@@ -1,5 +1,5 @@
 from django.core.management.base import BaseCommand
-from stockdata.models import General, Description, Highlights
+from stockdata.models import General, Description, Highlights, Valuation
 import requests
 from datetime import datetime
 
@@ -78,6 +78,20 @@ class Command(BaseCommand):
                 'gross_profit_ttm': highlights_data.get('GrossProfitTTM'),
                 'diluted_eps_ttm': highlights_data.get('DilutedEpsTTM'),
                 'quarterly_earnings_growth_yoy': highlights_data.get('QuarterlyEarningsGrowthYOY'),
+            }
+        )
+
+        valuation_data = data.get('Valuation', {})
+        valuation, created = Valuation.objects.update_or_create(
+            general=general,
+            defaults={
+                'trailing_pe': valuation_data.get('TrailingPE'),
+                'forward_pe': valuation_data.get('ForwardPE'),
+                'price_sales_ttm': valuation_data.get('PriceSalesTTM'),
+                'price_book_mrq': valuation_data.get('PriceBookMRQ'),
+                'enterprise_value': valuation_data.get('EnterpriseValue'),
+                'enterprise_value_revenue': valuation_data.get('EnterpriseValueRevenue'),
+                'enterprise_value_ebitda': valuation_data.get('EnterpriseValueEbitda'),
             }
         )        
         
