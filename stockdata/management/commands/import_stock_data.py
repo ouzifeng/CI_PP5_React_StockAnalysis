@@ -1,5 +1,5 @@
 from django.core.management.base import BaseCommand
-from stockdata.models import General, Description, Highlights, Valuation, Technicals
+from stockdata.models import General, Description, Highlights, Valuation, Technicals, SplitsDividends
 import requests
 from datetime import datetime
 
@@ -109,8 +109,22 @@ class Command(BaseCommand):
                 'short_ratio': technicals_data.get('ShortRatio'),
                 'short_percent': technicals_data.get('ShortPercent'),
             }
-        )                
-        
+        )
+
+        splits_dividends_data = data.get('SplitsDividends', {})
+        splits_dividends, created = SplitsDividends.objects.update_or_create(
+            general=general,
+            defaults={
+                'forward_annual_dividend_rate': splits_dividends_data.get('ForwardAnnualDividendRate'),
+                'forward_annual_dividend_yield': splits_dividends_data.get('ForwardAnnualDividendYield'),
+                'payout_ratio': splits_dividends_data.get('PayoutRatio'),
+                'dividend_date': datetime.strptime(splits_dividends_data.get('DividendDate'), '%Y-%m-%d').date(),
+                'ex_dividend_date': datetime.strptime(splits_dividends_data.get('ExDividendDate'), '%Y-%m-%d').date(),
+                'last_split_factor': splits_dividends_data.get('LastSplitFactor'),
+                'last_split_date': datetime.strptime(splits_dividends_data.get('LastSplitDate'), '%Y-%m-%d').date(),
+            }
+        )
+
         self.stdout.write(self.style.SUCCESS(f'Successfully imported or updated stock data for {primary_ticker}'))
         
         
