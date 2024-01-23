@@ -1,5 +1,5 @@
 from django.core.management.base import BaseCommand
-from stockdata.models import General, Description, Highlights, Valuation
+from stockdata.models import General, Description, Highlights, Valuation, Technicals
 import requests
 from datetime import datetime
 
@@ -93,7 +93,23 @@ class Command(BaseCommand):
                 'enterprise_value_revenue': valuation_data.get('EnterpriseValueRevenue'),
                 'enterprise_value_ebitda': valuation_data.get('EnterpriseValueEbitda'),
             }
-        )        
+        )
+        
+        technicals_data = data.get('Technicals', {})
+        technicals, created = Technicals.objects.update_or_create(
+            general=general,
+            defaults={
+                'beta': technicals_data.get('Beta'),
+                'fifty_two_week_high': technicals_data.get('52WeekHigh'),
+                'fifty_two_week_low': technicals_data.get('52WeekLow'),
+                'fifty_day_ma': technicals_data.get('50DayMA'),
+                'two_hundred_day_ma': technicals_data.get('200DayMA'),
+                'shares_short': technicals_data.get('SharesShort'),
+                'shares_short_prior_month': technicals_data.get('SharesShortPriorMonth'),
+                'short_ratio': technicals_data.get('ShortRatio'),
+                'short_percent': technicals_data.get('ShortPercent'),
+            }
+        )                
         
         self.stdout.write(self.style.SUCCESS(f'Successfully imported or updated stock data for {primary_ticker}'))
         
