@@ -1,5 +1,6 @@
 from django.db import models
 
+
 class General(models.Model):
     code = models.CharField(max_length=20)
     type = models.CharField(max_length=50)
@@ -29,7 +30,8 @@ class General(models.Model):
         if not self.logo_url.startswith('https://eodhd.com'):
             self.logo_url = 'https://eodhd.com' + self.logo_url
         super(General, self).save(*args, **kwargs)
-        
+
+     
 class Description(models.Model):
     general = models.OneToOneField(
         General, 
@@ -41,3 +43,39 @@ class Description(models.Model):
 
     def __str__(self):
         return f"Description for {self.general.name} ({self.general.code})"
+
+
+class Highlights(models.Model):
+    general = models.OneToOneField(
+        General,
+        on_delete=models.CASCADE,
+        primary_key=True,
+        related_name='highlights'
+    )
+    market_capitalization = models.DecimalField(max_digits=15, decimal_places=2)
+    ebitda = models.DecimalField(max_digits=15, decimal_places=2)
+    pe_ratio = models.DecimalField(max_digits=10, decimal_places=4)
+    peg_ratio = models.DecimalField(max_digits=10, decimal_places=4)
+    wall_street_target_price = models.DecimalField(max_digits=10, decimal_places=2)
+    book_value = models.DecimalField(max_digits=10, decimal_places=2)
+    dividend_share = models.DecimalField(max_digits=10, decimal_places=2)
+    dividend_yield = models.DecimalField(max_digits=10, decimal_places=4)
+    earnings_share = models.DecimalField(max_digits=10, decimal_places=2)
+    eps_estimate_current_year = models.DecimalField(max_digits=10, decimal_places=2)
+    eps_estimate_next_year = models.DecimalField(max_digits=10, decimal_places=2)
+    eps_estimate_next_quarter = models.DecimalField(max_digits=10, decimal_places=2)
+    eps_estimate_current_quarter = models.DecimalField(max_digits=10, decimal_places=2)
+    most_recent_quarter = models.DateField()
+    profit_margin = models.DecimalField(max_digits=10, decimal_places=4)
+    operating_margin_ttm = models.DecimalField(max_digits=10, decimal_places=4)
+    return_on_assets_ttm = models.DecimalField(max_digits=10, decimal_places=4)
+    return_on_equity_ttm = models.DecimalField(max_digits=10, decimal_places=4)
+    revenue_ttm = models.DecimalField(max_digits=15, decimal_places=2)
+    revenue_per_share_ttm = models.DecimalField(max_digits=10, decimal_places=4)
+    quarterly_revenue_growth_yoy = models.DecimalField(max_digits=10, decimal_places=4)
+    gross_profit_ttm = models.DecimalField(max_digits=15, decimal_places=2)
+    diluted_eps_ttm = models.DecimalField(max_digits=10, decimal_places=2)
+    quarterly_earnings_growth_yoy = models.DecimalField(max_digits=10, decimal_places=4)
+
+    def __str__(self):
+        return f"Highlights for {self.general.name} ({self.general.code})"    
