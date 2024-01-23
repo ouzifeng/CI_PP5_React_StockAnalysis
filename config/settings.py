@@ -76,17 +76,7 @@ WSGI_APPLICATION = "config.wsgi.application"
 
 # To use Neon with Django, you have to create a Project on Neon and specify the project connection settings in your settings.py in the same way as for standalone Postgres.
 
-DATABASES = {
-  'default': {
-    'ENGINE': 'django.db.backends.postgresql',
-    'NAME': 'neondb',
-    'USER': 'david.oak',
-    'PASSWORD': '6sivDCAQq5bK',
-    'HOST': 'ep-falling-poetry-a2ik94yp.eu-central-1.aws.neon.tech',
-    'PORT': '5432',
-    'OPTIONS': {'sslmode': 'require'},
-  }
-}
+
 
 
 # Password validation
