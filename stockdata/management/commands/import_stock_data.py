@@ -1,5 +1,5 @@
 from django.core.management.base import BaseCommand
-from stockdata.models import General, Description, Highlights, Valuation, Technicals, SplitsDividends, AnalystRatings, BalanceSheet, CashFlow
+from stockdata.models import General, Description, Highlights, Valuation, Technicals, SplitsDividends, AnalystRatings, BalanceSheet, CashFlow, IncomeStatement
 import requests
 from datetime import datetime
 
@@ -277,7 +277,67 @@ class Command(BaseCommand):
                         'other_non_cash_items': float(sheet_data.get('otherNonCashItems')) if sheet_data.get('otherNonCashItems') else None,
                         'free_cash_flow': float(sheet_data.get('freeCashFlow')) if sheet_data.get('freeCashFlow') else None,
                     }
-                )                
+                )        
+                
+
+
+        # Process Income Statement data
+        for sheet_type in ['yearly', 'quarterly']:
+            income_statement_data = data.get('Financials', {}).get('Income_Statement', {}).get(sheet_type, {})
+            for key, sheet_data in income_statement_data.items():
+                try:
+                    date_obj = datetime.strptime(key, '%Y-%m-%d').date()
+                except ValueError:
+                    self.stdout.write(self.style.ERROR(f"Invalid date format for {key} in {sheet_type} data."))
+                    continue
+
+                # Ensure we only process data within the last 5 years
+                if date_obj.year < datetime.now().year - 5:
+                    continue
+
+                income_statement, created = IncomeStatement.objects.update_or_create(
+                    general=general,
+                    date=date_obj,
+                    type=sheet_type,
+                    defaults={
+                        'filing_date': datetime.strptime(sheet_data.get('filing_date'), '%Y-%m-%d').date() if sheet_data.get('filing_date') else None,
+                        'currency_symbol': sheet_data.get('currency_symbol', ''),
+                        'research_development': float(sheet_data.get('researchDevelopment')) if sheet_data.get('researchDevelopment') else None,
+                        'effect_of_accounting_charges': float(sheet_data.get('effectOfAccountingCharges')) if sheet_data.get('effectOfAccountingCharges') else None,
+                        'income_before_tax': float(sheet_data.get('incomeBeforeTax')) if sheet_data.get('incomeBeforeTax') else None,
+                        'minority_interest': float(sheet_data.get('minorityInterest')) if sheet_data.get('minorityInterest') else None,
+                        'net_income': float(sheet_data.get('netIncome')) if sheet_data.get('netIncome') else None,
+                        'selling_general_administrative': float(sheet_data.get('sellingGeneralAdministrative')) if sheet_data.get('sellingGeneralAdministrative') else None,
+                        'selling_and_marketing_expenses': float(sheet_data.get('sellingAndMarketingExpenses')) if sheet_data.get('sellingAndMarketingExpenses') else None,
+                        'gross_profit': float(sheet_data.get('grossProfit')) if sheet_data.get('grossProfit') else None,
+                        'reconciled_depreciation': float(sheet_data.get('reconciledDepreciation')) if sheet_data.get('reconciledDepreciation') else None,
+                        'ebit': float(sheet_data.get('ebit')) if sheet_data.get('ebit') else None,
+                        'ebitda': float(sheet_data.get('ebitda')) if sheet_data.get('ebitda') else None,
+                        'depreciation_and_amortization': float(sheet_data.get('depreciationAndAmortization')) if sheet_data.get('depreciationAndAmortization') else None,
+                        'non_operating_income_net_other': float(sheet_data.get('nonOperatingIncomeNetOther')) if sheet_data.get('nonOperatingIncomeNetOther') else None,
+                        'operating_income': float(sheet_data.get('operatingIncome')) if sheet_data.get('operatingIncome') else None,
+                        'other_operating_expenses': float(sheet_data.get('otherOperatingExpenses')) if sheet_data.get('otherOperatingExpenses') else None,
+                        'interest_expense': float(sheet_data.get('interestExpense')) if sheet_data.get('interestExpense') else None,
+                        'tax_provision': float(sheet_data.get('taxProvision')) if sheet_data.get('taxProvision') else None,
+                        'interest_income': float(sheet_data.get('interestIncome')) if sheet_data.get('interestIncome') else None,
+                        'net_interest_income': float(sheet_data.get('netInterestIncome')) if sheet_data.get('netInterestIncome') else None,
+                        'extraordinary_items': float(sheet_data.get('extraordinaryItems')) if sheet_data.get('extraordinaryItems') else None,
+                        'non_recurring': float(sheet_data.get('nonRecurring')) if sheet_data.get('nonRecurring') else None,
+                        'other_items': float(sheet_data.get('otherItems')) if sheet_data.get('otherItems') else None,
+                        'income_tax_expense': float(sheet_data.get('incomeTaxExpense')) if sheet_data.get('incomeTaxExpense') else None,
+                        'total_revenue': float(sheet_data.get('totalRevenue')) if sheet_data.get('totalRevenue') else None,
+                        'total_operating_expenses': float(sheet_data.get('totalOperatingExpenses')) if sheet_data.get('totalOperatingExpenses') else None,
+                        'cost_of_revenue': float(sheet_data.get('costOfRevenue')) if sheet_data.get('costOfRevenue') else None,
+                        'total_other_income_expense_net': float(sheet_data.get('totalOtherIncomeExpenseNet')) if sheet_data.get('totalOtherIncomeExpenseNet') else None,
+                        'discontinued_operations': float(sheet_data.get('discontinuedOperations')) if sheet_data.get('discontinuedOperations') else None,
+                        'net_income_from_continuing_ops': float(sheet_data.get('netIncomeFromContinuingOps')) if sheet_data.get('netIncomeFromContinuingOps') else None,
+                        'net_income_applicable_to_common_shares': float(sheet_data.get('netIncomeApplicableToCommonShares')) if sheet_data.get('netIncomeApplicableToCommonShares') else None,
+                        'preferred_stock_and_other_adjustments': float(sheet_data.get('preferredStockAndOtherAdjustments')) if sheet_data.get('preferredStockAndOtherAdjustments') else None,
+                    }
+                )
+
+        self.stdout.write(self.style.SUCCESS(f'Successfully imported or updated Income Statement data for {primary_ticker}'))
+                        
 
         self.stdout.write(self.style.SUCCESS(f'Successfully imported or updated data for {primary_ticker}'))
 
