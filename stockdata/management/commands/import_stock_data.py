@@ -225,6 +225,59 @@ class Command(BaseCommand):
                         'common_stock_shares_outstanding': float(sheet_data.get('commonStockSharesOutstanding')) if sheet_data.get('commonStockSharesOutstanding') else None,
                     }
                 )
+                
+        # Process Cash Flow data
+        for sheet_type in ['yearly', 'quarterly']:
+            cash_flow_data = data.get('Financials', {}).get('Cash_Flow', {}).get(sheet_type, {})
+            for key, sheet_data in cash_flow_data.items():
+                try:
+                    date_obj = datetime.strptime(key, '%Y-%m-%d').date()
+                except ValueError:
+                    self.stdout.write(self.style.ERROR(f"Invalid date format for {key} in {sheet_type} data."))
+                    continue
+
+                # Ensure we only process data within the last 5 years
+                if date_obj.year < datetime.now().year - 5:
+                    continue
+
+                cash_flow, created = CashFlow.objects.update_or_create(
+                    general=general,
+                    date=date_obj,
+                    type=sheet_type,
+                    defaults={
+                        'filing_date': datetime.strptime(sheet_data.get('filing_date'), '%Y-%m-%d').date() if sheet_data.get('filing_date') else None,
+                        'currency_symbol': sheet_data.get('currency_symbol', ''),
+                        'investments': float(sheet_data.get('investments')) if sheet_data.get('investments') else None,
+                        'change_to_liabilities': float(sheet_data.get('changeToLiabilities')) if sheet_data.get('changeToLiabilities') else None,
+                        'total_cashflows_from_investing_activities': float(sheet_data.get('totalCashflowsFromInvestingActivities')) if sheet_data.get('totalCashflowsFromInvestingActivities') else None,
+                        'net_borrowings': float(sheet_data.get('netBorrowings')) if sheet_data.get('netBorrowings') else None,
+                        'total_cash_from_financing_activities': float(sheet_data.get('totalCashFromFinancingActivities')) if sheet_data.get('totalCashFromFinancingActivities') else None,
+                        'change_to_operating_activities': float(sheet_data.get('changeToOperatingActivities')) if sheet_data.get('changeToOperatingActivities') else None,
+                        'net_income': float(sheet_data.get('netIncome')) if sheet_data.get('netIncome') else None,
+                        'change_in_cash': float(sheet_data.get('changeInCash')) if sheet_data.get('changeInCash') else None,
+                        'begin_period_cash_flow': float(sheet_data.get('beginPeriodCashFlow')) if sheet_data.get('beginPeriodCashFlow') else None,
+                        'end_period_cash_flow': float(sheet_data.get('endPeriodCashFlow')) if sheet_data.get('endPeriodCashFlow') else None,
+                        'total_cash_from_operating_activities': float(sheet_data.get('totalCashFromOperatingActivities')) if sheet_data.get('totalCashFromOperatingActivities') else None,
+                        'issuance_of_capital_stock': float(sheet_data.get('issuanceOfCapitalStock')) if sheet_data.get('issuanceOfCapitalStock') else None,
+                        'depreciation': float(sheet_data.get('depreciation')) if sheet_data.get('depreciation') else None,
+                        'other_cashflows_from_investing_activities': float(sheet_data.get('otherCashflowsFromInvestingActivities')) if sheet_data.get('otherCashflowsFromInvestingActivities') else None,
+                        'dividends_paid': float(sheet_data.get('dividendsPaid')) if sheet_data.get('dividendsPaid') else None,
+                        'change_to_inventory': float(sheet_data.get('changeToInventory')) if sheet_data.get('changeToInventory') else None,
+                        'change_to_account_receivables': float(sheet_data.get('changeToAccountReceivables')) if sheet_data.get('changeToAccountReceivables') else None,
+                        'sale_purchase_of_stock': float(sheet_data.get('salePurchaseOfStock')) if sheet_data.get('salePurchaseOfStock') else None,
+                        'other_cashflows_from_financing_activities': float(sheet_data.get('otherCashflowsFromFinancingActivities')) if sheet_data.get('otherCashflowsFromFinancingActivities') else None,
+                        'change_to_netincome': float(sheet_data.get('changeToNetincome')) if sheet_data.get('changeToNetincome') else None,
+                        'capital_expenditures': float(sheet_data.get('capitalExpenditures')) if sheet_data.get('capitalExpenditures') else None,
+                        'change_receivables': float(sheet_data.get('changeReceivables')) if sheet_data.get('changeReceivables') else None,
+                        'cash_flows_other_operating': float(sheet_data.get('cashFlowsOtherOperating')) if sheet_data.get('cashFlowsOtherOperating') else None,
+                        'exchange_rate_changes': float(sheet_data.get('exchangeRateChanges')) if sheet_data.get('exchangeRateChanges') else None,
+                        'cash_and_cash_equivalents_changes': float(sheet_data.get('cashAndCashEquivalentsChanges')) if sheet_data.get('cashAndCashEquivalentsChanges') else None,
+                        'change_in_working_capital': float(sheet_data.get('changeInWorkingCapital')) if sheet_data.get('changeInWorkingCapital') else None,
+                        'stock_based_compensation': float(sheet_data.get('stockBasedCompensation')) if sheet_data.get('stockBasedCompensation') else None,
+                        'other_non_cash_items': float(sheet_data.get('otherNonCashItems')) if sheet_data.get('otherNonCashItems') else None,
+                        'free_cash_flow': float(sheet_data.get('freeCashFlow')) if sheet_data.get('freeCashFlow') else None,
+                    }
+                )                
 
         self.stdout.write(self.style.SUCCESS(f'Successfully imported or updated data for {primary_ticker}'))
 

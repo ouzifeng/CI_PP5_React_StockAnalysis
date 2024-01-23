@@ -819,3 +819,59 @@ class CashFlow(models.Model):
 
     def __str__(self):
         return f"{self.type.title()} Cash Flow for {self.general.name} ({self.date})"
+    
+
+class IncomeStatement(models.Model):
+    BALANCE_SHEET_TYPE_CHOICES = [
+        ('yearly', 'Yearly'),
+        ('quarterly', 'Quarterly'),
+    ]
+    general = models.ForeignKey(
+        General,
+        on_delete=models.CASCADE,
+        related_name='income_statements'
+    )
+    date = models.DateField()
+    filing_date = models.DateField()
+    currency_symbol = models.CharField(max_length=10, null=True, blank=True)
+    research_development = models.DecimalField(max_digits=15, decimal_places=2, null=True, blank=True)
+    effect_of_accounting_charges = models.DecimalField(max_digits=15, decimal_places=2, null=True, blank=True)
+    income_before_tax = models.DecimalField(max_digits=15, decimal_places=2, null=True, blank=True)
+    minority_interest = models.DecimalField(max_digits=15, decimal_places=2, null=True, blank=True)
+    net_income = models.DecimalField(max_digits=15, decimal_places=2, null=True, blank=True)
+    selling_general_administrative = models.DecimalField(max_digits=15, decimal_places=2, null=True, blank=True)
+    selling_and_marketing_expenses = models.DecimalField(max_digits=15, decimal_places=2, null=True, blank=True)
+    gross_profit = models.DecimalField(max_digits=15, decimal_places=2, null=True, blank=True)
+    reconciled_depreciation = models.DecimalField(max_digits=15, decimal_places=2, null=True, blank=True)
+    ebit = models.DecimalField(max_digits=15, decimal_places=2, null=True, blank=True)
+    ebitda = models.DecimalField(max_digits=15, decimal_places=2, null=True, blank=True)
+    depreciation_and_amortization = models.DecimalField(max_digits=15, decimal_places=2, null=True, blank=True)
+    non_operating_income_net_other = models.DecimalField(max_digits=15, decimal_places=2, null=True, blank=True)
+    operating_income = models.DecimalField(max_digits=15, decimal_places=2, null=True, blank=True)
+    other_operating_expenses = models.DecimalField(max_digits=15, decimal_places=2, null=True, blank=True)
+    interest_expense = models.DecimalField(max_digits=15, decimal_places=2, null=True, blank=True)
+    tax_provision = models.DecimalField(max_digits=15, decimal_places=2, null=True, blank=True)
+    interest_income = models.DecimalField(max_digits=15, decimal_places=2, null=True, blank=True)
+    net_interest_income = models.DecimalField(max_digits=15, decimal_places=2, null=True, blank=True)
+    extraordinary_items = models.DecimalField(max_digits=15, decimal_places=2, null=True, blank=True)
+    non_recurring = models.DecimalField(max_digits=15, decimal_places=2, null=True, blank=True)
+    other_items = models.DecimalField(max_digits=15, decimal_places=2, null=True, blank=True)
+    income_tax_expense = models.DecimalField(max_digits=15, decimal_places=2, null=True, blank=True)
+    total_revenue = models.DecimalField(max_digits=15, decimal_places=2, null=True, blank=True)
+    total_operating_expenses = models.DecimalField(max_digits=15, decimal_places=2, null=True, blank=True)
+    cost_of_revenue = models.DecimalField(max_digits=15, decimal_places=2, null=True, blank=True)
+    total_other_income_expense_net = models.DecimalField(max_digits=15, decimal_places=2, null=True, blank=True)
+    discontinued_operations = models.DecimalField(max_digits=15, decimal_places=2, null=True, blank=True)
+    net_income_from_continuing_ops = models.DecimalField(max_digits=15, decimal_places=2, null=True, blank=True)
+    net_income_applicable_to_common_shares = models.DecimalField(max_digits=15, decimal_places=2, null=True, blank=True)
+    preferred_stock_and_other_adjustments = models.DecimalField(max_digits=15, decimal_places=2, null=True, blank=True)
+
+    type = models.CharField(
+        max_length=10,
+        choices=BALANCE_SHEET_TYPE_CHOICES,
+        default='yearly',
+    )
+
+    def __str__(self):
+        return f"{self.type.title()} Income Statement for {self.general.name} ({self.date})"
+    
