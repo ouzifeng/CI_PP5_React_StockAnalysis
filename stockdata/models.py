@@ -767,3 +767,55 @@ class BalanceSheet(models.Model):
 
     def __str__(self):
         return f"{self.type.title()} Balance Sheet for {self.general.name} ({self.date})" 
+
+
+class CashFlow(models.Model):
+    CASH_FLOW_TYPE_CHOICES = [
+        ('yearly', 'Yearly'),
+        ('quarterly', 'Quarterly'),
+    ]
+    general = models.ForeignKey(
+        General,
+        on_delete=models.CASCADE,
+        related_name='cash_flows'
+    )
+    date = models.DateField()
+    filing_date = models.DateField()
+    currency_symbol = models.CharField(max_length=10, blank=True, null=True)
+    investments = models.DecimalField(max_digits=15, decimal_places=2, null=True, blank=True)
+    change_to_liabilities = models.DecimalField(max_digits=15, decimal_places=2, null=True, blank=True)
+    total_cashflows_from_investing_activities = models.DecimalField(max_digits=15, decimal_places=2, null=True, blank=True)
+    net_borrowings = models.DecimalField(max_digits=15, decimal_places=2, null=True, blank=True)
+    total_cash_from_financing_activities = models.DecimalField(max_digits=15, decimal_places=2, null=True, blank=True)
+    change_to_operating_activities = models.DecimalField(max_digits=15, decimal_places=2, null=True, blank=True)
+    net_income = models.DecimalField(max_digits=15, decimal_places=2, null=True, blank=True)
+    change_in_cash = models.DecimalField(max_digits=15, decimal_places=2, null=True, blank=True)
+    begin_period_cash_flow = models.DecimalField(max_digits=15, decimal_places=2, null=True, blank=True)
+    end_period_cash_flow = models.DecimalField(max_digits=15, decimal_places=2, null=True, blank=True)
+    total_cash_from_operating_activities = models.DecimalField(max_digits=15, decimal_places=2, null=True, blank=True)
+    issuance_of_capital_stock = models.DecimalField(max_digits=15, decimal_places=2, null=True, blank=True)
+    depreciation = models.DecimalField(max_digits=15, decimal_places=2, null=True, blank=True)
+    other_cashflows_from_investing_activities = models.DecimalField(max_digits=15, decimal_places=2, null=True, blank=True)
+    dividends_paid = models.DecimalField(max_digits=15, decimal_places=2, null=True, blank=True)
+    change_to_inventory = models.DecimalField(max_digits=15, decimal_places=2, null=True, blank=True)
+    change_to_account_receivables = models.DecimalField(max_digits=15, decimal_places=2, null=True, blank=True)
+    sale_purchase_of_stock = models.DecimalField(max_digits=15, decimal_places=2, null=True, blank=True)
+    other_cashflows_from_financing_activities = models.DecimalField(max_digits=15, decimal_places=2, null=True, blank=True)
+    change_to_netincome = models.DecimalField(max_digits=15, decimal_places=2, null=True, blank=True)
+    capital_expenditures = models.DecimalField(max_digits=15, decimal_places=2, null=True, blank=True)
+    change_receivables = models.DecimalField(max_digits=15, decimal_places=2, null=True, blank=True)
+    cash_flows_other_operating = models.DecimalField(max_digits=15, decimal_places=2, null=True, blank=True)
+    exchange_rate_changes = models.DecimalField(max_digits=15, decimal_places=2, null=True, blank=True)
+    cash_and_cash_equivalents_changes = models.DecimalField(max_digits=15, decimal_places=2, null=True, blank=True)
+    change_in_working_capital = models.DecimalField(max_digits=15, decimal_places=2, null=True, blank=True)
+    stock_based_compensation = models.DecimalField(max_digits=15, decimal_places=2, null=True, blank=True)
+    other_non_cash_items = models.DecimalField(max_digits=15, decimal_places=2, null=True, blank=True)
+    free_cash_flow = models.DecimalField(max_digits=15, decimal_places=2, null=True, blank=True)
+    type = models.CharField(
+        max_length=10,
+        choices=CASH_FLOW_TYPE_CHOICES,
+        default='yearly',
+    )
+
+    def __str__(self):
+        return f"{self.type.title()} Cash Flow for {self.general.name} ({self.date})"

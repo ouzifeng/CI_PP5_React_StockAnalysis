@@ -1,5 +1,5 @@
 from django.core.management.base import BaseCommand
-from stockdata.models import General, Description, Highlights, Valuation, Technicals, SplitsDividends, AnalystRatings, BalanceSheet
+from stockdata.models import General, Description, Highlights, Valuation, Technicals, SplitsDividends, AnalystRatings, BalanceSheet, CashFlow
 import requests
 from datetime import datetime
 
