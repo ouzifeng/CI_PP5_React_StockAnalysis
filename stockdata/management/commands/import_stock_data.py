@@ -96,3 +96,6 @@ class Command(BaseCommand):
         )        
         
         self.stdout.write(self.style.SUCCESS(f'Successfully imported or updated stock data for {primary_ticker}'))
+        
+        
+        

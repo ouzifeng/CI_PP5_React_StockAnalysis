@@ -96,4 +96,25 @@ class Valuation(models.Model):
     enterprise_value_ebitda = models.DecimalField(max_digits=10, decimal_places=4)
 
     def __str__(self):
-        return f"Valuation for {self.general.name} ({self.general.code})"     
+        return f"Valuation for {self.general.name} ({self.general.code})"
+    
+    
+class Technicals(models.Model):
+    general = models.OneToOneField(
+        General,
+        on_delete=models.CASCADE,
+        primary_key=True,
+        related_name='technicals'
+    )
+    beta = models.DecimalField(max_digits=5, decimal_places=2)
+    fifty_two_week_high = models.DecimalField(max_digits=10, decimal_places=4)
+    fifty_two_week_low = models.DecimalField(max_digits=10, decimal_places=4)
+    fifty_day_ma = models.DecimalField(max_digits=10, decimal_places=4)
+    two_hundred_day_ma = models.DecimalField(max_digits=10, decimal_places=4)
+    shares_short = models.IntegerField()
+    shares_short_prior_month = models.IntegerField()
+    short_ratio = models.DecimalField(max_digits=5, decimal_places=2)
+    short_percent = models.DecimalField(max_digits=5, decimal_places=3)
+
+    def __str__(self):
+        return f"Technicals for {self.general.name} ({self.general.code})"     
