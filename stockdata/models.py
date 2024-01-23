@@ -136,4 +136,23 @@ class SplitsDividends(models.Model):
     last_split_date = models.DateField()
 
     def __str__(self):
-        return f"Splits and Dividends for {self.general.name} ({self.general.code})"    
+        return f"Splits and Dividends for {self.general.name} ({self.general.code})"
+    
+ 
+class AnalystRatings(models.Model):
+    general = models.OneToOneField(
+        General,
+        on_delete=models.CASCADE,
+        primary_key=True,
+        related_name='analyst_ratings'
+    )
+    rating = models.DecimalField(max_digits=5, decimal_places=4)
+    target_price = models.DecimalField(max_digits=10, decimal_places=2)
+    strong_buy = models.IntegerField()
+    buy = models.IntegerField()
+    hold = models.IntegerField()
+    sell = models.IntegerField()
+    strong_sell = models.IntegerField()
+
+    def __str__(self):
+        return f"Analyst Ratings for {self.general.name} ({self.general.code})"    
