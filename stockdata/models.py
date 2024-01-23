@@ -117,4 +117,23 @@ class Technicals(models.Model):
     short_percent = models.DecimalField(max_digits=5, decimal_places=3)
 
     def __str__(self):
-        return f"Technicals for {self.general.name} ({self.general.code})"     
+        return f"Technicals for {self.general.name} ({self.general.code})"
+    
+ 
+class SplitsDividends(models.Model):
+    general = models.OneToOneField(
+        General,
+        on_delete=models.CASCADE,
+        primary_key=True,
+        related_name='splits_dividends'
+    )
+    forward_annual_dividend_rate = models.DecimalField(max_digits=10, decimal_places=2)
+    forward_annual_dividend_yield = models.DecimalField(max_digits=5, decimal_places=4)
+    payout_ratio = models.DecimalField(max_digits=10, decimal_places=4)
+    dividend_date = models.DateField()
+    ex_dividend_date = models.DateField()
+    last_split_factor = models.CharField(max_length=20)
+    last_split_date = models.DateField()
+
+    def __str__(self):
+        return f"Splits and Dividends for {self.general.name} ({self.general.code})"    
