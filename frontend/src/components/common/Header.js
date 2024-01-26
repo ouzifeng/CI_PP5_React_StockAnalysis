@@ -9,11 +9,11 @@ import NavDropdown from 'react-bootstrap/NavDropdown';
 
 function Header() {
   return (
-    <Navbar expand="lg" className="bg-body-tertiary">
+    <Navbar expand="lg" className="bg-body-tertiary" style={{ boxShadow: '0 4px 4px 0 rgba(0,0,0,.2)' }}>
       <Container fluid>
         <Navbar.Brand as={Link} to="/">Navbar scroll</Navbar.Brand>
         <Navbar.Toggle aria-controls="navbarScroll" />
-        <Navbar.Collapse id="navbarScroll">
+    <Navbar.Collapse id="navbarScroll">
           <Nav className="me-auto my-2 my-lg-0" style={{ maxHeight: '100px' }} navbarScroll>
             <Nav.Link as={Link} to="/action1">Home</Nav.Link>
             <Nav.Link as={Link} to="/action2">Link</Nav.Link>
@@ -32,7 +32,9 @@ function Header() {
               className="me-2"
               aria-label="Search"
             />
-            <Button variant="outline-success">Search</Button>
+            <Button variant="outline-success" className="me-2">Search</Button>
+            <Button variant="outline-primary" as={Link} to="/login" className="me-2">Login</Button>
+            <Button variant="outline-primary" as={Link} to="/register">Register</Button>
           </Form>
         </Navbar.Collapse>
       </Container>
