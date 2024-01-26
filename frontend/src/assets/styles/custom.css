@@ -1,0 +1,13 @@
+body {
+  font-family: 'Poppins', sans-serif;
+}
+
+.content-container {
+  max-width: 1290px;
+  margin: 0 auto;
+}
+
+.bg-body-tertiary {
+  padding: 10px 30px;
+  margin-bottom: 20px;
+}
