@@ -1,45 +1,32 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import Button from 'react-bootstrap/Button';
-import Container from 'react-bootstrap/Container';
-import Form from 'react-bootstrap/Form';
-import Nav from 'react-bootstrap/Nav';
-import Navbar from 'react-bootstrap/Navbar';
-import NavDropdown from 'react-bootstrap/NavDropdown';
+import * as React from 'react';
+import Box from '@mui/material/Box';
+import CssBaseline from '@mui/material/CssBaseline';
+import BottomNavigation from '@mui/material/BottomNavigation';
+import BottomNavigationAction from '@mui/material/BottomNavigationAction';
+import RestoreIcon from '@mui/icons-material/Restore';
+import FavoriteIcon from '@mui/icons-material/Favorite';
+import ArchiveIcon from '@mui/icons-material/Archive';
+import Paper from '@mui/material/Paper';
 
-function Footer() {
+export default function StickyFooter() {
+  const [value, setValue] = React.useState(0);
+
   return (
-    <Navbar expand="lg" className="bg-body-tertiary" style={{ boxShadow: '0 4px 4px 0 rgba(0,0,0,.2)' }}>
-      <Container fluid>
-        <Navbar.Brand as={Link} to="/">Navbar scroll</Navbar.Brand>
-        <Navbar.Toggle aria-controls="navbarScroll" />
-    <Navbar.Collapse id="navbarScroll">
-          <Nav className="me-auto my-2 my-lg-0" style={{ maxHeight: '100px' }} navbarScroll>
-            <Nav.Link as={Link} to="/action1">Home</Nav.Link>
-            <Nav.Link as={Link} to="/action2">Link</Nav.Link>
-            <NavDropdown title="Link" id="navbarScrollingDropdown">
-              <NavDropdown.Item as={Link} to="/action3">Action</NavDropdown.Item>
-              <NavDropdown.Item as={Link} to="/action4">Another action</NavDropdown.Item>
-              <NavDropdown.Divider />
-              <NavDropdown.Item as={Link} to="/action5">Something else here</NavDropdown.Item>
-            </NavDropdown>
-            <Nav.Link as={Link} to="/disabled" disabled>Link</Nav.Link>
-          </Nav>
-          <Form className="d-flex">
-            <Form.Control
-              type="search"
-              placeholder="Search"
-              className="me-2"
-              aria-label="Search"
-            />
-            <Button variant="outline-success" className="me-2">Search</Button>
-            <Button variant="outline-primary" as={Link} to="/login" className="me-2">Login</Button>
-            <Button variant="outline-primary" as={Link} to="/register">Register</Button>
-          </Form>
-        </Navbar.Collapse>
-      </Container>
-    </Navbar>
+    <Box sx={{ pb: 7 }}>
+      <CssBaseline />
+      <Paper sx={{ position: 'fixed', bottom: 0, left: 0, right: 0 }} elevation={3}>
+        <BottomNavigation
+          showLabels
+          value={value}
+          onChange={(event, newValue) => {
+            setValue(newValue);
+          }}
+        >
+          <BottomNavigationAction label="Recents" icon={<RestoreIcon />} />
+          <BottomNavigationAction label="Favorites" icon={<FavoriteIcon />} />
+          <BottomNavigationAction label="Archive" icon={<ArchiveIcon />} />
+        </BottomNavigation>
+      </Paper>
+    </Box>
   );
 }
-
-export default Footer;
