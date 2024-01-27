@@ -1,7 +1,7 @@
 // StockDetail.js
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import TradingViewWidget from '../components/common/TradingViewWidget'; // Adjust the import path as needed
+import TradingViewWidget from '../components/stockpage/TradingViewWidget'; // Adjust the import path as needed
 
 const StockDetail = () => {
   const { primary_ticker } = useParams();
@@ -28,7 +28,7 @@ const StockDetail = () => {
 
   return (
     <div>
-      <h1>{stockData.name}</h1>
+      <h1 className='stockname'>{stockData.name}</h1>
       {/* Render more stock details here */}
       
       {/* Bootstrap Grid Layout */}
@@ -42,8 +42,7 @@ const StockDetail = () => {
           <div className="highlight">
             <ul>
               <li>
-                <strong>Market Cap:</strong> {stockData.currency_symbol + Number(stockData.highlights.market_capitalization).toLocaleString()}
-
+                <strong>Target Price</strong>: {stockData.currency_symbol + Number(stockData.highlights.wall_street_target_price).toLocaleString()}
               </li>
               {/* Add other highlights here */}
             </ul>

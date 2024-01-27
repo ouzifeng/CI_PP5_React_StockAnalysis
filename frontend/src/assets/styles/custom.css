@@ -1,5 +1,5 @@
 body {
-  font-family: 'Poppins', sans-serif;
+  font-family: 'Roboto', sans-serif;
 }
 
 .content-container {
@@ -11,3 +11,10 @@ body {
   padding: 10px 30px;
   margin-bottom: 20px;
 }
+
+.stockname {
+  margin-top: 20px;
+  padding-left: 20px;
+  font-size: 30px;
+}
+
