@@ -1,33 +1,111 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import Button from 'react-bootstrap/Button';
-import Container from 'react-bootstrap/Container';
-import Form from 'react-bootstrap/Form';
-import Navbar from 'react-bootstrap/Navbar';
+import AppBar from '@mui/material/AppBar';
+import Box from '@mui/material/Box';
+import Toolbar from '@mui/material/Toolbar';
+import Container from '@mui/material/Container'; 
+import IconButton from '@mui/material/IconButton';
+import Typography from '@mui/material/Typography';
+import InputBase from '@mui/material/InputBase';
+import Button from '@mui/material/Button';
+import MenuIcon from '@mui/icons-material/Menu';
+import SearchIcon from '@mui/icons-material/Search';
+import { styled, alpha } from '@mui/material/styles';
 import MenuDrawer from './MenuDrawer'; // Import the MenuDrawer component
 
+const Search = styled('div')(({ theme }) => ({
+  position: 'relative',
+  borderRadius: theme.shape.borderRadius,
+  backgroundColor: alpha(theme.palette.common.white, 0.15),
+  '&:hover': {
+    backgroundColor: alpha(theme.palette.common.white, 0.25),
+  },
+  marginLeft: 0,
+  width: '100%',
+  [theme.breakpoints.up('sm')]: {
+    marginLeft: theme.spacing(1),
+    width: 'auto',
+  },
+}));
+
+const SearchIconWrapper = styled('div')(({ theme }) => ({
+  padding: theme.spacing(0, 2),
+  height: '100%',
+  position: 'absolute',
+  pointerEvents: 'none',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+}));
+
+const StyledInputBase = styled(InputBase)(({ theme }) => ({
+  color: 'inherit',
+  '& .MuiInputBase-input': {
+    padding: theme.spacing(1, 1, 1, 0),
+    paddingLeft: `calc(1em + ${theme.spacing(4)})`,
+    transition: theme.transitions.create('width'),
+    width: '100%',
+    [theme.breakpoints.up('sm')]: {
+      width: '12ch',
+      '&:focus': {
+        width: '20ch',
+      },
+    },
+  },
+}));
+
 function Header() {
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+
+  const handleDrawerOpen = () => {
+    setIsDrawerOpen(true);
+  };
+
+  const handleDrawerClose = () => {
+    setIsDrawerOpen(false);
+  };
+
   return (
-    <Navbar expand="lg" className="bg-body-tertiary" style={{ boxShadow: '0 4px 4px 0 rgba(0,0,0,.2)' }}>
-      <Container className="container-fluid header">
-        <Navbar.Brand as={Link} to="/">Navbar scroll</Navbar.Brand>
-        <MenuDrawer /> {/* Use the MenuDrawer component as the menu button */}
-        <Navbar.Toggle aria-controls="navbarScroll" />
-        <Navbar.Collapse id="navbarScroll" className="justify-content-end">
-          <Form className="d-flex me-2">
-            <Form.Control
-              type="search"
-              placeholder="Search"
-              className="me-2"
-              aria-label="Search"
+    <AppBar position="static">
+      <Container maxWidth="xl" style={{ maxWidth: '1200px' }}> {/* Set the maximum width to 1200px */}
+        <Toolbar disableGutters> {/* Remove default padding */}
+          <IconButton
+            size="large"
+            edge="start"
+            color="inherit"
+            aria-label="menu"
+            sx={{ mr: 2 }}
+            onClick={() => setIsDrawerOpen(true)}
+          >
+            <MenuIcon />
+          </IconButton>
+          <Typography
+            variant="h6"
+            component={Link}
+            to="/"
+            sx={{ flexGrow: 1, textDecoration: 'none', color: 'inherit' }}
+          >
+            Bull Street
+          </Typography>
+          <Search>
+            <SearchIconWrapper>
+              <SearchIcon />
+            </SearchIconWrapper>
+            <StyledInputBase
+              placeholder="Find more stocks..."
+              inputProps={{ 'aria-label': 'search' }}
             />
-            <Button variant="outline-success" className="me-2">Search</Button>
-          </Form>
-          <Button variant="outline-primary" as={Link} to="/login" className="me-2">Login</Button>
-          <Button variant="outline-primary" as={Link} to="/register">Register</Button>
-        </Navbar.Collapse>
+          </Search>
+          <Button variant="outlined" color="inherit" component={Link} to="/login" sx={{ ml: 2 }}>
+            Login
+          </Button>
+          <Button variant="outlined" color="inherit" component={Link} to="/register" sx={{ ml: 2 }}>
+            Register
+          </Button>
+        </Toolbar>
       </Container>
-    </Navbar>
+      <MenuDrawer isOpen={isDrawerOpen} onDrawerClose={() => setIsDrawerOpen(false)} />
+    </AppBar>
   );
 }
 

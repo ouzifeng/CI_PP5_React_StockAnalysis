@@ -18,3 +18,33 @@ body {
   font-size: 30px;
 }
 
+.bg-body-tertiary {
+  background-color: #1976d2 !important;
+  color: white;
+}
+
+.navbar-brand {
+  color: white;
+}
+
+/* Add this CSS to your stylesheet */
+
+/* This will ensure the container takes the full width */
+.tradingview-widget-container {
+  width: 100%;
+  overflow-x: auto;
+}
+
+/* This CSS will ensure that on small screens all tickers are displayed */
+@media (max-width: 767px) { /* Adjust the max-width as needed for your breakpoint */
+  .tradingview-widget-container__widget {
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+  }
+
+  .tradingview-widget-container__widget > div {
+    flex: 0 0 auto;
+    margin-right: 10px; /* Adjust the margin as needed */
+  }
+}

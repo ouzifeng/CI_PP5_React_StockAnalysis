@@ -40,7 +40,7 @@ const Ticker = () => {
                 ],
                 "isTransparent": false,
                 "showSymbolLogo": false,
-                "colorTheme": "dark",
+                "colorTheme": "light",
                 "locale": "en"
       });
 
