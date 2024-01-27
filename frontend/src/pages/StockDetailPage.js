@@ -1,7 +1,7 @@
-// StockDetail.js
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import TradingViewWidget from '../components/stockpage/TradingViewWidget'; // Adjust the import path as needed
+import { Grid, Paper, Typography, Box, List, ListItem, ListItemText } from '@mui/material';
 
 const StockDetail = () => {
   const { primary_ticker } = useParams();
@@ -9,13 +9,10 @@ const StockDetail = () => {
   const [tradingViewSymbol, setTradingViewSymbol] = useState('');
 
   useEffect(() => {
-    // Fetch stock data by primary_ticker
     fetch(`http://localhost:8000/api/stocks/${primary_ticker.replace('-', '.')}/`)
       .then(response => response.json())
       .then(data => {
         setStockData(data);
-
-        // After fetching stock data, construct the TradingView symbol
         const symbol = `${data.exchange}:${data.code}`;
         setTradingViewSymbol(symbol);
       })
@@ -23,33 +20,32 @@ const StockDetail = () => {
   }, [primary_ticker]);
 
   if (!stockData) {
-    return <div>Loading...</div>;
+    return <Box sx={{ display: 'flex', justifyContent: 'center', mt: 3 }}><Typography>Loading...</Typography></Box>;
   }
 
   return (
-    <div>
-      <h1 className='stockname'>{stockData.name}</h1>
-      {/* Render more stock details here */}
-      
-      {/* Bootstrap Grid Layout */}
-      <div className="row">
-        <div className="col-md-7"> {/* This div takes up 7 columns on medium and larger screens */}
-          {/* Insert your TradingViewWidget here */}
-          {tradingViewSymbol && <TradingViewWidget symbol={tradingViewSymbol} />}
-        </div>
-        <div className="col-md-5"> {/* This div takes up 5 columns on medium and larger screens */}
-          {/* Other content can be added here */}
-          <div className="highlight">
-            <ul>
-              <li>
-                <strong>Target Price</strong>: {stockData.currency_symbol + Number(stockData.highlights.wall_street_target_price).toLocaleString()}
-              </li>
-              {/* Add other highlights here */}
-            </ul>
-          </div>
-        </div>
-      </div>
-    </div>
+    <Grid container spacing={3} sx={{ p: 3 }}>
+      <Grid item xs={12}>
+        <Typography variant="h4" className='stockname'>{stockData.name}</Typography>
+      </Grid>
+      <Grid item md={7} xs={12}>
+        {tradingViewSymbol && <TradingViewWidget symbol={tradingViewSymbol} />}
+      </Grid>
+      <Grid item md={5} xs={12}>
+        <Paper elevation={3} sx={{ p: 2 }}>
+          <Typography variant="h6">Highlights</Typography>
+          <List>
+            <ListItem>
+              <ListItemText
+                primary="Target Price"
+                secondary={stockData.currency_symbol + Number(stockData.highlights.wall_street_target_price).toLocaleString()}
+              />
+            </ListItem>
+            {/* Add other highlights here */}
+          </List>
+        </Paper>
+      </Grid>
+    </Grid>
   );
 };
 

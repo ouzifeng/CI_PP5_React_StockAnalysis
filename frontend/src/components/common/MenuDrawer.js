@@ -5,17 +5,17 @@ import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
 import Box from '@mui/material/Box';
 
-const MenuDrawer = ({ isOpen, onDrawerClose }) => { // Updated to match the props from Header
-  const list = () => (
+const MenuDrawer = ({ isOpen, onDrawerClose }) => {
+  const list = (
     <Box
       sx={{ width: 250 }}
       role="presentation"
-      onClick={onDrawerClose} // Updated to use onDrawerClose
-      onKeyDown={(event) => event.key === 'Tab' || event.key === 'Shift' ? null : onDrawerClose()} // Updated to use onDrawerClose
+      onClick={onDrawerClose}
+      onKeyDown={(event) => event.key === 'Tab' || event.key === 'Shift' ? null : onDrawerClose()}
     >
       <List>
         {['Home', 'Action 1', 'Action 2', 'Action 3'].map((text, index) => (
-          <ListItem button key={index}>
+          <ListItem button key={index} onClick={onDrawerClose}>
             <ListItemText primary={text} />
           </ListItem>
         ))}
@@ -27,9 +27,9 @@ const MenuDrawer = ({ isOpen, onDrawerClose }) => { // Updated to match the prop
     <Drawer
       anchor="left"
       open={isOpen}
-      onClose={onDrawerClose} // Updated to use onDrawerClose
+      onClose={onDrawerClose}
     >
-      {list()}
+      {list}
     </Drawer>
   );
 };
