@@ -38,7 +38,7 @@ const Ticker = () => {
                     "proName": "XETR:DAX"
                   }
                 ],
-                "isTransparent": false,
+                "isTransparent": true,
                 "showSymbolLogo": false,
                 "colorTheme": "light",
                 "locale": "en"
@@ -65,7 +65,7 @@ const Ticker = () => {
     <div className="tradingview-widget-container" ref={containerRef}>
       <div className="tradingview-widget-container__widget"></div>
       <div className="tradingview-widget-copyright">
-        <a href="https://www.tradingview.com/" rel="noopener nofollow" target="_blank">
+        <a href="https://www.tradingview.com/">
           <span className="blue-text">Track all markets on TradingView</span>
         </a>
       </div>

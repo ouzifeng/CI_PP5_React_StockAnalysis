@@ -5,8 +5,8 @@ import BaseLayout from './layouts/BaseLayout';
 import StockDetail from './pages/StockDetailPage';
 import HomePage from './pages/HomePage';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import './assets/styles/custom.css';
 import { Helmet } from 'react-helmet';
+import './assets/styles/custom.css';
 
 function App() {
   return (
