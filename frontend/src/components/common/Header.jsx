@@ -71,6 +71,7 @@ function Header() {
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = useState(null);
   const isMenuOpen = Boolean(anchorEl);
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   const handleProfileMenuOpen = (event) => {
     setAnchorEl(event.currentTarget);
@@ -87,6 +88,15 @@ function Header() {
 
   const handleMobileMenuOpen = (event) => {
     setMobileMoreAnchorEl(event.currentTarget);
+  };
+
+    const handleLogin = () => {
+    setIsAuthenticated(true);
+  };
+
+  // Add a function to handle logout
+  const handleLogout = () => {
+    setIsAuthenticated(false);
   };
 
   const menuId = 'primary-search-account-menu';
@@ -106,8 +116,18 @@ function Header() {
       open={isMenuOpen}
       onClose={handleMenuClose}
     >
-      <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
-      <MenuItem onClick={handleMenuClose}>My account</MenuItem>
+      {isAuthenticated ? (
+        <>
+          <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
+          <MenuItem onClick={handleMenuClose}>My account</MenuItem>
+          <MenuItem onClick={handleLogout}>Logout</MenuItem>
+        </>
+      ) : (
+        <>
+          <MenuItem onClick={handleLogin}>Login</MenuItem>
+          <MenuItem onClick={handleLogin}>Register</MenuItem>
+        </>
+      )}
     </Menu>
   );
 
@@ -166,7 +186,7 @@ function Header() {
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="static">
-        <Container maxWidth="xl" style={{ maxWidth: '1200px', margin: '0 auto' }}>
+        <Container maxWidth="xl" style={{ maxWidth: '1280px', margin: '0 auto' }}>
           <Toolbar>
             <IconButton
               size="large"
