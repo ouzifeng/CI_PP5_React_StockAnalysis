@@ -2,17 +2,22 @@ import React from 'react';
 import { Typography, Table, TableBody, TableCell, TableContainer, TableRow, Paper, Box, Grid } from '@mui/material';
 
 const StockHighlights = ({ highlights }) => {
-  // Ensure that the keys here match the keys in your highlights data
   const firstColumnHighlights = [
     { key: "wall_street_target_price", label: "Target Price" },
-    { key: "market_capitalization", label: "Market Cap" }
-    // Add other entries for the first column
+    { key: "market_capitalization", label: "Market Cap" },
+    { key: "earnings_share", label: "EPS" },
+    { key: "book_value", label: "Book Value" },
+    { key: "eps_estimate_current_year", label: "EPS Estimate" },
+    { key: "eps_estimate_next_year", label: "EPS Est. Next Yr" },
   ];
 
   const secondColumnHighlights = [
+    { key: "dividend_yield", label: "Dividend Yield" },
     { key: "pe_ratio", label: "P/E Ratio" },
-    { key: "dividend_yield", label: "Dividend Yield" }
-    // Add other entries for the second column
+    { key: "peg_ratio", label: "PEG Ratio" },
+    { key: "profit_margin", label: "Profit Margin" },
+    { key: "eps_estimate_current_quarter", label: "EPS Estimate Qtr" },
+    { key: "eps_estimate_next_quarter", label: "EPS Est. Next Qtr" },    
   ];
 
 const renderRow = (data, key) => {

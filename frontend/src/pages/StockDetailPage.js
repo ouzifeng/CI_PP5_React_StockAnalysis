@@ -4,6 +4,8 @@ import TradingViewWidget from '../components/stockpage/TradingViewWidget'; // Ad
 import { Grid, Typography, Box, Button } from '@mui/material';
 import StockHighlights from '../components/stockpage/StockHighlights';
 import MyNotesDrawer from '../components/stockpage/MyNotes';
+import AnalystRatingsBarChart from '../components/stockpage/AnalystRatingsBarChart';
+import AnalystOverallRating from '../components/stockpage/AnalystOverallRating';
 
 const StockDetail = () => {
   const { primary_ticker } = useParams();
@@ -44,11 +46,26 @@ const StockDetail = () => {
       <Grid item md={7} xs={12} className="chart-container">
         {tradingViewSymbol && <TradingViewWidget symbol={tradingViewSymbol} />}
       </Grid>
+
       <Grid item md={5} xs={12}>
         <StockHighlights highlights={stockData.highlights} />
+      </Grid>
+
+      {/* Analyst ratings section */}
+      <Grid container item md={12} xs={12} spacing={3} sx={{ mt: 3 }}>
+                <Grid item md={6} xs={12}>
+
+        </Grid>
+        <Grid item md={3} xs={12}>
+          <AnalystOverallRating ratings={stockData.analyst_ratings} />
+        </Grid>
+        <Grid item md={3} xs={12}>
+          <AnalystRatingsBarChart ratings={stockData.analyst_ratings} />
+        </Grid>
       </Grid>
     </Grid>
   );
 };
+
 
 export default StockDetail;
