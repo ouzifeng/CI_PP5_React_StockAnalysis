@@ -13,38 +13,58 @@ body {
 }
 
 .stockname {
-  margin-top: 20px;
-  padding-left: 20px;
   font-size: 30px;
+  padding-left: 24px;
 }
 
-
-/* Add this CSS to your stylesheet */
-
-/* This will ensure the container takes the full width */
-.tradingview-widget-container {
-  width: 100%;
-  overflow-x: auto;
-}
-
-/* This CSS will ensure that on small screens all tickers are displayed */
-@media (max-width: 767px) { /* Adjust the max-width as needed for your breakpoint */
-  .tradingview-widget-container__widget {
-    display: flex;
-    flex-wrap: nowrap;
-    justify-content: space-between;
-  }
-
-  .tradingview-widget-container__widget > div {
-    flex: 0 0 auto;
-    margin-right: 10px; /* Adjust the margin as needed */
-  }
+.stock-follow {
+  margin-top: 20px;
 }
 
 #root {
   background-color: #f2f7fc;
 }
 
-.tv-widget-ticker__row {
-  margin-top: 20px !important;
+.follow-button {
+  margin-top: 0px !important;
+}
+
+.button-container {
+  padding-top: 5px !important;
+}
+
+.chart-container {
+  height: 400px;
+}
+
+.css-hip9hq-MuiPaper-root-MuiAppBar-root {
+  margin-bottom: 20px !important;
+}
+
+
+/* Extra Small Devices (phones) */
+@media (max-width: 576px) {
+
+  .css-tk088u-MuiGrid-root {
+    padding: 24px 10px !important;
+  }
+
+  .stockname {
+    font-size: 24px !important;
+  }
+
+  .follow-button {
+    margin-left: 24px !important;
+    margin-top: 10px !important;
+  }
+}
+
+/* Small Devices (tablets) */
+@media (min-width: 577px) and (max-width: 768px) {
+  /* Your CSS rules for small screens go here */
+}
+
+/* Medium Devices (small desktops and laptops) */
+@media (min-width: 769px) and (max-width: 992px) {
+  /* Your CSS rules for medium screens go here */
 }

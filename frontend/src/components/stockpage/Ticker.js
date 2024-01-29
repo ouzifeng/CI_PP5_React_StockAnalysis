@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 
-const Ticker = () => {
+const Ticker = ({ className }) => {
   const containerRef = useRef();
 
   useEffect(() => {
@@ -36,9 +36,13 @@ const Ticker = () => {
                   {
                     "description": "DAX",
                     "proName": "XETR:DAX"
+                  },
+                  {
+                    "description": "DAX",
+                    "proName": "XETR:DAX"
                   }
                 ],
-                "isTransparent": true,
+                "isTransparent": false,
                 "showSymbolLogo": false,
                 "colorTheme": "light",
                 "locale": "en"
@@ -65,9 +69,6 @@ const Ticker = () => {
     <div className="tradingview-widget-container" ref={containerRef}>
       <div className="tradingview-widget-container__widget"></div>
       <div className="tradingview-widget-copyright">
-        <a href="https://www.tradingview.com/">
-          <span className="blue-text">Track all markets on TradingView</span>
-        </a>
       </div>
     </div>
   );
