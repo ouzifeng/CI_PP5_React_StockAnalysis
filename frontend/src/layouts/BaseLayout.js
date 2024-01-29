@@ -9,7 +9,7 @@ const BaseLayout = ({ children }) => {
       <Header /> {/* Header stays outside the max-width restriction */}
       
     <div className="content-container">
-      <Ticker />
+      <Ticker className="ticker" />
     <main>{children}</main>
     <Footer />
     </div>
