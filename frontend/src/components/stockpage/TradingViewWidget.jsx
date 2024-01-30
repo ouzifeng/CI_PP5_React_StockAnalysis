@@ -1,11 +1,16 @@
-import React, { useEffect, useRef, memo } from 'react';
+import React, { useEffect, useRef, memo, useState } from 'react';
+import { Skeleton } from '@mui/material'; // Import Skeleton from Material-UI
 
 function TradingViewWidget({ symbol }) {
   const container = useRef();
+  const [isLoading, setIsLoading] = useState(true); // Add loading state
 
   useEffect(() => {
     // Define script variable outside of setTimeout
     let script;
+
+    // Define a variable to capture container.current
+    const currentContainer = container.current;
 
     // Delay the script insertion to ensure the container is ready
     const timeoutId = setTimeout(() => {
@@ -49,21 +54,32 @@ function TradingViewWidget({ symbol }) {
     "all|1M"
   ]
         }`;
-      container.current.appendChild(script);
+      currentContainer.appendChild(script);
+
+      // Set loading to false once script is loaded
+      script.onload = () => {
+        setIsLoading(false);
+      };
     }, 0);
 
     // Cleanup function to remove the script and clear the timeout
     return () => {
-      if (container.current && script) {
-        container.current.removeChild(script);
+      if (currentContainer && script) {
+        currentContainer.removeChild(script);
       }
       clearTimeout(timeoutId);
     };
-  }, [symbol]);
+  }, [symbol, setIsLoading]); // Include setIsLoading as a dependency
 
   return (
     <div className="tradingview-widget-container" ref={container} style={{ height: "100%", width: "100%" }}>
-      <div className="tradingview-widget-container__widget" style={{ height: "calc(100% - 32px)", width: "100%" }}></div>
+      {isLoading ? (
+        // Render Material-UI Skeleton loader while loading
+        <Skeleton variant="rect" width="100%" height="100%" animation="wave" />
+      ) : null}
+      {!isLoading && (
+        <div className="tradingview-widget-container__widget" style={{ height: "calc(100% - 32px)", width: "100%" }}></div>
+      )}
     </div>
   );
 }

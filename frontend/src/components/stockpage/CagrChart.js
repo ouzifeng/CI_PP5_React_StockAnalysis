@@ -43,6 +43,19 @@ const CagrChart = ({ incomeStatements }) => {
 
   const options = {
     plugins: {
+      title: {
+        display: true,
+        text: 'Yearly Financials Over 5 Years',
+        // Customize title styling
+        font: {
+          size: 16, // Adjust font size as needed
+          weight: 'bold', // Make it bold
+        },
+        color: 'white', // Text color
+        padding: 10, // Add padding
+        backgroundColor: theme.palette.primary.main, // Background color
+        textAlign: 'center', // Center the text
+      },
       legend: {
         position: 'top',
       },
@@ -58,26 +71,10 @@ const CagrChart = ({ incomeStatements }) => {
           }
         }
       },
-      x: {
-      }
-    },
-    // Add title styling
-    plugins: {
-      title: {
-        display: true,
-        text: 'Yearly Financials Over 5 Years',
-        // Customize title styling
-        font: {
-          size: 16, // Adjust font size as needed
-          weight: 'bold', // Make it bold
-        },
-        color: 'white', // Text color
-        padding: 10, // Add padding
-        backgroundColor: theme.palette.primary.main, // Background color
-        textAlign: 'center', // Center the text
-      },
-    },
+      x: {}
+    }
   };
+
 
   return (
     <Paper elevation={3}>
