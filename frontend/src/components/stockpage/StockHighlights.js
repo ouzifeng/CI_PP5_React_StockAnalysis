@@ -1,5 +1,16 @@
 import React from 'react';
-import { Typography, Table, TableBody, TableCell, TableContainer, TableRow, Paper, Box, Grid } from '@mui/material';
+import {
+  Typography,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableRow,
+  Paper,
+  Box,
+  Grid,
+  Skeleton // Import Skeleton from Material-UI
+} from '@mui/material';
 
 const StockHighlights = ({ highlights }) => {
   const firstColumnHighlights = [
@@ -20,35 +31,35 @@ const StockHighlights = ({ highlights }) => {
     { key: "eps_estimate_next_quarter", label: "EPS Est. Next Qtr" },    
   ];
 
-const renderRow = (data, key) => {
-  let formattedValue = highlights[data.key];
-  
-  if (data.key === "market_capitalization") {
-    const marketCap = parseFloat(highlights[data.key]);
-    if (!isNaN(marketCap)) {
-      formattedValue = (marketCap / 1000000000).toFixed(2) + "B";
-    }
-  } else if (data.key === "dividend_yield") {
-    const dividendYield = parseFloat(highlights[data.key]);
-    if (!isNaN(dividendYield)) {
-      formattedValue = (dividendYield * 100).toFixed(2) + "%";
-    }
-  } else if (data.key === "pe_ratio") {
-    const peRatio = parseFloat(highlights[data.key]);
-    if (!isNaN(peRatio)) {
-      formattedValue = peRatio.toFixed(2);
-    }
-  }
+  const renderRow = (data, key) => {
+    let formattedValue = highlights[data.key];
 
-  return (
-    <TableRow key={key}>
-      <TableCell component="th" scope="row">{data.label}</TableCell>
-      <TableCell align="right" sx={{ fontWeight: 'bold' }}>
-        {formattedValue}
-      </TableCell>
-    </TableRow>
-  );
-};
+    if (data.key === "market_capitalization") {
+      const marketCap = parseFloat(highlights[data.key]);
+      if (!isNaN(marketCap)) {
+        formattedValue = (marketCap / 1000000000).toFixed(2) + "B";
+      }
+    } else if (data.key === "dividend_yield") {
+      const dividendYield = parseFloat(highlights[data.key]);
+      if (!isNaN(dividendYield)) {
+        formattedValue = (dividendYield * 100).toFixed(2) + "%";
+      }
+    } else if (data.key === "pe_ratio") {
+      const peRatio = parseFloat(highlights[data.key]);
+      if (!isNaN(peRatio)) {
+        formattedValue = peRatio.toFixed(2);
+      }
+    }
+
+    return (
+      <TableRow key={key}>
+        <TableCell component="th" scope="row">{data.label}</TableCell>
+        <TableCell align="right" sx={{ fontWeight: 'bold' }}>
+          {formattedValue}
+        </TableCell>
+      </TableRow>
+    );
+  };
 
   return (
     <Paper elevation={3} sx={{ margin: 'auto', overflow: 'hidden' }}>
@@ -60,7 +71,22 @@ const renderRow = (data, key) => {
           <TableContainer>
             <Table aria-label="Highlights Table">
               <TableBody>
-                {firstColumnHighlights.map((data) => renderRow(data, data.key))}
+                {highlights ? (
+                  // Render content if highlights data is available
+                  firstColumnHighlights.map((data) => renderRow(data, data.key))
+                ) : (
+                  // Render skeleton loader if highlights data is not available
+                  Array.from({ length: firstColumnHighlights.length }, (_, index) => (
+                    <TableRow key={index}>
+                      <TableCell>
+                        <Skeleton variant="text" width={100} animation="wave" />
+                      </TableCell>
+                      <TableCell>
+                        <Skeleton variant="text" width={100} animation="wave" />
+                      </TableCell>
+                    </TableRow>
+                  ))
+                )}
               </TableBody>
             </Table>
           </TableContainer>
@@ -69,7 +95,22 @@ const renderRow = (data, key) => {
           <TableContainer>
             <Table aria-label="Highlights Table">
               <TableBody>
-                {secondColumnHighlights.map((data) => renderRow(data, data.key))}
+                {highlights ? (
+                  // Render content if highlights data is available
+                  secondColumnHighlights.map((data) => renderRow(data, data.key))
+                ) : (
+                  // Render skeleton loader if highlights data is not available
+                  Array.from({ length: secondColumnHighlights.length }, (_, index) => (
+                    <TableRow key={index}>
+                      <TableCell>
+                        <Skeleton variant="text" width={100} animation="wave" />
+                      </TableCell>
+                      <TableCell>
+                        <Skeleton variant="text" width={100} animation="wave" />
+                      </TableCell>
+                    </TableRow>
+                  ))
+                )}
               </TableBody>
             </Table>
           </TableContainer>
