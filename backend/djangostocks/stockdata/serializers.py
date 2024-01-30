@@ -1,5 +1,10 @@
 from rest_framework import serializers
-from .models import General, Highlights, Valuation, Technicals, SplitsDividends, AnalystRatings, Description
+from .models import General, Highlights, Valuation, Technicals, SplitsDividends, AnalystRatings, Description, IncomeStatement
+
+class IncomeStatementSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = IncomeStatement
+        fields = '__all__'
 
 class HighlightSerializer(serializers.ModelSerializer):
     class Meta:
@@ -32,15 +37,17 @@ class DescriptionSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class GeneralSerializer(serializers.ModelSerializer):
-    highlights = HighlightSerializer()
-    valuation = ValuationSerializer()
-    technicals = TechnicalsSerializer()
-    splits_dividends = SplitsDividendsSerializer()
-    analyst_ratings = AnalystRatingsSerializer()
-    general_description = DescriptionSerializer()
+    highlights = HighlightSerializer(read_only=True)
+    valuation = ValuationSerializer(read_only=True)
+    technicals = TechnicalsSerializer(read_only=True)
+    splits_dividends = SplitsDividendsSerializer(read_only=True)
+    analyst_ratings = AnalystRatingsSerializer(read_only=True)
+    general_description = DescriptionSerializer(read_only=True)
+    income_statements = IncomeStatementSerializer(many=True, read_only=True)
 
     class Meta:
         model = General
         fields = '__all__'
+
         
         

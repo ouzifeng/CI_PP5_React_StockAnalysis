@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from rest_framework import generics
 from .models import General
-from .serializers import GeneralSerializer, HighlightSerializer, ValuationSerializer, TechnicalsSerializer, SplitsDividendsSerializer, AnalystRatingsSerializer, DescriptionSerializer
+from .serializers import GeneralSerializer, HighlightSerializer, ValuationSerializer, TechnicalsSerializer, SplitsDividendsSerializer, AnalystRatingsSerializer, DescriptionSerializer, IncomeStatementSerializer
 
 class StockDetailView(generics.RetrieveAPIView):
     queryset = General.objects.all()
@@ -15,6 +15,7 @@ class StockDetailView(generics.RetrieveAPIView):
             'technicals',
             'splits_dividends',
             'analyst_ratings',
-            'general_description'
+            'general_description',
+            'income_statements'
         ).all()
 
