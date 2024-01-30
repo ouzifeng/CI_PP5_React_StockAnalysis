@@ -42,10 +42,9 @@ const AnalystRatingsBarChart = ({ ratings }) => {
 
   return (
     <Paper elevation={3} sx={{ mb: 3, overflow: 'hidden' }}>
-      <Box sx={{ bgcolor: theme.palette.background.default, p: 2 }}>
-        <Typography variant="subtitle1" component="div">
-          Analyst Ratings
-        </Typography>
+      <Box sx={{ p: 1, bgcolor: theme.palette.primary.main, textAlign: 'center' }}>
+        {/* Typography component for the chart title */}
+        <Typography variant="subtitle1" sx={{ color: 'common.white', textAlign: 'center' }}>Analyst Ratings Past Month</Typography>
       </Box>
       <Box sx={{ height: 'auto', p: 2 }}>
         <Bar data={data} options={options} />
