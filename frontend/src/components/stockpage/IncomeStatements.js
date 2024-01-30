@@ -10,7 +10,8 @@ import {
   Paper,
   Typography,
   Box,
-  Grid
+  Grid,
+  Skeleton // Import Skeleton from Material-UI
 } from '@mui/material';
 
 const IncomeStatements = ({ incomeStatements }) => {
@@ -24,11 +25,43 @@ const IncomeStatements = ({ incomeStatements }) => {
   }, [incomeStatements, selectedFrequency]);
 
   if (!filteredIncomeStatements || filteredIncomeStatements.length === 0) {
-    return <div>No income statement data available for the selected frequency.</div>;
+    return (
+      <Paper elevation={3} sx={{ margin: 'auto', overflow: 'hidden' }}>
+        <Box sx={{ bgcolor: 'primary.main', p: 1 }}>
+          <Typography variant="subtitle1" sx={{ color: 'common.white', textAlign: 'center' }}>Income Statement</Typography>
+        </Box>
+        <TableContainer>
+          <Table aria-label="Income Statement" sx={{ minWidth: 650 }}>
+            <TableHead>
+              <TableRow>
+                {/* Display skeleton loaders for table headers */}
+                {Array(6).fill(null).map((_, index) => (
+                  <TableCell key={index}>
+                    <Skeleton variant="text" width={100} animation="wave" />
+                  </TableCell>
+                ))}
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {/* Display multiple rows of skeleton loaders */}
+              {Array(5).fill(null).map((_, rowIndex) => (
+                <TableRow key={rowIndex}>
+                  {Array(6).fill(null).map((_, cellIndex) => (
+                    <TableCell key={cellIndex}>
+                      <Skeleton variant="text" width={100} animation="wave" />
+                    </TableCell>
+                  ))}
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      </Paper>
+    );
   }
 
   // Define keys to filter out
-  const keysToFilterOut = ['id', 'filing_date', 'currency_symbol', 'type', 'general', 'preferred_stock_and_other_adjustments', 'discontinued_operations', 'other_items', 'non_recurring', 'extraordinary_items', 'selling_and_marketing_expenses', 'minority_interest', 'effect_of_accounting_charges' ]; // Add keys you want to filter out here
+  const keysToFilterOut = ['id', 'filing_date', 'currency_symbol', 'type', 'general', 'preferred_stock_and_other_adjustments', 'discontinued_operations', 'other_items', 'non_recurring', 'extraordinary_items', 'selling_and_marketing_expenses', 'minority_interest', 'effect_of_accounting_charges']; // Add keys you want to filter out here
 
   // Function to filter out keys
   const filteredKeys = Object.keys(filteredIncomeStatements[0]).filter(key => !keysToFilterOut.includes(key));
@@ -65,7 +98,6 @@ const IncomeStatements = ({ incomeStatements }) => {
       </TableCell>
     );
   };
-
 
   return (
     <>
