@@ -2,6 +2,7 @@ import React from 'react';
 import { Line } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, LineElement, PointElement, Title, Tooltip, Legend } from 'chart.js';
 import { Box, Paper, Typography, useTheme } from '@mui/material';
+import { Skeleton } from '@mui/material';
 
 ChartJS.register(CategoryScale, LinearScale, LineElement, PointElement, Title, Tooltip, Legend);
 
@@ -87,7 +88,13 @@ const CagrChart = ({ incomeStatements }) => {
       </Box>
       <Box sx={{ paddingTop: theme.spacing(1), paddingLeft: theme.spacing(2), paddingRight: theme.spacing(2) }}>
         <Box sx={{ height: '300px' }}>
-          <Line data={data} options={options} />
+          {yearlyData ? (
+            // Render the chart if yearlyData is available
+            <Line data={data} options={options} />
+          ) : (
+            // Render a skeleton loader if yearlyData is not available
+            <Skeleton variant="rectangular" height={300} />
+          )}
         </Box>
       </Box>
     </Paper>
