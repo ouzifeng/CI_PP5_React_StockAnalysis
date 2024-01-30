@@ -6,6 +6,7 @@ import StockHighlights from '../components/stockpage/StockHighlights';
 import MyNotesDrawer from '../components/stockpage/MyNotes';
 import AnalystRatingsBarChart from '../components/stockpage/AnalystRatingsBarChart';
 import AnalystOverallRating from '../components/stockpage/AnalystOverallRating';
+import CagrChart from '../components/stockpage/CagrChart';
 
 const StockDetail = () => {
   const { primary_ticker } = useParams();
@@ -53,8 +54,8 @@ const StockDetail = () => {
 
       {/* Analyst ratings section */}
       <Grid container item md={12} xs={12} spacing={3} sx={{ mt: 3 }}>
-                <Grid item md={6} xs={12}>
-
+        <Grid item md={5} xs={12}>
+          {stockData.income_statements && <CagrChart incomeStatements={stockData.income_statements} />}
         </Grid>
         <Grid item md={3} xs={12}>
           <AnalystOverallRating ratings={stockData.analyst_ratings} />

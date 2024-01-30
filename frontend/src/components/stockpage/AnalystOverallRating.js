@@ -63,10 +63,9 @@ const AnalystOverallRating = ({ ratings }) => {
 
   return (
     <Paper elevation={3} sx={{ mb: 3, overflow: 'hidden' }}>
-      <Box sx={{ bgcolor: theme.palette.background.default, p: 2 }}>
-        <Typography variant="subtitle1" component="div">
-          Analyst Overall Rating
-        </Typography>
+      <Box sx={{ p: 1, bgcolor: theme.palette.primary.main, textAlign: 'center' }}>
+        {/* Typography component for the chart title */}
+        <Typography variant="subtitle1" sx={{ color: 'common.white', textAlign: 'center' }}>Average Analyst Rating</Typography>
       </Box>
       <Box sx={{ p: 2 }}>
         <Slider
