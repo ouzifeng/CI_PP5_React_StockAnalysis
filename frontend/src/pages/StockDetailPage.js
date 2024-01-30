@@ -11,6 +11,7 @@ import CagrPercent from '../components/stockpage/CagrPercents';
 import BasicStats from '../components/stockpage/BasicStats';
 import FinancialsTable from '../components/stockpage/IncomeStatements';
 import BalanceSheets from '../components/stockpage/BalanceSheet';
+import CashFlows from '../components/stockpage/Cashflow';
 
 const StockDetail = () => {
   const { primary_ticker } = useParams();
@@ -83,6 +84,10 @@ const StockDetail = () => {
   </Grid>
     <Grid item xs={12}>
     <BalanceSheets balanceSheets={stockData.balance_sheets} />
+
+  </Grid>
+      <Grid item xs={12}>
+    <CashFlows cashFlows={stockData.cash_flows} />
 
   </Grid>
       </Grid>
