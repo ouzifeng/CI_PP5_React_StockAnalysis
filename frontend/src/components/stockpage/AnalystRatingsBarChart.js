@@ -2,6 +2,7 @@ import React from 'react';
 import { Bar } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js';
 import { Box, Paper, Typography, useTheme } from '@mui/material';
+import { Skeleton } from '@mui/material';
 
 // Register the chart.js components we will use
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
@@ -13,7 +14,7 @@ const AnalystRatingsBarChart = ({ ratings }) => {
     labels: ['Strong Buy', 'Buy', 'Hold', 'Sell', 'Strong Sell'],
     datasets: [{
       label: 'Analyst Ratings',
-      data: [ratings.strong_buy, ratings.buy, ratings.hold, ratings.sell, ratings.strong_sell],
+      data: [ratings?.strong_buy, ratings?.buy, ratings?.hold, ratings?.sell, ratings?.strong_sell],
       backgroundColor: ['#4caf50', '#8bc34a', '#ffeb3b', '#ff9800', '#f44336'],
     }],
   };
@@ -47,7 +48,11 @@ const AnalystRatingsBarChart = ({ ratings }) => {
         <Typography variant="subtitle1" sx={{ color: 'common.white', textAlign: 'center' }}>Analyst Ratings Past Month</Typography>
       </Box>
       <Box sx={{ height: 'auto', p: 2 }}>
-        <Bar data={data} options={options} />
+        {ratings ? (
+          <Bar data={data} options={options} />
+        ) : (
+          <Skeleton animation="wave" height={200} />
+        )}
       </Box>
     </Paper>
   );
