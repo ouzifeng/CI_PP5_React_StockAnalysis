@@ -23,6 +23,8 @@ import SplitsDividendsTable from '../components/stockpage/SplitsDividendsTable';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import TradingViewWidget from '../components/stockpage/TradingViewWidget';
+import MarginTable from '../components/stockpage/MarginTable';
+import Description from '../components/stockpage/Description';
 
 const StockDetail = () => {
   const { primary_ticker } = useParams();
@@ -88,6 +90,12 @@ const StockDetail = () => {
         </Grid>
       </Grid>
 
+      <Grid container item xs={12} spacing={3}>
+        <Grid item xs={12}>
+          <Description text={stockData.general_description.text} />
+        </Grid>
+      </Grid>      
+
       {/* Analyst ratings section */}
       <Grid container item md={12} xs={12} spacing={3} sx={{ mt: 3 }}>
         <Grid item md={5} xs={12}>
@@ -106,13 +114,17 @@ const StockDetail = () => {
 
       {/* Include the new components here */}
       <Grid container item md={12} xs={12} spacing={3} sx={{ mt: 3 }}>
-        <Grid item md={4} xs={12}>
+<Grid item md={3} xs={12}>
+  <MarginTable highlights={stockData.highlights} />
+</Grid>
+
+        <Grid item md={3} xs={12}>
           <ValuationTable valuationData={stockData.valuation} />
         </Grid>
-        <Grid item md={4} xs={12}>
+        <Grid item md={3} xs={12}>
           <TechnicalsTable technicalsData={stockData.technicals} />
         </Grid>
-        <Grid item md={4} xs={12}>
+        <Grid item md={3} xs={12}>
           <SplitsDividendsTable splitsDividendsData={stockData.splits_dividends} />
         </Grid>
         <Grid item xs={12}>
