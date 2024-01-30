@@ -14,29 +14,28 @@ import {
   Skeleton,
 } from '@mui/material';
 import GetAppIcon from '@mui/icons-material/GetApp';
-import Papa from 'papaparse'; 
+import Papa from 'papaparse';
 
-const IncomeStatements = ({ incomeStatements }) => {
+const BalanceSheets = ({ balanceSheets }) => {
   const [selectedFrequency, setSelectedFrequency] = useState('yearly');
-  const [filteredIncomeStatements, setFilteredIncomeStatements] = useState([]);
+  const [filteredBalanceSheets, setFilteredBalanceSheets] = useState([]);
 
   useEffect(() => {
-    // Filter income statements based on the selected frequency
-    const filteredData = incomeStatements?.filter(statement => statement.type.toLowerCase() === selectedFrequency);
-    setFilteredIncomeStatements(filteredData);
-  }, [incomeStatements, selectedFrequency]);
+    // Filter balance sheets based on the selected frequency
+    const filteredData = balanceSheets?.filter(sheet => sheet.type.toLowerCase() === selectedFrequency);
+    setFilteredBalanceSheets(filteredData);
+  }, [balanceSheets, selectedFrequency]);
 
-  if (!filteredIncomeStatements || filteredIncomeStatements.length === 0) {
+  if (!filteredBalanceSheets || filteredBalanceSheets.length === 0) {
     return (
       <Paper elevation={3} sx={{ margin: 'auto', overflow: 'hidden' }}>
         <Box sx={{ bgcolor: 'primary.main', p: 1 }}>
-          <Typography variant="subtitle1" sx={{ color: 'common.white', textAlign: 'center' }}>Income Statement</Typography>
+          <Typography variant="subtitle1" sx={{ color: 'common.white', textAlign: 'center' }}>Balance Sheet</Typography>
         </Box>
         <TableContainer>
-          <Table aria-label="Income Statement" size="small"> {/* Use size="small" for the table */}
+          <Table aria-label="Balance Sheet" size="small">
             <TableHead>
               <TableRow>
-                {/* Display skeleton loaders for table headers */}
                 {Array(6).fill(null).map((_, index) => (
                   <TableCell key={index}>
                     <Skeleton variant="text" width={100} animation="wave" />
@@ -45,7 +44,6 @@ const IncomeStatements = ({ incomeStatements }) => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {/* Display multiple rows of skeleton loaders */}
               {Array(5).fill(null).map((_, rowIndex) => (
                 <TableRow key={rowIndex}>
                   {Array(6).fill(null).map((_, cellIndex) => (
@@ -63,36 +61,31 @@ const IncomeStatements = ({ incomeStatements }) => {
   }
 
   // Define keys to filter out
-  const keysToFilterOut = ['id', 'filing_date', 'currency_symbol', 'type', 'general', 'preferred_stock_and_other_adjustments', 'discontinued_operations', 'other_items', 'non_recurring', 'extraordinary_items', 'selling_and_marketing_expenses', 'minority_interest', 'effect_of_accounting_charges']; // Add keys you want to filter out here
+  const keysToFilterOut = ['id', 'filing_date', 'currency_symbol', 'type', 'general', 'preferred_stock_and_other_adjustments', 'discontinued_operations', 'other_items', 'non_recurring', 'extraordinary_items', 'selling_and_marketing_expenses', 'minority_interest', 'effect_of_accounting_charges'];
 
   // Function to filter out keys
-  const filteredKeys = Object.keys(filteredIncomeStatements[0]).filter(key => !keysToFilterOut.includes(key));
+  const filteredKeys = Object.keys(filteredBalanceSheets[0]).filter(key => !keysToFilterOut.includes(key));
 
   // Function to render table cells
   const renderTableCell = (key, value) => {
-    // Define an array of keys that should be formatted differently
-    const keysToFormatAsDate = ['date']; // Add any other keys as needed
+    const keysToFormatAsDate = ['date'];
 
     if (keysToFilterOut.includes(key)) {
-      return null; // Return null for filtered keys
+      return null;
     }
 
-    // Check if the key should be formatted as a date
     if (keysToFormatAsDate.includes(key)) {
       return (
         <TableCell>
-          {value} {/* Assuming 'value' is a date in the desired format */}
+          {value}
         </TableCell>
       );
     }
 
-    // Attempt to convert to a number if it's not already
     const numericValue = typeof value === 'number' ? value : parseFloat(value);
-
-    // Check if the value is a number and not NaN
     const displayedValue = !isNaN(numericValue)
-      ? Math.round(numericValue).toLocaleString() // Format as a whole number
-      : value; // Keep the original value if it's not a number
+      ? Math.round(numericValue).toLocaleString()
+      : value;
 
     return (
       <TableCell>
@@ -101,32 +94,23 @@ const IncomeStatements = ({ incomeStatements }) => {
     );
   };
 
-  // Function to download CSV
   const downloadCSV = () => {
-    if (filteredIncomeStatements.length > 0) {
-      // Convert filteredIncomeStatements to CSV format
-      const csvData = Papa.unparse(filteredIncomeStatements);
-
-      // Create a Blob object for the CSV data
+    if (filteredBalanceSheets.length > 0) {
+      const csvData = Papa.unparse(filteredBalanceSheets);
       const blob = new Blob([csvData], { type: 'text/csv' });
       const url = window.URL.createObjectURL(blob);
 
-      // Create a temporary link element for downloading
       const a = document.createElement('a');
       a.href = url;
-      a.download = 'income_statements.csv';
+      a.download = 'balance_sheets.csv';
 
-      // Trigger the click event to start the download
       a.click();
-
-      // Clean up by revoking the Object URL
       window.URL.revokeObjectURL(url);
     }
   };
 
   return (
     <>
-      {/* Buttons to select frequency and Download CSV */}
       <Grid container spacing={1}>
         <Grid item>
           <Button
@@ -158,29 +142,26 @@ const IncomeStatements = ({ incomeStatements }) => {
         </Grid>
       </Grid>
 
-      {/* Table to display filtered income statement data */}
       <Paper elevation={3} sx={{ margin: 'auto', overflow: 'hidden' }}>
         <Box sx={{ bgcolor: 'primary.main', p: 1 }}>
-          <Typography variant="subtitle1" sx={{ color: 'common.white', textAlign: 'center' }}>Income Statement</Typography>
+          <Typography variant="subtitle1" sx={{ color: 'common.white', textAlign: 'center' }}>Balance Sheet</Typography>
         </Box>
         <TableContainer>
-          <Table aria-label="Income Statement" size="small"> {/* Use size="small" for the table */}
+          <Table aria-label="Balance Sheet" size="small">
             <TableHead>
               <TableRow>
-                {/* Dynamically create table header based on the filtered keys */}
                 {filteredKeys.map((key, index) => (
-                  <TableCell key={index} sx={{ fontWeight: 'bold' }} className="MuiTableCell-sizeSmall"> {/* Apply class for sizeSmall */}
+                  <TableCell key={index} sx={{ fontWeight: 'bold' }} className="MuiTableCell-sizeSmall">
                     {key.replace(/_/g, ' ').toUpperCase()}
                   </TableCell>
                 ))}
               </TableRow>
             </TableHead>
             <TableBody>
-              {filteredIncomeStatements.map((item, index) => (
+              {filteredBalanceSheets.map((item, index) => (
                 <TableRow key={index}>
-                  {/* Dynamically create table cells based on the values of the income statement data */}
                   {filteredKeys.map((key) => (
-                    renderTableCell(key, item[key]) // Use the rendering function
+                    renderTableCell(key, item[key])
                   ))}
                 </TableRow>
               ))}
@@ -192,4 +173,4 @@ const IncomeStatements = ({ incomeStatements }) => {
   );
 };
 
-export default IncomeStatements;
+export default BalanceSheets;

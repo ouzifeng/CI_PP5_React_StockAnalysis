@@ -10,6 +10,7 @@ import CagrChart from '../components/stockpage/CagrChart';
 import CagrPercent from '../components/stockpage/CagrPercents';
 import BasicStats from '../components/stockpage/BasicStats';
 import FinancialsTable from '../components/stockpage/IncomeStatements';
+import BalanceSheets from '../components/stockpage/BalanceSheet';
 
 const StockDetail = () => {
   const { primary_ticker } = useParams();
@@ -78,6 +79,10 @@ const StockDetail = () => {
             <Grid container item md={12} xs={12} sx={{ mt: 3 }}>
   <Grid item xs={12}>
     <FinancialsTable incomeStatements={stockData.income_statements} />
+
+  </Grid>
+    <Grid item xs={12}>
+    <BalanceSheets balanceSheets={stockData.balance_sheets} />
 
   </Grid>
       </Grid>
