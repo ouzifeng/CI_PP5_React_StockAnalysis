@@ -1,6 +1,5 @@
 from django.db import models
 
-
 class General(models.Model):
     code = models.CharField(max_length=20)
     type = models.CharField(max_length=50, null=True, blank=True)
@@ -875,3 +874,17 @@ class IncomeStatement(models.Model):
     def __str__(self):
         return f"{self.type.title()} Income Statement for {self.general.name} ({self.date})"
     
+    
+class CAGR(models.Model):
+    general = models.OneToOneField(
+        General, 
+        on_delete=models.CASCADE, 
+        primary_key=True, 
+        related_name='general_cagr'
+    )
+    total_revenue_cagr = models.DecimalField(max_digits=10, decimal_places=4, null=True, blank=True)
+    gross_profit_cagr = models.DecimalField(max_digits=10, decimal_places=4, null=True, blank=True)
+    net_income_cagr = models.DecimalField(max_digits=10, decimal_places=4, null=True, blank=True)
+
+    def __str__(self):
+        return f"CAGR for {self.general.name} ({self.general.code})"
