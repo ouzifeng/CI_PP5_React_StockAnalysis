@@ -1,15 +1,16 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef } from 'react';
 
 const Ticker = ({ className }) => {
   const containerRef = useRef();
-  const [isLoading, setIsLoading] = useState(true); // Add loading state
 
   useEffect(() => {
+    const currentRef = containerRef.current; // Capture the ref value
+
     // Delay the script injection until after the current call stack clears
     const timeoutId = setTimeout(() => {
-      if (containerRef.current) {
+      if (currentRef) {
         // Clear any existing content
-        containerRef.current.innerHTML = '';
+        currentRef.innerHTML = '';
 
         // Create script element
         const script = document.createElement('script');
@@ -50,22 +51,17 @@ const Ticker = ({ className }) => {
         });
 
         // Append script to the container
-        containerRef.current.appendChild(script);
-
-        // Set loading to false once script is loaded
-        script.onload = () => {
-          setIsLoading(false);
-        };
+        currentRef.appendChild(script);
       }
     }, 0);
 
     // Cleanup function to remove script when component unmounts
     return () => {
       clearTimeout(timeoutId);
-      if (containerRef.current) {
-        const script = containerRef.current.querySelector('script');
+      if (currentRef) {
+        const script = currentRef.querySelector('script');
         if (script) {
-          containerRef.current.removeChild(script);
+          currentRef.removeChild(script);
         }
       }
     };
@@ -73,14 +69,9 @@ const Ticker = ({ className }) => {
 
   return (
     <div className="tradingview-widget-container" ref={containerRef}>
-      {isLoading ? ( // Render skeleton loader while loading
-        <div className="skeleton-loader"></div>
-      ) : (
-        <>
-          <div className="tradingview-widget-container__widget"></div>
-          <div className="tradingview-widget-copyright"></div>
-        </>
-      )}
+      <div className="tradingview-widget-container__widget"></div>
+      <div className="tradingview-widget-copyright">
+      </div>
     </div>
   );
 };
