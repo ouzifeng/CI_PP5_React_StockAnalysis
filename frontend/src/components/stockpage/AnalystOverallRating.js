@@ -4,6 +4,7 @@ import Slider from '@mui/material/Slider';
 import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
 import { useTheme } from '@mui/material/styles';
+import { Skeleton } from '@mui/material';
 
 const AnalystOverallRating = ({ ratings }) => {
   const theme = useTheme();
@@ -68,35 +69,46 @@ const AnalystOverallRating = ({ ratings }) => {
         <Typography variant="subtitle1" sx={{ color: 'common.white', textAlign: 'center' }}>Average Analyst Rating</Typography>
       </Box>
       <Box sx={{ p: 2 }}>
-        <Slider
-          value={parseFloat(overallRating)}
-          aria-labelledby="analyst-rating-slider"
-          valueLabelDisplay="auto"
-          step={0.1}
-          marks={marks}
-          min={1}
-          max={5}
-          disabled
-          sx={{
-            color: theme.palette.primary.main,
-            '& .MuiSlider-thumb': {
-              backgroundColor: theme.palette.common.white,
-            },
-            '& .MuiSlider-markLabel': {
-              color: theme.palette.text.primary,
-            },
-            '& .MuiSlider-valueLabel': {
-              backgroundColor: 'transparent',
+        {ratings ? (
+          <Slider
+            value={parseFloat(overallRating)}
+            aria-labelledby="analyst-rating-slider"
+            valueLabelDisplay="auto"
+            step={0.1}
+            marks={marks}
+            min={1}
+            max={5}
+            disabled
+            sx={{
               color: theme.palette.primary.main,
-              '& *': {
-                background: 'transparent',
-                color: theme.palette.primary.main,
+              '& .MuiSlider-thumb': {
+                backgroundColor: theme.palette.common.white,
               },
-            },
-          }}
-        />
-        <Typography variant="body2" align="center" color="primary" sx={{ mt: 2 }}>
-          {`Overall Rating: ${overallRating !== 'N/A' ? overallRating : 'Not available'} based on ${numberOfAnalysts} opinions`}
+              '& .MuiSlider-markLabel': {
+                color: theme.palette.text.primary,
+                fontSize: '12px', // Reduce font size if needed
+                whiteSpace: 'normal', // Allow text to wrap
+                display: 'block', // Set display to block to enable wrapping
+              },
+              '& .MuiSlider-valueLabel': {
+                backgroundColor: 'transparent',
+                color: theme.palette.primary.main,
+                '& *': {
+                  background: 'transparent',
+                  color: theme.palette.primary.main,
+                },
+              },
+            }}
+          />
+        ) : (
+          <Skeleton animation="wave" height={20} width={200} />
+        )}
+        <Typography variant="body2" align="center" color="primary" sx={{ mt: 2, fontSize: '14px' }}>
+          {ratings ? (
+            `Overall Rating: ${overallRating !== 'N/A' ? parseFloat(overallRating).toFixed(1) : 'N/A'} based on ${numberOfAnalysts} opinions`
+          ) : (
+            <Skeleton animation="wave" height={20} width={300} />
+          )}
         </Typography>
       </Box>
     </Paper>

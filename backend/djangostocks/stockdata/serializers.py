@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import General, Highlights, Valuation, Technicals, SplitsDividends, AnalystRatings, Description, IncomeStatement
+from .models import General, Highlights, Valuation, Technicals, SplitsDividends, AnalystRatings, Description, IncomeStatement, CAGR, CashFlow, BalanceSheet
 
 class IncomeStatementSerializer(serializers.ModelSerializer):
     class Meta:
@@ -35,6 +35,22 @@ class DescriptionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Description
         fields = '__all__'
+        
+class CagrSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CAGR
+        fields = '__all__'
+        
+class BalanceSheetSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = BalanceSheet
+        fields = '__all__'
+
+class CashFlowSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CashFlow
+        fields = '__all__'
+        
 
 class GeneralSerializer(serializers.ModelSerializer):
     highlights = HighlightSerializer(read_only=True)
@@ -43,7 +59,10 @@ class GeneralSerializer(serializers.ModelSerializer):
     splits_dividends = SplitsDividendsSerializer(read_only=True)
     analyst_ratings = AnalystRatingsSerializer(read_only=True)
     general_description = DescriptionSerializer(read_only=True)
+    general_cagr = CagrSerializer(read_only=True)
     income_statements = IncomeStatementSerializer(many=True, read_only=True)
+    balance_sheets = BalanceSheetSerializer(many=True, read_only=True)
+    cash_flows = CashFlowSerializer(many=True, read_only=True)    
 
     class Meta:
         model = General

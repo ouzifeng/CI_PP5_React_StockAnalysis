@@ -23,7 +23,7 @@ export default function StickyFooter() {
           }}
         >
           <BottomNavigationAction label="Recents" icon={<RestoreIcon />} />
-          <BottomNavigationAction label="Favorites" icon={<FavoriteIcon />} />
+          <BottomNavigationAction label="Following" icon={<FavoriteIcon />} />
           <BottomNavigationAction label="Archive" icon={<ArchiveIcon />} />
         </BottomNavigation>
       </Paper>
