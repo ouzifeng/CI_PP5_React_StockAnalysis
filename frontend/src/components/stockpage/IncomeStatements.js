@@ -11,7 +11,7 @@ import {
   Typography,
   Box,
   Grid,
-  Skeleton // Import Skeleton from Material-UI
+  Skeleton,
 } from '@mui/material';
 
 const IncomeStatements = ({ incomeStatements }) => {
@@ -31,7 +31,7 @@ const IncomeStatements = ({ incomeStatements }) => {
           <Typography variant="subtitle1" sx={{ color: 'common.white', textAlign: 'center' }}>Income Statement</Typography>
         </Box>
         <TableContainer>
-          <Table aria-label="Income Statement" sx={{ minWidth: 650 }}>
+          <Table aria-label="Income Statement" size="small"> {/* Use size="small" for the table */}
             <TableHead>
               <TableRow>
                 {/* Display skeleton loaders for table headers */}
@@ -129,12 +129,14 @@ const IncomeStatements = ({ incomeStatements }) => {
           <Typography variant="subtitle1" sx={{ color: 'common.white', textAlign: 'center' }}>Income Statement</Typography>
         </Box>
         <TableContainer>
-          <Table aria-label="Income Statement" sx={{ minWidth: 650 }}>
+          <Table aria-label="Income Statement" size="small"> {/* Use size="small" for the table */}
             <TableHead>
               <TableRow>
                 {/* Dynamically create table header based on the filtered keys */}
                 {filteredKeys.map((key, index) => (
-                  <TableCell key={index} sx={{ fontWeight: 'bold' }}>{key.replace(/_/g, ' ').toUpperCase()}</TableCell>
+                  <TableCell key={index} sx={{ fontWeight: 'bold' }} className="MuiTableCell-sizeSmall"> {/* Apply class for sizeSmall */}
+                    {key.replace(/_/g, ' ').toUpperCase()}
+                  </TableCell>
                 ))}
               </TableRow>
             </TableHead>
