@@ -35,16 +35,26 @@ const StockDetail = () => {
   const [showBalanceSheets, setShowBalanceSheets] = useState(true);
   const [showCashFlows, setShowCashFlows] = useState(true);
 
-  useEffect(() => {
-    fetch(`http://localhost:8000/api/stocks/${primary_ticker.replace('-', '.')}/`)
-      .then(response => response.json())
-      .then(data => {
-        setStockData(data);
-        const symbol = `${data.exchange}:${data.code}`;
-        setTradingViewSymbol(symbol);
-      })
-      .catch(error => console.error('Error fetching stock data:', error));
-  }, [primary_ticker]);
+useEffect(() => {
+  fetch(`https://django-stocks-ecbc6bc5e208.herokuapp.com/api/stocks/${primary_ticker.replace('-', '.')}/`, {
+    headers: {
+      'Authorization': `Token 13502af70a55d1fcddf7c094e4418c65904ef6eb`
+    }
+  })
+    .then(response => {
+      if (response.ok) {
+        return response.json();
+      } else {
+        throw new Error('Failed to fetch data');
+      }
+    })
+    .then(data => {
+      setStockData(data);
+      const symbol = `${data.exchange}:${data.code}`;
+      setTradingViewSymbol(symbol);
+    })
+    .catch(error => console.error('Error fetching stock data:', error));
+}, [primary_ticker]);
 
   if (!stockData) {
     return <Box sx={{ display: 'flex', justifyContent: 'center', mt: 3 }}><Typography>Loading...</Typography></Box>;
