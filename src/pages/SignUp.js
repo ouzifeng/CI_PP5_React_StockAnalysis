@@ -12,30 +12,79 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-
-function Copyright(props) {
-  return (
-    <Typography variant="body2" color="text.secondary" align="center" {...props}>
-      {'Copyright © '}
-      <Link color="inherit" href="https://mui.com/">
-        Your Website
-      </Link>{' '}
-      {new Date().getFullYear()}
-      {'.'}
-    </Typography>
-  );
-}
+import { useState } from 'react';
+import axios from 'axios';
 
 const defaultTheme = createTheme();
 
 export default function SignUp() {
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get('email'),
-      password: data.get('password'),
+  const [formData, setFormData] = useState({
+    firstName: '',
+    lastName: '',
+    email: '',
+    password: '',
+    confirmPassword: '',
+  });
+  const [errors, setErrors] = useState({});
+
+  const validateForm = () => {
+    let tempErrors = {};
+    tempErrors.firstName = formData.firstName ? "" : "First name is required.";
+    tempErrors.lastName = formData.lastName ? "" : "Last name is required.";
+    tempErrors.email = (/^$|.+@.+..+/).test(formData.email) ? "" : "Email is not valid.";
+    tempErrors.password = formData.password.length > 5 ? "" : "Password must be at least 6 characters long.";
+    tempErrors.confirmPassword = formData.password === formData.confirmPassword ? "" : "Passwords do not match.";
+    setErrors({
+      ...tempErrors
     });
+
+    return Object.values(tempErrors).every(x => x === "");
+  }
+
+  // Function to handle sign up
+  const handleSignUp = async (email, password, firstName, lastName) => {
+      try {
+          const endpoint = 'https://django-stocks-ecbc6bc5e208.herokuapp.com/auth/register/';
+          const response = await axios.post(endpoint, { email, password, first_name: firstName, last_name: lastName });
+          // Consider adding response status check here
+          console.log('Sign up successful', response.data);
+          // Redirect to login page or dashboard here
+      } catch (error) {
+          console.error('Sign Up Error: ', error.response);
+          // Display error message to the user
+      }
+  }
+
+  const handleSubmit = async (event) => {
+      event.preventDefault();
+      if (!validateForm()) {
+          console.log('Validation failed');
+          return; // Stop submission if validation fails
+      }
+
+      const email = formData.email;
+      const password = formData.password;
+      const firstName = formData.firstName;
+      const lastName = formData.lastName;
+
+      try {
+          const signUpResponse = await handleSignUp(email, password, firstName, lastName);
+          console.log('Sign up successful', signUpResponse);
+          // Navigate to your dashboard or home page upon successful sign up
+          // history.push('/dashboard'); // if you're using react-router-dom
+      } catch (error) {
+          // Handle and display sign up error
+          console.error('Sign up failed: ', error);
+          // Optionally, set an error state and display it in your UI
+      }
+  };
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prevState => ({
+      ...prevState,
+      [name]: value
+    }));
   };
 
   return (
@@ -67,6 +116,10 @@ export default function SignUp() {
                   id="firstName"
                   label="First Name"
                   autoFocus
+                  value={formData.firstName}
+                  onChange={handleChange}
+                  error={!!errors.firstName}
+                  helperText={errors.firstName}
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
@@ -77,6 +130,10 @@ export default function SignUp() {
                   label="Last Name"
                   name="lastName"
                   autoComplete="family-name"
+                  value={formData.lastName}
+                  onChange={handleChange}
+                  error={!!errors.lastName}
+                  helperText={errors.lastName}
                 />
               </Grid>
               <Grid item xs={12}>
@@ -87,6 +144,10 @@ export default function SignUp() {
                   label="Email Address"
                   name="email"
                   autoComplete="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  error={!!errors.email}
+                  helperText={errors.email}
                 />
               </Grid>
               <Grid item xs={12}>
@@ -98,6 +159,25 @@ export default function SignUp() {
                   type="password"
                   id="password"
                   autoComplete="new-password"
+                  value={formData.password}
+                  onChange={handleChange}
+                  error={!!errors.password}
+                  helperText={errors.password}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  required
+                  fullWidth
+                  name="confirmPassword"
+                  label="Confirm Password"
+                  type="password"
+                  id="confirmPassword"
+                  autoComplete="new-password"
+                  value={formData.confirmPassword}
+                  onChange={handleChange}
+                  error={!!errors.confirmPassword}
+                  helperText={errors.confirmPassword}
                 />
               </Grid>
               <Grid item xs={12}>
@@ -124,7 +204,6 @@ export default function SignUp() {
             </Grid>
           </Box>
         </Box>
-        <Copyright sx={{ mt: 5 }} />
       </Container>
     </ThemeProvider>
   );
