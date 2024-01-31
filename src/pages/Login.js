@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { useState, useContext } from 'react';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -12,35 +12,45 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
+import Alert from '@mui/material/Alert';
+import { AuthContext } from '../context/AuthContext'; // Make sure the path is correct
 
-function Copyright(props) {
-  return (
-    <Typography variant="body2" color="text.secondary" align="center" {...props}>
-      {'Copyright © '}
-      <Link color="inherit" href="https://mui.com/">
-        Your Website
-      </Link>{' '}
-      {new Date().getFullYear()}
-      {'.'}
-    </Typography>
-  );
-}
+function SignIn() {
+  const navigate = useNavigate();
+  const { setIsAuthenticated } = useContext(AuthContext);
+  const [loginError, setLoginError] = useState('');
+  const [showLoginAlert, setShowLoginAlert] = useState(false);
 
-
-const defaultTheme = createTheme();
-
-export default function SignIn() {
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get('email'),
-      password: data.get('password'),
-    });
+    const username = data.get('email');
+    const password = data.get('password');
+
+    try {
+      const response = await axios.post(
+        'https://django-stocks-ecbc6bc5e208.herokuapp.com/auth/login/',
+        { username, password },
+        { headers: { 'Content-Type': 'application/json' } }
+      );
+
+      localStorage.setItem('token', response.data.key);
+      setIsAuthenticated(true); // Update the global authentication state
+      setShowLoginAlert(true); // Show login alert
+      navigate('/'); // Redirect user to the dashboard or another appropriate route
+      console.log('Logged in successfully!'); // Console log for successful login
+
+    } catch (error) {
+      console.error('Login Error: ', error);
+      setLoginError('Invalid login credentials.');
+      console.log('Login failed: ', error); // Console log for login failure
+    }
   };
 
   return (
-    <ThemeProvider theme={defaultTheme}>
+    <ThemeProvider theme={createTheme()}>
       <Container component="main" maxWidth="xs">
         <CssBaseline />
         <Box
@@ -82,6 +92,16 @@ export default function SignIn() {
               control={<Checkbox value="remember" color="primary" />}
               label="Remember me"
             />
+            {loginError && (
+              <Alert severity="error" onClose={() => setLoginError('')}>
+                {loginError}
+              </Alert>
+            )}
+            {showLoginAlert && (
+              <Alert severity="success" onClose={() => setShowLoginAlert(false)}>
+                Logged in successfully!
+              </Alert>
+            )}
             <Button
               type="submit"
               fullWidth
@@ -97,15 +117,16 @@ export default function SignIn() {
                 </Link>
               </Grid>
               <Grid item>
-                <Link href="#" variant="body2">
+                <Link href="/signup" variant="body2">
                   {"Don't have an account? Sign Up"}
                 </Link>
               </Grid>
             </Grid>
           </Box>
         </Box>
-        <Copyright sx={{ mt: 8, mb: 4 }} />
       </Container>
     </ThemeProvider>
   );
 }
+
+export default SignIn;

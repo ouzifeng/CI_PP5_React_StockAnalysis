@@ -9,10 +9,12 @@ import HomePage from './pages/HomePage';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Helmet } from 'react-helmet';
 import './assets/styles/custom.css';
+import { AuthProvider } from './context/AuthContext';
 
 function App() {
   return (
     <>
+    <AuthProvider>
       <Helmet>
         <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
       </Helmet>
@@ -26,6 +28,7 @@ function App() {
           </Routes>
         </BaseLayout>
       </Router>
+      </AuthProvider>
     </>
   );
 }
