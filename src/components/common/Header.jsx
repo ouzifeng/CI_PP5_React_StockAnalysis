@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect, useContext } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
@@ -7,18 +7,20 @@ import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import InputBase from '@mui/material/InputBase';
 import Badge from '@mui/material/Badge';
-import MenuItem from '@mui/material/MenuItem';
+import MailIcon from '@mui/icons-material/Mail';
+import NotificationsIcon from '@mui/icons-material/Notifications';
+import { styled, alpha } from '@mui/material/styles';
+import MenuDrawer from './MenuDrawer';
+import Container from '@mui/material/Container';
+import axios from 'axios';
+import Alert from '@mui/material/Alert';
 import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
 import MenuIcon from '@mui/icons-material/Menu';
 import SearchIcon from '@mui/icons-material/Search';
 import AccountCircle from '@mui/icons-material/AccountCircle';
-import MailIcon from '@mui/icons-material/Mail';
-import NotificationsIcon from '@mui/icons-material/Notifications';
 import MoreIcon from '@mui/icons-material/MoreVert';
-import { styled, alpha } from '@mui/material/styles';
-import MenuDrawer from './MenuDrawer'; // Make sure the path is correct
-import Container from '@mui/material/Container';
-import { Link as RouterLink } from 'react-router-dom'; 
+import { AuthContext } from '../../context/AuthContext'; // Adjust the path based on your project structure
 
 const Search = styled('div')(({ theme }) => ({
     position: 'relative',
@@ -66,13 +68,15 @@ function Header() {
     const [isDrawerOpen, setIsDrawerOpen] = useState(false);
     const [anchorEl, setAnchorEl] = useState(null);
     const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = useState(null);
-    const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const { isAuthenticated, setIsAuthenticated } = useContext(AuthContext);
+    const [showLogoutAlert, setShowLogoutAlert] = useState(false);
     const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
+    const navigate = useNavigate();
 
     useEffect(() => {
         const token = localStorage.getItem('token');
         setIsAuthenticated(!!token);
-    }, []);
+    }, [setIsAuthenticated]);
 
     const handleProfileMenuOpen = (event) => {
         setAnchorEl(event.currentTarget);
@@ -91,10 +95,16 @@ function Header() {
         setMobileMoreAnchorEl(event.currentTarget);
     };
 
-    const handleLogout = () => {
-        localStorage.removeItem('token');
-        setIsAuthenticated(false);
-        // TODO: Redirect to the home or login page
+    const handleLogout = async () => {
+        try {
+            await axios.post('https://django-stocks-ecbc6bc5e208.herokuapp.com/auth/logout/');
+            localStorage.removeItem('token');
+            setIsAuthenticated(false);
+            setShowLogoutAlert(true);
+            navigate('/login');
+        } catch (error) {
+            console.error('Logout Error: ', error);
+        }
     };
 
     const renderMenu = (
@@ -120,12 +130,12 @@ function Header() {
                     <MenuItem onClick={handleLogout}>Logout</MenuItem>
                 </>
             ) : (
-            <>
-                <MenuItem component={RouterLink} to="/login" onClick={handleMenuClose}>Login</MenuItem>
-                <MenuItem component={RouterLink} to="/signup" onClick={handleMenuClose}>Register</MenuItem>
-            </>
-        )}
-    </Menu>
+                <>
+                    <MenuItem component={Link} to="/login" onClick={handleMenuClose}>Login</MenuItem>
+                    <MenuItem component={Link} to="/signup" onClick={handleMenuClose}>Register</MenuItem>
+                </>
+            )}
+        </Menu>
     );
 
     const renderMobileMenu = (
@@ -152,8 +162,8 @@ function Header() {
                 </>
             ) : (
                 <>
-                    <MenuItem onClick={() => { /* Navigate to login */ }}>Login</MenuItem>
-                    <MenuItem onClick={() => { /* Navigate to register */ }}>Register</MenuItem>
+                    <MenuItem component={Link} to="/login" onClick={handleMobileMenuClose}>Login</MenuItem>
+                    <MenuItem component={Link} to="/signup" onClick={handleMobileMenuClose}>Register</MenuItem>
                 </>
             )}
         </Menu>
@@ -237,6 +247,11 @@ function Header() {
             </AppBar>
             {renderMobileMenu}
             {renderMenu}
+            {showLogoutAlert && (
+                <Alert severity="success" onClose={() => setShowLogoutAlert(false)}>
+                    Logged out successfully!
+                </Alert>
+            )}
         </Box>
     );
 }
