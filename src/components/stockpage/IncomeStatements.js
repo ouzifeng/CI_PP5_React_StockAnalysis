@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import {
   Button,
   Table,
@@ -12,13 +12,18 @@ import {
   Box,
   Grid,
   Skeleton,
+  Alert,
 } from '@mui/material';
 import GetAppIcon from '@mui/icons-material/GetApp';
-import Papa from 'papaparse'; 
+import Papa from 'papaparse';
+import { AuthContext } from '../../context/AuthContext'; // Adjust the path based on your project structure
+import { Link as RouterLink } from 'react-router-dom';
 
 const IncomeStatements = ({ incomeStatements }) => {
   const [selectedFrequency, setSelectedFrequency] = useState('yearly');
   const [filteredIncomeStatements, setFilteredIncomeStatements] = useState([]);
+  const [showLoginAlert, setShowLoginAlert] = useState(false); // State to control login alert visibility
+  const { isAuthenticated } = useContext(AuthContext); // Destructure to get `isAuthenticated` from the context
 
   useEffect(() => {
     // Filter income statements based on the selected frequency
@@ -33,10 +38,9 @@ const IncomeStatements = ({ incomeStatements }) => {
           <Typography variant="subtitle1" sx={{ color: 'common.white', textAlign: 'center' }}>Income Statement</Typography>
         </Box>
         <TableContainer>
-          <Table aria-label="Income Statement" size="small"> {/* Use size="small" for the table */}
+          <Table aria-label="Income Statement" size="small">
             <TableHead>
               <TableRow>
-                {/* Display skeleton loaders for table headers */}
                 {Array(6).fill(null).map((_, index) => (
                   <TableCell key={index}>
                     <Skeleton variant="text" width={100} animation="wave" />
@@ -45,7 +49,6 @@ const IncomeStatements = ({ incomeStatements }) => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {/* Display multiple rows of skeleton loaders */}
               {Array(5).fill(null).map((_, rowIndex) => (
                 <TableRow key={rowIndex}>
                   {Array(6).fill(null).map((_, cellIndex) => (
@@ -62,71 +65,67 @@ const IncomeStatements = ({ incomeStatements }) => {
     );
   }
 
-  // Define keys to filter out
-  const keysToFilterOut = ['id', 'filing_date', 'currency_symbol', 'type', 'general', 'preferred_stock_and_other_adjustments', 'discontinued_operations', 'other_items', 'non_recurring', 'extraordinary_items', 'selling_and_marketing_expenses', 'minority_interest', 'effect_of_accounting_charges']; // Add keys you want to filter out here
+  const keysToFilterOut = [
+    'id',
+    'filing_date',
+    'currency_symbol',
+    'type',
+    'general',
+    'preferred_stock_and_other_adjustments',
+    'discontinued_operations',
+    'other_items',
+    'non_recurring',
+    'extraordinary_items',
+    'selling_and_marketing_expenses',
+    'minority_interest',
+    'effect_of_accounting_charges'
+  ];
 
-  // Function to filter out keys
   const filteredKeys = Object.keys(filteredIncomeStatements[0]).filter(key => !keysToFilterOut.includes(key));
 
-  // Function to render table cells
   const renderTableCell = (key, value) => {
-    // Define an array of keys that should be formatted differently
-    const keysToFormatAsDate = ['date']; // Add any other keys as needed
+    const keysToFormatAsDate = ['date'];
 
     if (keysToFilterOut.includes(key)) {
-      return null; // Return null for filtered keys
+      return null;
     }
 
-    // Check if the key should be formatted as a date
     if (keysToFormatAsDate.includes(key)) {
-      return (
-        <TableCell>
-          {value} {/* Assuming 'value' is a date in the desired format */}
-        </TableCell>
-      );
+      return <TableCell>{value}</TableCell>;
     }
 
-    // Attempt to convert to a number if it's not already
     const numericValue = typeof value === 'number' ? value : parseFloat(value);
+    const displayedValue = !isNaN(numericValue) ? Math.round(numericValue).toLocaleString() : value;
 
-    // Check if the value is a number and not NaN
-    const displayedValue = !isNaN(numericValue)
-      ? Math.round(numericValue).toLocaleString() // Format as a whole number
-      : value; // Keep the original value if it's not a number
-
-    return (
-      <TableCell>
-        {displayedValue}
-      </TableCell>
-    );
+    return <TableCell>{displayedValue}</TableCell>;
   };
 
-  // Function to download CSV
   const downloadCSV = () => {
-    if (filteredIncomeStatements.length > 0) {
-      // Convert filteredIncomeStatements to CSV format
-      const csvData = Papa.unparse(filteredIncomeStatements);
+    if (!isAuthenticated) {
+      setShowLoginAlert(true); // Show an alert if not authenticated
+      return;
+    }
 
-      // Create a Blob object for the CSV data
+    if (filteredIncomeStatements.length > 0) {
+      const csvData = Papa.unparse(filteredIncomeStatements);
       const blob = new Blob([csvData], { type: 'text/csv' });
       const url = window.URL.createObjectURL(blob);
 
-      // Create a temporary link element for downloading
       const a = document.createElement('a');
       a.href = url;
       a.download = 'income_statements.csv';
-
-      // Trigger the click event to start the download
       a.click();
-
-      // Clean up by revoking the Object URL
       window.URL.revokeObjectURL(url);
     }
   };
 
   return (
     <>
-      {/* Buttons to select frequency and Download CSV */}
+      {showLoginAlert && (
+        <Alert severity="warning" onClose={() => setShowLoginAlert(false)}>
+          Please <RouterLink to="/login">login</RouterLink> to download the cash flows.
+        </Alert>
+      )}
       <Grid container spacing={1}>
         <Grid item>
           <Button
@@ -158,18 +157,16 @@ const IncomeStatements = ({ incomeStatements }) => {
         </Grid>
       </Grid>
 
-      {/* Table to display filtered income statement data */}
       <Paper elevation={3} sx={{ margin: 'auto', overflow: 'hidden' }}>
         <Box sx={{ bgcolor: 'primary.main', p: 1 }}>
           <Typography variant="subtitle1" sx={{ color: 'common.white', textAlign: 'center' }}>Income Statement</Typography>
         </Box>
         <TableContainer>
-          <Table aria-label="Income Statement" size="small"> {/* Use size="small" for the table */}
+          <Table aria-label="Income Statement" size="small">
             <TableHead>
               <TableRow>
-                {/* Dynamically create table header based on the filtered keys */}
                 {filteredKeys.map((key, index) => (
-                  <TableCell key={index} sx={{ fontWeight: 'bold' }} className="MuiTableCell-sizeSmall"> {/* Apply class for sizeSmall */}
+                  <TableCell key={index} sx={{ fontWeight: 'bold' }} className="MuiTableCell-sizeSmall">
                     {key.replace(/_/g, ' ').toUpperCase()}
                   </TableCell>
                 ))}
@@ -178,10 +175,7 @@ const IncomeStatements = ({ incomeStatements }) => {
             <TableBody>
               {filteredIncomeStatements.map((item, index) => (
                 <TableRow key={index}>
-                  {/* Dynamically create table cells based on the values of the income statement data */}
-                  {filteredKeys.map((key) => (
-                    renderTableCell(key, item[key]) // Use the rendering function
-                  ))}
+                  {filteredKeys.map(key => renderTableCell(key, item[key]))}
                 </TableRow>
               ))}
             </TableBody>

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import {
   Button,
   Table,
@@ -12,16 +12,19 @@ import {
   Box,
   Grid,
   Skeleton,
+  Alert,
 } from '@mui/material';
 import GetAppIcon from '@mui/icons-material/GetApp';
 import Papa from 'papaparse';
-
+import { AuthContext } from '../../context/AuthContext'; // Adjust the path based on your project structure
+import { Link as RouterLink } from 'react-router-dom';
 const BalanceSheets = ({ balanceSheets }) => {
   const [selectedFrequency, setSelectedFrequency] = useState('yearly');
   const [filteredBalanceSheets, setFilteredBalanceSheets] = useState([]);
+  const [showLoginAlert, setShowLoginAlert] = useState(false); // State to control login alert visibility
+  const { isAuthenticated } = useContext(AuthContext); // Destructure to get `isAuthenticated` from the context
 
   useEffect(() => {
-    // Filter balance sheets based on the selected frequency
     const filteredData = balanceSheets?.filter(sheet => sheet.type.toLowerCase() === selectedFrequency);
     setFilteredBalanceSheets(filteredData);
   }, [balanceSheets, selectedFrequency]);
@@ -60,13 +63,24 @@ const BalanceSheets = ({ balanceSheets }) => {
     );
   }
 
-  // Define keys to filter out
-  const keysToFilterOut = ['id', 'filing_date', 'currency_symbol', 'type', 'general', 'preferred_stock_and_other_adjustments', 'discontinued_operations', 'other_items', 'non_recurring', 'extraordinary_items', 'selling_and_marketing_expenses', 'minority_interest', 'effect_of_accounting_charges'];
+  const keysToFilterOut = [
+    'id',
+    'filing_date',
+    'currency_symbol',
+    'type',
+    'general',
+    'preferred_stock_and_other_adjustments',
+    'discontinued_operations',
+    'other_items',
+    'non_recurring',
+    'extraordinary_items',
+    'selling_and_marketing_expenses',
+    'minority_interest',
+    'effect_of_accounting_charges'
+  ];
 
-  // Function to filter out keys
   const filteredKeys = Object.keys(filteredBalanceSheets[0]).filter(key => !keysToFilterOut.includes(key));
 
-  // Function to render table cells
   const renderTableCell = (key, value) => {
     const keysToFormatAsDate = ['date'];
 
@@ -75,26 +89,21 @@ const BalanceSheets = ({ balanceSheets }) => {
     }
 
     if (keysToFormatAsDate.includes(key)) {
-      return (
-        <TableCell>
-          {value}
-        </TableCell>
-      );
+      return <TableCell>{value}</TableCell>;
     }
 
     const numericValue = typeof value === 'number' ? value : parseFloat(value);
-    const displayedValue = !isNaN(numericValue)
-      ? Math.round(numericValue).toLocaleString()
-      : value;
+    const displayedValue = !isNaN(numericValue) ? Math.round(numericValue).toLocaleString() : value;
 
-    return (
-      <TableCell>
-        {displayedValue}
-      </TableCell>
-    );
+    return <TableCell>{displayedValue}</TableCell>;
   };
 
   const downloadCSV = () => {
+    if (!isAuthenticated) {
+      setShowLoginAlert(true); // Show an alert if not authenticated
+      return;
+    }
+
     if (filteredBalanceSheets.length > 0) {
       const csvData = Papa.unparse(filteredBalanceSheets);
       const blob = new Blob([csvData], { type: 'text/csv' });
@@ -111,6 +120,11 @@ const BalanceSheets = ({ balanceSheets }) => {
 
   return (
     <>
+      {showLoginAlert && (
+        <Alert severity="warning" onClose={() => setShowLoginAlert(false)}>
+          Please <RouterLink to="/login">login</RouterLink> to download the cash flows.
+        </Alert>
+      )}
       <Grid container spacing={1}>
         <Grid item>
           <Button
@@ -160,9 +174,7 @@ const BalanceSheets = ({ balanceSheets }) => {
             <TableBody>
               {filteredBalanceSheets.map((item, index) => (
                 <TableRow key={index}>
-                  {filteredKeys.map((key) => (
-                    renderTableCell(key, item[key])
-                  ))}
+                  {filteredKeys.map(key => renderTableCell(key, item[key]))}
                 </TableRow>
               ))}
             </TableBody>

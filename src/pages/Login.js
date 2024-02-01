@@ -15,16 +15,18 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import Alert from '@mui/material/Alert';
+import CircularProgress from '@mui/material/CircularProgress';
 import { AuthContext } from '../context/AuthContext'; // Make sure the path is correct
 
 function SignIn() {
   const navigate = useNavigate();
-  const { setIsAuthenticated } = useContext(AuthContext);
+  const { setIsAuthenticated, setShowLoginSuccessAlert } = useContext(AuthContext);
   const [loginError, setLoginError] = useState('');
-  const [showLoginAlert, setShowLoginAlert] = useState(false);
+  const [loading, setLoading] = useState(false); // State to handle loading
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+    setLoading(true); // Activate loading state
     const data = new FormData(event.currentTarget);
     const username = data.get('email');
     const password = data.get('password');
@@ -38,15 +40,15 @@ function SignIn() {
 
       localStorage.setItem('token', response.data.key);
       setIsAuthenticated(true); // Update the global authentication state
-      setShowLoginAlert(true); // Show login alert
-      navigate('/'); // Redirect user to the dashboard or another appropriate route
+      setShowLoginSuccessAlert(true); // Trigger the global login success alert
+      navigate('/'); // Redirect user to the homepage or another appropriate route
       console.log('Logged in successfully!'); // Console log for successful login
-
     } catch (error) {
       console.error('Login Error: ', error);
       setLoginError('Invalid login credentials.');
       console.log('Login failed: ', error); // Console log for login failure
     }
+    setLoading(false); // Deactivate loading state
   };
 
   return (
@@ -97,18 +99,14 @@ function SignIn() {
                 {loginError}
               </Alert>
             )}
-            {showLoginAlert && (
-              <Alert severity="success" onClose={() => setShowLoginAlert(false)}>
-                Logged in successfully!
-              </Alert>
-            )}
             <Button
               type="submit"
               fullWidth
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
+              disabled={loading} // Disable the button when loading
             >
-              Sign In
+              {loading ? <CircularProgress size={24} /> : 'Sign In'}
             </Button>
             <Grid container>
               <Grid item xs>
