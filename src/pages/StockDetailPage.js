@@ -35,48 +35,53 @@ const StockDetail = () => {
   const [isFollowing, setIsFollowing] = useState(false);
   const [showLoginAlert, setShowLoginAlert] = useState(false);
 
-  useEffect(() => {
-    // Fetch stock data from the backend
-    fetch(`https://django-stocks-ecbc6bc5e208.herokuapp.com/api/stocks/${primary_ticker.replace('-', '.')}/`, {
-      headers: {
-        'Authorization': `Token 13502af70a55d1fcddf7c094e4418c65904ef6eb`,
-      },
+useEffect(() => {
+  // Transform ticker format from 'AAPL-US' to 'AAPL.US' for backend compatibility
+  const formattedTicker = primary_ticker.replace('-', '.');
+
+  // Fetch stock data from the backend
+  fetch(`https://django-stocks-ecbc6bc5e208.herokuapp.com/api/stocks/${formattedTicker}/`, {
+    headers: {
+      'Authorization': `Token 13502af70a55d1fcddf7c094e4418c65904ef6eb`,
+    },
+  })
+    .then(response => {
+      if (response.ok) {
+        return response.json();
+      } else {
+        throw new Error('Failed to fetch data');
+      }
     })
-      .then(response => {
-        if (response.ok) {
-          return response.json();
-        } else {
-          throw new Error('Failed to fetch data');
-        }
-      })
-      .then(data => {
-        setStockData(data);
-        const symbol = `${data.exchange}:${data.code}`;
-        setTradingViewSymbol(symbol);
-        // Check if the user is following this stock and update isFollowing state accordingly
-        if (isAuthenticated) {
-          // Make an API call to check if the user is following this stock
-          fetch(`https://django-stocks-ecbc6bc5e208.herokuapp.com/api/stocks/${primary_ticker.replace('.', '-')}/`, {
-            method: 'POST',
-            headers: {
-              'Authorization': `Token 13502af70a55d1fcddf7c094e4418c65904ef6eb`, // Replace with the actual user's authentication token
-            },
+    .then(data => {
+      setStockData(data);
+      const symbol = `${data.exchange}:${data.code}`;
+      setTradingViewSymbol(symbol);
+
+      // Check if the user is following this stock and update isFollowing state accordingly
+      if (isAuthenticated) {
+        // Use the same transformed ticker for fetching the following status
+        fetch(`https://django-stocks-ecbc6bc5e208.herokuapp.com/api/stocks/${formattedTicker}/`, {
+          method: 'GET',
+          headers: {
+            'Authorization': `Token 13502af70a55d1fcddf7c094e4418c65904ef6eb`, // Replace with the actual user's authentication token
+          },
+        })
+          .then(response => {
+            if (response.ok) {
+              return response.json();
+            } else {
+              throw new Error('Failed to check following status');
+            }
           })
-            .then(response => {
-              if (response.ok) {
-                return response.json();
-              } else {
-                throw new Error('Failed to check following status');
-              }
-            })
-            .then(result => {
-              setIsFollowing(result.isFollowing);
-            })
-            .catch(error => console.error('Error checking following status:', error));
-        }
-      })
-      .catch(error => console.error('Error fetching stock data:', error));
-  }, [primary_ticker, isAuthenticated]);
+          .then(result => {
+            console.log(result);
+            setIsFollowing(data.is_following);
+          })
+          .catch(error => console.error('Error checking following status:', error));
+      }
+    })
+    .catch(error => console.error('Error fetching stock data:', error));
+}, [primary_ticker, isAuthenticated]);
 
   if (!stockData) {
     return <Box sx={{ display: 'flex', justifyContent: 'center', mt: 3 }}><Typography>Loading...</Typography></Box>;
@@ -88,27 +93,33 @@ const handleFollowClick = () => {
     return;
   }
 
+  const formattedTicker = primary_ticker.replace('-', '.');
+
   // Make an API call to follow/unfollow the stock
-  fetch(`https://django-stocks-ecbc6bc5e208.herokuapp.com/api/stocks/${primary_ticker.replace('.', '-')}/toggle_follow/`, {
+  fetch(`https://django-stocks-ecbc6bc5e208.herokuapp.com/api/stocks/${formattedTicker}/toggle_follow/`, {
     method: 'POST',
     headers: {
       'Authorization': `Token 13502af70a55d1fcddf7c094e4418c65904ef6eb`, // Replace with the actual user's authentication token
     },
     })
-      .then(response => {
-        if (response.ok) {
-          // Request was successful, update the isFollowing state
-          setIsFollowing(!isFollowing);
-        } else {
-          // Handle errors here
-          console.error('Error:', response.statusText);
+    .then(response => response.json())
+    .then(data => {
+      if (data.status === "ok") {
+        if (data.action === "followed") {
+          setIsFollowing(true);  // The user has just followed the stock
+        } else if (data.action === "unfollowed") {
+          setIsFollowing(false);  // The user has just unfollowed the stock
         }
-      })
-      .catch(error => {
-        // Handle network or other errors here
-        console.error('Error:', error);
-      });
-  };
+      } else {
+        // Handle other statuses or errors here
+        console.error('Error:', data);
+      }
+    })
+    .catch(error => {
+      // Handle network or other errors here
+      console.error('Error:', error);
+    });
+};
 
 
   const handleMyNotesClick = () => {
