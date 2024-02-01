@@ -68,15 +68,23 @@ function Header() {
     const [isDrawerOpen, setIsDrawerOpen] = useState(false);
     const [anchorEl, setAnchorEl] = useState(null);
     const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = useState(null);
-    const { isAuthenticated, setIsAuthenticated } = useContext(AuthContext);
-    const [showLogoutAlert, setShowLogoutAlert] = useState(false);
+    const {
+        isAuthenticated,
+        setIsAuthenticated,
+        showLoginSuccessAlert,
+        setShowLoginSuccessAlert,
+        showLogoutAlert, 
+        setShowLogoutAlert
+    } = useContext(AuthContext);
     const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
     const navigate = useNavigate();
 
     useEffect(() => {
         const token = localStorage.getItem('token');
         setIsAuthenticated(!!token);
-    }, [setIsAuthenticated]);
+        // Reset login success alert when Header mounts
+        setShowLoginSuccessAlert(false);
+    }, [setIsAuthenticated, setShowLoginSuccessAlert]);
 
     const handleProfileMenuOpen = (event) => {
         setAnchorEl(event.currentTarget);
@@ -100,12 +108,17 @@ function Header() {
             await axios.post('https://django-stocks-ecbc6bc5e208.herokuapp.com/auth/logout/');
             localStorage.removeItem('token');
             setIsAuthenticated(false);
-            setShowLogoutAlert(true);
-            navigate('/login');
+
+            // Set the logout alert state to true
+            setShowLogoutAlert(true); 
+
+            // Navigate to the login page
+            navigate('/login', { replace: true }); // Added { replace: true } to replace the current entry in the history stack
         } catch (error) {
             console.error('Logout Error: ', error);
         }
     };
+
 
     const renderMenu = (
         <Menu
@@ -123,18 +136,14 @@ function Header() {
             open={Boolean(anchorEl)}
             onClose={handleMenuClose}
         >
-            {isAuthenticated ? (
-                <>
-                    <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
-                    <MenuItem onClick={handleMenuClose}>My account</MenuItem>
-                    <MenuItem onClick={handleLogout}>Logout</MenuItem>
-                </>
-            ) : (
-                <>
-                    <MenuItem component={Link} to="/login" onClick={handleMenuClose}>Login</MenuItem>
-                    <MenuItem component={Link} to="/signup" onClick={handleMenuClose}>Register</MenuItem>
-                </>
-            )}
+            {isAuthenticated ? [
+                <MenuItem key="profile" onClick={handleMenuClose}>Profile</MenuItem>,
+                <MenuItem key="account" onClick={handleMenuClose}>My account</MenuItem>,
+                <MenuItem key="logout" onClick={handleLogout}>Logout</MenuItem>
+            ] : [
+                <MenuItem key="login" component={Link} to="/login" onClick={handleMenuClose}>Login</MenuItem>,
+                <MenuItem key="register" component={Link} to="/signup" onClick={handleMenuClose}>Register</MenuItem>
+            ]}
         </Menu>
     );
 
@@ -154,24 +163,21 @@ function Header() {
             open={isMobileMenuOpen}
             onClose={handleMobileMenuClose}
         >
-            {isAuthenticated ? (
-                <>
-                    <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
-                    <MenuItem onClick={handleMenuClose}>My account</MenuItem>
-                    <MenuItem onClick={handleLogout}>Logout</MenuItem>
-                </>
-            ) : (
-                <>
-                    <MenuItem component={Link} to="/login" onClick={handleMobileMenuClose}>Login</MenuItem>
-                    <MenuItem component={Link} to="/signup" onClick={handleMobileMenuClose}>Register</MenuItem>
-                </>
-            )}
+            {isAuthenticated ? [
+                <MenuItem key="profile" onClick={handleMenuClose}>Profile</MenuItem>,
+                <MenuItem key="account" onClick={handleMenuClose}>My account</MenuItem>,
+                <MenuItem key="logout" onClick={handleLogout}>Logout</MenuItem>
+            ] : [
+                <MenuItem key="login" component={Link} to="/login" onClick={handleMobileMenuClose}>Login</MenuItem>,
+                <MenuItem key="register" component={Link} to="/signup" onClick={handleMobileMenuClose}>Register</MenuItem>
+            ]}
         </Menu>
     );
 
+
     return (
         <Box sx={{ flexGrow: 1 }}>
-            <AppBar position="static">
+            <AppBar className="stickyHeader">
                 <Container maxWidth="xl" style={{ maxWidth: '1280px', margin: '0 auto' }}>
                     <Toolbar>
                         <IconButton
@@ -247,8 +253,13 @@ function Header() {
             </AppBar>
             {renderMobileMenu}
             {renderMenu}
+            {showLoginSuccessAlert && (
+                <Alert className="alert" severity="success" onClose={() => setShowLoginSuccessAlert(false)}>
+                    Logged in successfully!
+                </Alert>
+            )}
             {showLogoutAlert && (
-                <Alert severity="success" onClose={() => setShowLogoutAlert(false)}>
+                <Alert className="alert" severity="success" onClose={() => setShowLogoutAlert(false)}>
                     Logged out successfully!
                 </Alert>
             )}
