@@ -16,17 +16,16 @@ import {
 } from '@mui/material';
 import GetAppIcon from '@mui/icons-material/GetApp';
 import Papa from 'papaparse';
-import { AuthContext } from '../../context/AuthContext'; // Adjust the path based on your project structure
+import { AuthContext } from '../../context/AuthContext';
 import { Link as RouterLink } from 'react-router-dom';
 
 const CashFlows = ({ cashFlows }) => {
   const [selectedFrequency, setSelectedFrequency] = useState('yearly');
   const [filteredCashFlows, setFilteredCashFlows] = useState([]);
-  const [showLoginAlert, setShowLoginAlert] = useState(false); // State to control login alert visibility
-  const { isAuthenticated } = useContext(AuthContext); // Destructure to get `isAuthenticated` from the context
+  const [showLoginAlert, setShowLoginAlert] = useState(false);
+  const { isAuthenticated } = useContext(AuthContext);
 
   useEffect(() => {
-    // Filter cash flows based on the selected frequency
     const filteredData = cashFlows?.filter(flow => flow.type.toLowerCase() === selectedFrequency);
     setFilteredCashFlows(filteredData);
   }, [cashFlows, selectedFrequency]);
@@ -83,26 +82,24 @@ const CashFlows = ({ cashFlows }) => {
 
   const filteredKeys = Object.keys(filteredCashFlows[0]).filter(key => !keysToFilterOut.includes(key));
 
-  const renderTableCell = (key, value) => {
-    const keysToFormatAsDate = ['date'];
-
+  const renderTableCell = (rowIndex, key, value) => {
     if (keysToFilterOut.includes(key)) {
       return null;
     }
 
-    if (keysToFormatAsDate.includes(key)) {
-      return <TableCell>{value}</TableCell>;
+    if (key === 'date') {
+      return <TableCell key={`${rowIndex}-${key}`}>{value}</TableCell>;
     }
 
     const numericValue = typeof value === 'number' ? value : parseFloat(value);
-    const displayedValue = !isNaN(numericValue) ? Math.round(numericValue).toLocaleString() : value;
+    const displayedValue = !isNaN(numericValue) ? numericValue.toLocaleString() : value;
 
-    return <TableCell>{displayedValue}</TableCell>;
+    return <TableCell key={`${rowIndex}-${key}`}>{displayedValue}</TableCell>;
   };
 
   const downloadCSV = () => {
     if (!isAuthenticated) {
-      setShowLoginAlert(true); // Show an alert if not authenticated
+      setShowLoginAlert(true);
       return;
     }
 
@@ -173,10 +170,10 @@ const CashFlows = ({ cashFlows }) => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {filteredCashFlows.map((item, index) => (
-                <TableRow key={index}>
+              {filteredCashFlows.map((item, rowIndex) => (
+                <TableRow key={`row-${rowIndex}`}>
                   {filteredKeys.map((key) => (
-                    renderTableCell(key, item[key])
+                    renderTableCell(rowIndex, key, item[key])
                   ))}
                 </TableRow>
               ))}

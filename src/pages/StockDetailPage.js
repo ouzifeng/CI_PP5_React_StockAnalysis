@@ -6,7 +6,7 @@ import {
   Box,
   Button,
   Alert,
-  Link, // Import Link component to create login link
+  Link,
 } from '@mui/material';
 import StockHighlights from '../components/stockpage/StockHighlights';
 import MyNotesDrawer from '../components/stockpage/MyNotes';
@@ -36,10 +36,11 @@ const StockDetail = () => {
   const [showLoginAlert, setShowLoginAlert] = useState(false);
 
   useEffect(() => {
+    // Fetch stock data from the backend
     fetch(`https://django-stocks-ecbc6bc5e208.herokuapp.com/api/stocks/${primary_ticker.replace('-', '.')}/`, {
       headers: {
-        'Authorization': `Token 13502af70a55d1fcddf7c094e4418c65904ef6eb`
-      }
+        'Authorization': `Token 13502af70a55d1fcddf7c094e4418c65904ef6eb`,
+      },
     })
       .then(response => {
         if (response.ok) {
@@ -52,21 +53,63 @@ const StockDetail = () => {
         setStockData(data);
         const symbol = `${data.exchange}:${data.code}`;
         setTradingViewSymbol(symbol);
+        // Check if the user is following this stock and update isFollowing state accordingly
+        if (isAuthenticated) {
+          // Make an API call to check if the user is following this stock
+          fetch(`https://django-stocks-ecbc6bc5e208.herokuapp.com/api/stocks/${primary_ticker.replace('.', '-')}/`, {
+            method: 'POST',
+            headers: {
+              'Authorization': `Token 13502af70a55d1fcddf7c094e4418c65904ef6eb`, // Replace with the actual user's authentication token
+            },
+          })
+            .then(response => {
+              if (response.ok) {
+                return response.json();
+              } else {
+                throw new Error('Failed to check following status');
+              }
+            })
+            .then(result => {
+              setIsFollowing(result.isFollowing);
+            })
+            .catch(error => console.error('Error checking following status:', error));
+        }
       })
       .catch(error => console.error('Error fetching stock data:', error));
-  }, [primary_ticker]);
+  }, [primary_ticker, isAuthenticated]);
 
   if (!stockData) {
     return <Box sx={{ display: 'flex', justifyContent: 'center', mt: 3 }}><Typography>Loading...</Typography></Box>;
   }
 
-  const handleFollowClick = () => {
-    if (!isAuthenticated) {
-      setShowLoginAlert(true);
-      return;
-    }
-    setIsFollowing(!isFollowing);
+const handleFollowClick = () => {
+  if (!isAuthenticated) {
+    setShowLoginAlert(true);
+    return;
+  }
+
+  // Make an API call to follow/unfollow the stock
+  fetch(`https://django-stocks-ecbc6bc5e208.herokuapp.com/api/stocks/${primary_ticker.replace('.', '-')}/toggle_follow/`, {
+    method: 'POST',
+    headers: {
+      'Authorization': `Token 13502af70a55d1fcddf7c094e4418c65904ef6eb`, // Replace with the actual user's authentication token
+    },
+    })
+      .then(response => {
+        if (response.ok) {
+          // Request was successful, update the isFollowing state
+          setIsFollowing(!isFollowing);
+        } else {
+          // Handle errors here
+          console.error('Error:', response.statusText);
+        }
+      })
+      .catch(error => {
+        // Handle network or other errors here
+        console.error('Error:', error);
+      });
   };
+
 
   const handleMyNotesClick = () => {
     if (!isAuthenticated) {
@@ -78,7 +121,7 @@ const StockDetail = () => {
 
   return (
     <Grid container spacing={3} sx={{ p: 3 }}>
-            {showLoginAlert && (
+      {showLoginAlert && (
         <Grid item xs={12} sx={{ p: 2 }}>
           <Alert severity="warning" onClose={() => setShowLoginAlert(false)}>
             Please <Link href="/login">log in</Link> to access this.
