@@ -11,6 +11,7 @@ import { Helmet } from 'react-helmet';
 import './assets/styles/custom.css';
 import { AuthProvider } from './context/AuthContext';
 import Follow from './pages/Following';
+import DividendScreener from './pages/DividendScreener';
 
 function App() {
   return (
@@ -27,6 +28,7 @@ function App() {
             <Route path="/login" element={<SignIn />} />
             <Route path="/signup" element={<SignUp />} />
             <Route path="/following" element={<Follow />} />
+            <Route path="/dividend-screener" element={<DividendScreener />} />
           </Routes>
         </BaseLayout>
       </Router>
