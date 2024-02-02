@@ -10,6 +10,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { Helmet } from 'react-helmet';
 import './assets/styles/custom.css';
 import { AuthProvider } from './context/AuthContext';
+import Follow from './pages/Following';
 
 function App() {
   return (
@@ -22,9 +23,10 @@ function App() {
         <BaseLayout>
           <Routes>
             <Route path="/" element={<HomePage />} />
-            <Route path="/stocks/:primary_ticker" element={<StockDetail />} /> {/* Just use the parameter name */}
-            <Route path="/login" element={<SignIn />} /> {/* Add this line */}
-            <Route path="/signup" element={<SignUp />} /> {/* Add this line */}
+            <Route path="/stocks/:primary_ticker" element={<StockDetail />} />
+            <Route path="/login" element={<SignIn />} />
+            <Route path="/signup" element={<SignUp />} />
+            <Route path="/following" element={<Follow />} />
           </Routes>
         </BaseLayout>
       </Router>
