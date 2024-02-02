@@ -5,7 +5,6 @@ import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
-import InputBase from '@mui/material/InputBase';
 import Badge from '@mui/material/Badge';
 import MailIcon from '@mui/icons-material/Mail';
 import NotificationsIcon from '@mui/icons-material/Notifications';
@@ -20,51 +19,44 @@ import MenuIcon from '@mui/icons-material/Menu';
 import SearchIcon from '@mui/icons-material/Search';
 import AccountCircle from '@mui/icons-material/AccountCircle';
 import MoreIcon from '@mui/icons-material/MoreVert';
-import { AuthContext } from '../../context/AuthContext'; // Adjust the path based on your project structure
+import { AuthContext } from '../../context/AuthContext';
+import Autocomplete from '@mui/material/Autocomplete';
+import CircularProgress from '@mui/material/CircularProgress';
+import TextField from '@mui/material/TextField';
+import useDebounce from './useDebounce';
 
+// Styled components
 const Search = styled('div')(({ theme }) => ({
-    position: 'relative',
-    borderRadius: theme.shape.borderRadius,
-    backgroundColor: alpha(theme.palette.common.white, 0.15),
-    '&:hover': {
-        backgroundColor: alpha(theme.palette.common.white, 0.25),
-    },
-    marginRight: theme.spacing(2),
-    marginLeft: 0,
-    width: '100%',
-    [theme.breakpoints.up('sm')]: {
-        marginLeft: theme.spacing(3),
-        width: 'auto',
-    },
+  position: 'relative',
+  borderRadius: theme.shape.borderRadius,
+  backgroundColor: alpha(theme.palette.common.white, 0.75),
+  '&:hover': {
+    backgroundColor: theme.palette.common.white,
+  },
+  marginRight: theme.spacing(2),
+  marginLeft: 0,
+  width: '100%',
+  [theme.breakpoints.up('sm')]: {
+    marginLeft: theme.spacing(3),
+    width: '40ch',
+  },
 }));
 
-const SearchIconWrapper = styled('div')(({ theme }) => ({
-    padding: theme.spacing(0, 2),
-    height: '100%',
-    position: 'absolute',
-    pointerEvents: 'none',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
+const SearchIconWrapper = styled('div')(({ theme, focused }) => ({
+  padding: theme.spacing(0, 2),
+  height: '100%',
+  position: 'absolute',
+  pointerEvents: 'none',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  color: focused ? '#ffffff' : '#1976d2',
 }));
 
-const StyledInputBase = styled(InputBase)(({ theme }) => ({
-    color: 'inherit',
-    '& .MuiInputBase-input': {
-        padding: theme.spacing(1, 1, 1, 0),
-        paddingLeft: `calc(1em + ${theme.spacing(4)})`,
-        transition: theme.transitions.create('width'),
-        width: '100%',
-        [theme.breakpoints.up('sm')]: {
-            width: '12ch',
-            '&:focus': {
-                width: '20ch',
-            },
-        },
-    },
-}));
+
 
 function Header() {
+    const [focused, setFocused] = useState(false);
     const [isDrawerOpen, setIsDrawerOpen] = useState(false);
     const [anchorEl, setAnchorEl] = useState(null);
     const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = useState(null);
@@ -78,6 +70,10 @@ function Header() {
     } = useContext(AuthContext);
     const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
     const navigate = useNavigate();
+    const [searchInput, setSearchInput] = useState('');
+    const [searchResults, setSearchResults] = useState([]);
+    const [isLoading, setIsLoading] = useState(false);
+    const debouncedSearchInput = useDebounce(searchInput, 500);    
 
     useEffect(() => {
         const token = localStorage.getItem('token');
@@ -85,6 +81,30 @@ function Header() {
         // Reset login success alert when Header mounts
         setShowLoginSuccessAlert(false);
     }, [setIsAuthenticated, setShowLoginSuccessAlert]);
+
+    // useEffect for handling search
+    useEffect(() => {
+        const fetchData = async () => {
+            if (debouncedSearchInput.length >= 3) {
+                setIsLoading(true);
+                try {
+                    const response = await axios.get(`https://django-stocks-ecbc6bc5e208.herokuapp.com/api/search_stocks/?query=${encodeURIComponent(debouncedSearchInput)}`, {
+                        headers: {
+                            'Authorization': `Token 13502af70a55d1fcddf7c094e4418c65904ef6eb`,
+                        },
+                    });
+                    setSearchResults(response.data || []);
+                } catch (error) {
+                    console.error('Search Error: ', error);
+                }
+                setIsLoading(false);
+            } else {
+                setSearchResults([]); // Clear results if input is less than 3 characters
+            }
+        };
+
+        if (debouncedSearchInput) fetchData();
+    }, [debouncedSearchInput]);
 
     const handleProfileMenuOpen = (event) => {
         setAnchorEl(event.currentTarget);
@@ -200,14 +220,43 @@ function Header() {
                             Bull Street
                         </Typography>
                         <Search>
-                            <SearchIconWrapper>
+                            <SearchIconWrapper focused={focused}>
                                 <SearchIcon />
                             </SearchIconWrapper>
-                            <StyledInputBase
-                                placeholder="Search…"
-                                inputProps={{ 'aria-label': 'search' }}
+                            <Autocomplete
+                                freeSolo
+                                id="search-autocomplete"
+                                options={searchResults}
+                                loading={isLoading}
+                                onInputChange={(event, newInputValue) => {
+                                setSearchInput(newInputValue);
+                                }}
+                                onChange={(event, value) => {
+                                if (value && value.primary_ticker) {
+                                    navigate(`/stocks/${value.primary_ticker}`);
+                                    setSearchInput('');
+                                }
+                                }}
+                                getOptionLabel={(option) => `${option.name} (${option.primary_ticker})`}
+                                renderInput={(params) => (
+                                <TextField
+                                    {...params}
+                                    onFocus={() => setFocused(true)}
+                                    onBlur={() => setFocused(false)}
+                                    InputProps={{
+                                    ...params.InputProps,
+                                    endAdornment: (
+                                        <React.Fragment>
+                                        {isLoading ? <CircularProgress color="inherit" size={16} /> : null}
+                                        {params.InputProps.endAdornment}
+                                        </React.Fragment>
+                                    ),
+                                    style: { width: '100%', padding: '3px'  }, // Adjust width as needed
+                                    }}
+                                />
+                                )}
                             />
-                        </Search>
+                            </Search>
                         <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
                             <IconButton size="large" aria-label="show 4 new mails" color="inherit">
                                 <Badge badgeContent={4} color="error">
