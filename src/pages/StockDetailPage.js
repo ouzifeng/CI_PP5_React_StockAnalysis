@@ -28,6 +28,8 @@ const SplitsDividendsTable = lazy(() => import('../components/stockpage/SplitsDi
 const TradingViewWidget = lazy(() => import('../components/stockpage/TradingViewWidget'));
 const MarginTable = lazy(() => import('../components/stockpage/MarginTable'));
 const Description = lazy(() => import('../components/stockpage/Description'));
+const DividendYieldChart = lazy(() => import('../components/stockpage/DividendYieldChart'));
+
 
 const StockDetail = () => {
   const { primary_ticker } = useParams();
@@ -41,6 +43,9 @@ const StockDetail = () => {
   const [loadingIsFollowing, setLoadingIsFollowing] = useState(true);  // Loading state for isFollowing
   const [showLoginAlert, setShowLoginAlert] = useState(false);
   const isLoadingInitialData = loadingStockData || loadingTradingViewSymbol || (isAuthenticated && loadingIsFollowing);
+  const stockPriceCagr = stockData && stockData.stock_prices && stockData.stock_prices.length > 0 ? stockData.stock_prices[0].cagr_5_years : null;
+  const dividendYieldCagr = stockData && stockData.dividend_yield_data ? stockData.dividend_yield_data.cagr_5_years : null;
+
 
 
   useEffect(() => {
@@ -186,14 +191,21 @@ const StockDetail = () => {
           </Grid>
         </Grid>
         <Grid container item md={12} xs={12} spacing={3} sx={{ mt: 3 }}>
-          <Grid item md={5} xs={12}>
-            {stockData.income_statements && <CagrChart incomeStatements={stockData.income_statements} />}
-          </Grid>
-          <Grid item md={3} xs={12}>
+<Grid item md={5} xs={12}>
+  {stockData.income_statements && <CagrChart incomeStatements={stockData.income_statements} />}
+  {stockData.dividend_yield_data && <div style={{ marginTop: '20px' }}></div>}
+  {stockData.dividend_yield_data && <DividendYieldChart dividendYieldData={stockData.dividend_yield_data} />}
+</Grid>
+
+        <Grid item md={3} xs={12}>
             {stockData.general_cagr && (
-              <CagrPercent cagrData={stockData.general_cagr} />
+                <CagrPercent
+                    cagrData={stockData.general_cagr}
+                    stockPriceCagr={stockPriceCagr}
+                    dividendYieldCagr={dividendYieldCagr}
+                />
             )}
-          </Grid>
+        </Grid>
           <Grid item md={4} xs={12}>
             <AnalystOverallRating ratings={stockData.analyst_ratings} />
             <AnalystRatingsBarChart ratings={stockData.analyst_ratings} />

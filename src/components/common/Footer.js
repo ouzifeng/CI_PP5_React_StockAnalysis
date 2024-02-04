@@ -7,9 +7,29 @@ import RestoreIcon from '@mui/icons-material/Restore';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import ArchiveIcon from '@mui/icons-material/Archive';
 import Paper from '@mui/material/Paper';
+import { useNavigate } from 'react-router-dom';
 
 export default function StickyFooter() {
   const [value, setValue] = React.useState(0);
+  const navigate = useNavigate();
+
+  const handleChange = (event, newValue) => {
+    setValue(newValue);
+
+    switch (newValue) {
+      case 0:
+        navigate('/recents');
+        break;
+      case 1:
+        navigate('/following');
+        break;
+      case 2:
+        navigate('/archive');
+        break;
+      default:
+        break;
+    }
+  };
 
   return (
     <Box sx={{ pb: 7 }}>
@@ -18,9 +38,7 @@ export default function StickyFooter() {
         <BottomNavigation
           showLabels
           value={value}
-          onChange={(event, newValue) => {
-            setValue(newValue);
-          }}
+          onChange={handleChange}
         >
           <BottomNavigationAction label="Recents" icon={<RestoreIcon />} />
           <BottomNavigationAction label="Following" icon={<FavoriteIcon />} />

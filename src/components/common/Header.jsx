@@ -4,7 +4,6 @@ import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
 import IconButton from '@mui/material/IconButton';
-import Typography from '@mui/material/Typography';
 import Badge from '@mui/material/Badge';
 import MailIcon from '@mui/icons-material/Mail';
 import NotificationsIcon from '@mui/icons-material/Notifications';
@@ -210,15 +209,14 @@ function Header() {
                         >
                             <MenuIcon />
                         </IconButton>
-                        <Typography
-                            variant="h6"
-                            noWrap
-                            component={Link}
-                            to="/"
-                            sx={{ display: { xs: 'none', sm: 'block' }, flexGrow: 1, textDecoration: 'none', color: 'inherit' }}
-                        >
-                            Bull Street
-                        </Typography>
+                        {/* Replace Typography with img tag */}
+                        <Link to="/" style={{ display: 'flex', alignItems: 'center', flexGrow: 1, color: 'inherit', textDecoration: 'none' }}>
+                            <img 
+                                src="/bull_street_logo.png" 
+                                alt="Bull Street Logo" 
+                                style={{ height: 'auto', maxWidth: '100%', maxHeight: '50px' }} // Adjust height and width as needed
+                            />
+                        </Link>
                         <Search>
                             <SearchIconWrapper focused={focused}>
                                 <SearchIcon />
@@ -281,7 +279,15 @@ function Header() {
                                 onClick={handleProfileMenuOpen}
                                 color="inherit"
                             >
-                                <AccountCircle />
+                                {isAuthenticated ? (
+                                    <img 
+                                        src={require('../../assets/images/bull-avatar.jpg')} 
+                                        alt="User Avatar" 
+                                        style={{ width: '32px', height: '32px', borderRadius: '50%' }}
+                                    />
+                                ) : (
+                                    <AccountCircle />
+                                )}
                             </IconButton>
                         </Box>
                         <Box sx={{ display: { xs: 'flex', md: 'none' } }}>
