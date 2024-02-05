@@ -11,6 +11,10 @@ import './assets/styles/custom.css';
 import { AuthProvider } from './context/AuthContext';
 import Follow from './pages/Following';
 import DividendScreener from './pages/DividendScreener';
+import ContactForm from './pages/ContactUs';
+import ForgotPassword from './pages/ForgotPassword';  
+import ResetPassword from './pages/ResetPassword';
+
 
 function App() {
   return (
@@ -28,6 +32,9 @@ function App() {
             <Route path="/signup" element={<SignUp />} />
             <Route path="/following" element={<Follow />} />
             <Route path="/dividend-screener" element={<DividendScreener />} />
+            <Route path="/contact" element={<ContactForm />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/reset-password/:uidb64/:token" element={<ResetPassword />} />
           </Routes>
         </BaseLayout>
       </Router>
