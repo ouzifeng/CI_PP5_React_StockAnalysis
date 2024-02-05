@@ -18,7 +18,7 @@ export default function StickyFooter() {
 
     switch (newValue) {
       case 0:
-        navigate('/recents');
+        navigate('/contact');
         break;
       case 1:
         navigate('/following');
@@ -40,7 +40,7 @@ export default function StickyFooter() {
           value={value}
           onChange={handleChange}
         >
-          <BottomNavigationAction label="Recents" icon={<RestoreIcon />} />
+          <BottomNavigationAction label="Contact" icon={<RestoreIcon />} />
           <BottomNavigationAction label="Following" icon={<FavoriteIcon />} />
           <BottomNavigationAction label="Archive" icon={<ArchiveIcon />} />
         </BottomNavigation>
