@@ -1,9 +1,11 @@
 import React from 'react';
 import { Typography, Table, TableBody, TableCell, TableContainer, TableRow, Paper, Box, Skeleton } from '@mui/material';
 
-const SplitsDividendsTable = ({ splitsDividendsData }) => {
+const SplitsDividendsTable = ({ splitsDividendsData, general }) => {
+  const currencySymbol = general.currency_symbol || '$';
+
   const splitsDividendsItems = [
-    { label: 'Forward Annual Dividend Rate', key: 'forward_annual_dividend_rate' },
+    { label: 'Forward Annual Dividend', key: 'forward_annual_dividend_rate' },
     { label: 'Forward Annual Dividend Yield', key: 'forward_annual_dividend_yield' },
     { label: 'Payout Ratio', key: 'payout_ratio' },
     { label: 'Dividend Date', key: 'dividend_date' },
@@ -13,7 +15,19 @@ const SplitsDividendsTable = ({ splitsDividendsData }) => {
   ];
 
   const renderRow = (item, key) => {
-    const value = splitsDividendsData[item.key] || 'N/A';
+    let value = splitsDividendsData[item.key];
+
+    // Check if the value should be formatted as a percentage
+    if (item.key === 'forward_annual_dividend_yield' || item.key === 'payout_ratio') {
+      value = value ? `${(value * 100).toFixed(2)}%` : 'N/A';
+    } else {
+      value = value || 'N/A';
+    }
+
+    // Prepend currency symbol for "Forward Annual Dividend Rate"
+    if (item.key === 'forward_annual_dividend_rate') {
+      value = value ? `${currencySymbol}${(value)}` : 'N/A';
+    }
 
     return (
       <TableRow key={key}>
