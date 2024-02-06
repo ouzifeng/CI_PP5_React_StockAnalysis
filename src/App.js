@@ -8,38 +8,44 @@ import HomePage from './pages/HomePage';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Helmet } from 'react-helmet';
 import './assets/styles/custom.css';
-import { AuthProvider } from './context/AuthContext';
+import { AuthProvider } from './context/AuthContext'; // No need to import AuthContext here
 import Follow from './pages/Following';
 import DividendScreener from './pages/DividendScreener';
 import ContactForm from './pages/ContactUs';
 import ForgotPassword from './pages/ForgotPassword';  
 import ResetPassword from './pages/ResetPassword';
+import ProtectedRoute from './components/common/ProtectedRoute'; // Ensure this component is implemented correctly
+import RestrictedRoute from './components/common/RestrictedRoute'; // Ensure this component is implemented correctly
 
 
 function App() {
   return (
-    <>
-    <AuthProvider>
+    <AuthProvider> {/* AuthProvider wraps all components that need access to AuthContext */}
       <Helmet>
         <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
       </Helmet>
       <Router>
         <BaseLayout>
           <Routes>
+            {/* Accessible to all */}
             <Route path="/" element={<HomePage />} />
             <Route path="/stocks/:primary_ticker" element={<StockDetail />} />
-            <Route path="/login" element={<SignIn />} />
-            <Route path="/signup" element={<SignUp />} />
-            <Route path="/following" element={<Follow />} />
             <Route path="/dividend-screener" element={<DividendScreener />} />
             <Route path="/contact" element={<ContactForm />} />
-            <Route path="/forgot-password" element={<ForgotPassword />} />
-            <Route path="/reset-password/:uidb64/:token" element={<ResetPassword />} />
+
+            {/* Accessible only when not logged in */}
+            <Route path="/login" element={<RestrictedRoute component={SignIn} />} />
+            <Route path="/signup" element={<RestrictedRoute component={SignUp} />} />
+            <Route path="/forgot-password" element={<RestrictedRoute component={ForgotPassword} />} />
+            <Route path="/reset-password/:uidb64/:token" element={<RestrictedRoute component={ResetPassword} />} />
+
+            {/* Accessible only when logged in */}
+            <Route path="/following" element={<ProtectedRoute component={Follow} />} />
+            {/* ... other routes ... */}
           </Routes>
         </BaseLayout>
       </Router>
-      </AuthProvider>
-    </>
+    </AuthProvider>
   );
 }
 
