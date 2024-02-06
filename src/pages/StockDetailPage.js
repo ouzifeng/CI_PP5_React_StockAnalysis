@@ -224,15 +224,19 @@ const StockDetail = () => {
           <Grid item md={3} xs={12}>
             <SplitsDividendsTable general={stockData} splitsDividendsData={stockData.splits_dividends} />
           </Grid>
-          <Grid item xs={12}>
+
+        </Grid>
+        <Grid container item md={12} xs={12} spacing={3} sx={{ mt: 3 }}>
+                        <Grid item xs={12} md={4}>
             <FinancialsTable incomeStatements={stockData.income_statements} />
           </Grid>
-          <Grid item xs={12} style={{ marginTop: '20px' }}>
+          <Grid item xs={12} md={4}>
             <BalanceSheets balanceSheets={stockData.balance_sheets} />
           </Grid>
-          <Grid item xs={12} style={{ marginTop: '20px' }}>
+          <Grid item xs={12} md={4}>
             <CashFlows cashFlows={stockData.cash_flows} />
           </Grid>
+
         </Grid>
       </Grid>
     </ Suspense>

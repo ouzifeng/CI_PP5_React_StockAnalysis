@@ -27,21 +27,23 @@ const MarginTable = ({ highlights, general }) => {
   ];
 
   const formatValue = (key, value) => {
+    // Ensure the value is a number if it's a string representing a number
+    const numericValue = (typeof value === 'string' && !isNaN(value)) ? parseFloat(value) : value;
+
     if (key === "operating_margin_ttm" || key === "return_on_assets_ttm" || key === "return_on_equity_ttm" || key === "quarterly_earnings_growth_yoy" || key === "quarterly_earnings_growth_yoy" || key === "quarterly_revenue_growth_yoy") {
-      return `${(value * 100).toFixed(2)}%`;
+      return `${(numericValue * 100).toFixed(2)}%`;
     }
 
     if (key === "revenue_ttm" || key === "gross_profit_ttm") {
-      return `${currencySymbol}${(value / 1000000000).toFixed(2)}B`;
+      return `${currencySymbol}${(numericValue / 1000000000).toFixed(2)}B`;
     }
 
     if (key === "revenue_per_share_ttm") {
-      return `${currencySymbol}${(value)}`;
+      return `${currencySymbol}${numericValue.toFixed(2)}`;
     }
 
-    
-
-    return value;
+    // If it's not one of the specific keys, check if it's a number and format; otherwise, return as is
+    return (typeof numericValue === 'number') ? numericValue.toFixed(2) : value;
   };
 
 
