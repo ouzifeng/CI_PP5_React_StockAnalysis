@@ -30,6 +30,82 @@ const IncomeStatements = ({ incomeStatements }) => {
     setFilteredIncomeStatements(filteredData);
   }, [incomeStatements, selectedFrequency]);
 
+const financialMetricsOrder = [
+  'total_revenue',
+  'cost_of_revenue',
+  'gross_profit',
+  'research_development',
+  'selling_general_administrative',
+  'selling_and_marketing_expenses',
+  'total_operating_expenses',
+  'operating_income',
+  'ebit', // Earnings Before Interest and Taxes
+  'ebitda', // Earnings Before Interest, Taxes, Depreciation, and Amortization
+  'depreciation_and_amortization',
+  'reconciled_depreciation',
+  'non_operating_income_net_other',
+  'interest_income',
+  'net_interest_income',
+  'interest_expense',
+  'income_before_tax',
+  'tax_provision',
+  'income_tax_expense',
+  'extraordinary_items',
+  'non_recurring',
+  'other_items',
+  'minority_interest',
+  'effect_of_accounting_charges',
+  'net_income',
+  'discontinued_operations',
+  'net_income_from_continuing_ops',
+  'preferred_stock_and_other_adjustments',
+  'net_income_applicable_to_common_shares'
+];
+
+  const formatLabel = (key) => {
+    // Convert snake_case to Title Case
+    return key
+      .replace(/_/g, ' ')
+      .split(' ')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ');
+  };
+
+  // Prepare the data structure for rendering
+  const rows = financialMetricsOrder.map(key => {
+    const row = { metric: formatLabel(key) };
+    filteredIncomeStatements.forEach(statement => {
+      row[statement.date] = statement[key];
+    });
+    return row;
+  });
+
+  const renderTableCell = (row, key) => {
+    const value = row[key];
+    const numericValue = typeof value === 'number' ? value : parseFloat(value);
+    const displayedValue = !isNaN(numericValue) ? numericValue.toLocaleString() : value;
+    return <TableCell key={key}>{displayedValue}</TableCell>;
+  };
+
+  const downloadCSV = () => {
+    if (!isAuthenticated) {
+      setShowLoginAlert(true);
+      return;
+    }
+
+    if (filteredIncomeStatements.length > 0) {
+      const csvData = Papa.unparse(filteredIncomeStatements);
+      const blob = new Blob([csvData], { type: 'text/csv' });
+      const url = window.URL.createObjectURL(blob);
+
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'income_statements.csv';
+      a.click();
+      window.URL.revokeObjectURL(url);
+    }
+  };
+
   if (!filteredIncomeStatements || filteredIncomeStatements.length === 0) {
     return (
       <Paper elevation={3} sx={{ margin: 'auto', overflow: 'hidden' }}>
@@ -63,58 +139,6 @@ const IncomeStatements = ({ incomeStatements }) => {
       </Paper>
     );
   }
-
-  const keysToFilterOut = [
-    'id',
-    'filing_date',
-    'currency_symbol',
-    'type',
-    'general',
-    'preferred_stock_and_other_adjustments',
-    'discontinued_operations',
-    'other_items',
-    'non_recurring',
-    'extraordinary_items',
-    'selling_and_marketing_expenses',
-    'minority_interest',
-    'effect_of_accounting_charges'
-  ];
-
-  const filteredKeys = Object.keys(filteredIncomeStatements[0]).filter(key => !keysToFilterOut.includes(key));
-
-  const renderTableCell = (rowIndex, key, value) => {
-    if (keysToFilterOut.includes(key)) {
-      return null;
-    }
-
-    if (key === 'date') {
-      return <TableCell key={`${rowIndex}-${key}`}>{value}</TableCell>;
-    }
-
-    const numericValue = typeof value === 'number' ? value : parseFloat(value);
-    const displayedValue = !isNaN(numericValue) ? numericValue.toLocaleString() : value;
-
-    return <TableCell key={`${rowIndex}-${key}`}>{displayedValue}</TableCell>;
-  };
-
-  const downloadCSV = () => {
-    if (!isAuthenticated) {
-      setShowLoginAlert(true);
-      return;
-    }
-
-    if (filteredIncomeStatements.length > 0) {
-      const csvData = Papa.unparse(filteredIncomeStatements);
-      const blob = new Blob([csvData], { type: 'text/csv' });
-      const url = window.URL.createObjectURL(blob);
-
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = 'income_statements.csv';
-      a.click();
-      window.URL.revokeObjectURL(url);
-    }
-  };
 
   return (
     <>
@@ -162,17 +186,23 @@ const IncomeStatements = ({ incomeStatements }) => {
           <Table aria-label="Income Statement" size="small">
             <TableHead>
               <TableRow>
-                {filteredKeys.map((key, index) => (
-                  <TableCell key={index} sx={{ fontWeight: 'bold' }} className="MuiTableCell-sizeSmall">
-                    {key.replace(/_/g, ' ').toUpperCase()}
+                <TableCell sx={{ fontWeight: 'bold' }}></TableCell>
+                {filteredIncomeStatements.map((statement, index) => (
+                  <TableCell key={index} sx={{ fontWeight: 'bold' }}>
+                    {statement.date}
                   </TableCell>
                 ))}
               </TableRow>
             </TableHead>
             <TableBody>
-              {filteredIncomeStatements.map((item, rowIndex) => (
-                <TableRow key={`row-${rowIndex}`}>
-                  {filteredKeys.map(key => renderTableCell(rowIndex, key, item[key]))}
+              {rows.map((row, rowIndex) => (
+                <TableRow key={rowIndex}>
+                  <TableCell component="th" scope="row" sx={{ fontWeight: 'bold' }}>
+                    {row.metric}
+                  </TableCell>
+                  {Object.keys(row).filter(key => key !== 'metric').map(dateKey => (
+                    renderTableCell(row, dateKey)
+                  ))}
                 </TableRow>
               ))}
             </TableBody>
