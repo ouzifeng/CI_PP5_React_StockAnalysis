@@ -47,6 +47,62 @@ body {
     margin-left: 20px;
 }
 
+.ticker-container {
+  margin-top: 20px;
+  background-color: white;
+  border-radius: 8px;
+  height: 70px;
+}
+
+.stock-grid-item {
+  padding: 10px; /* Give some space around each grid item */
+}
+
+.stock-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center; /* Center content vertically */
+  width: 100%;
+}
+
+.stock-info {
+  display: flex;
+  justify-content: space-between;
+  width: 45%;
+  margin-bottom: 4px; /* Space between info and percent */
+}
+
+.stock-name {
+  font-size: 12px; /* Slightly larger font for visibility */
+  font-weight: 600; /* Bolder font weight */
+  color: #2978cf; /* Dark grey for better contrast */
+}
+
+.stock-price {
+  font-size: 12px; /* Consistent font size with stock name */
+  font-weight: 400; /* Regular font weight */
+}
+
+.stock-percent {
+  font-size: 14px;
+  font-weight: 400;
+}
+
+/* Specific color styles for performance indication */
+.stock-card.red .stock-percent {
+  color: #ff4d4f; /* Brighter red for negative values */
+}
+
+.stock-card.green .stock-percent {
+  color: #29a329; /* Brighter green for positive values */
+}
+
+.arrow {
+  display: inline-block; /* Align arrow with text */
+  margin-left: 5px; /* Space between percent and arrow */
+}
+
 /* Extra Small Devices (phones) */
 @media (max-width: 576px) {
 
@@ -62,7 +118,12 @@ body {
     margin-left: 24px !important;
     margin-top: 10px !important;
   }
+
+  .ticker-container {
+    display: none;
+  }  
 }
+
 
 .stickyHeader {
     position: sticky;
