@@ -151,7 +151,7 @@ const StockDetail = () => {
           <Grid item xs={12} sm={10}>
             <Typography variant="h4" className='stockname'>{stockData.name} Fundamental Analysis</Typography>
           </Grid>
-          <Grid item xs={3} sm={1}>
+          <Grid item xs={4} sm={1}>
             {!loadingIsFollowing && isAuthenticated ? (
               <Button
                 variant={isFollowing ? 'contained' : 'outlined'}
@@ -164,7 +164,7 @@ const StockDetail = () => {
               <Button variant="outlined" onClick={() => setShowLoginAlert(true)}>Follow</Button>
             )}
           </Grid>
-          <Grid item xs={4} sm={1}>
+          <Grid item xs={5} sm={1}>
             <Button variant="outlined" className='follow-button' onClick={handleMyNotesClick}>My Notes</Button>
             <MyNotesDrawer open={myNotesOpen} onClose={() => setMyNotesOpen(false)} stockId={primary_ticker} stockData={stockData} />
           </Grid>

@@ -1,77 +1,68 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useState } from 'react';
+import Grid from '@mui/material/Grid';
+import Skeleton from '@mui/material/Skeleton';
+import '../../assets/styles/custom.css';
 
-const Ticker = ({ className }) => {
-  const containerRef = useRef();
+const Ticker = () => {
+  const [stocks, setStocks] = useState([]);
+  const [loading, setLoading] = useState(true); // State to track loading status
 
   useEffect(() => {
-    const currentRef = containerRef.current; // Capture the ref value
+    // Simulate API fetch delay for demonstration purposes
+    const delay = setTimeout(() => {
+      setLoading(false); // Set loading to false after a delay (you can remove this in a real app)
+    }, 3000);
 
-    // Delay the script injection until after the current call stack clears
-    const timeoutId = setTimeout(() => {
-      if (currentRef) {
-        // Clear any existing content
-        currentRef.innerHTML = '';
+    // In a real app, replace the code inside this useEffect with your API fetch logic
 
-        // Create script element
-        const script = document.createElement('script');
-        script.src = 'https://s3.tradingview.com/external-embedding/embed-widget-tickers.js';
-        script.async = true;
-        script.type = 'text/javascript';
-        script.innerHTML = JSON.stringify({
-          "symbols": [
-            {
-              "proName": "FOREXCOM:SPXUSD",
-              "title": "S&P 500"
-            },
-            {
-              "description": "NASDAQ",
-              "proName": "NASDAQ:IXIC"
-            },
-            {
-              "description": "FTSE 100",
-              "proName": "SPREADEX:FTSE"
-            },
-            {
-              "description": "RUSSELL 2000",
-              "proName": "CAPITALCOM:RTY"
-            },
-            {
-              "description": "DAX",
-              "proName": "XETR:DAX"
-            },
-            {
-              "description": "DAX",
-              "proName": "XETR:DAX"
-            }
-          ],
-          "isTransparent": false,
-          "showSymbolLogo": false,
-          "colorTheme": "light",
-          "locale": "en"
-        });
+    // Clean up the timeout on unmount
+    return () => clearTimeout(delay);
+  }, []);
 
-        // Append script to the container
-        currentRef.appendChild(script);
-      }
-    }, 0);
-
-    // Cleanup function to remove script when component unmounts
-    return () => {
-      clearTimeout(timeoutId);
-      if (currentRef) {
-        const script = currentRef.querySelector('script');
-        if (script) {
-          currentRef.removeChild(script);
-        }
-      }
-    };
-  }, []); // Empty dependency array ensures the effect runs once on mount
+  useEffect(() => {
+    // Fetch stock data from your API
+    fetch('https://script.googleusercontent.com/macros/echo?user_content_key=6MbtMnAH8ZXd84aaH-UbWdfZe6UiDj-iUEEKOb1BmBYf9WTz1BR0xVLBZtHm3lwst4Ny7pcHGba3LDTkoqUAlHTDuuwUYz-ym5_BxDlH2jW0nuo2oDemN9CCS2h10ox_1xSncGQajx_ryfhECjZEnPeTRfTtTl31E7n6HlPkwXGCVvT2mUROOOaCQFgyCI-jNC3U55BpMAcbf-OKdJkmAjb8iiC6b9mkVfxHOPGXTDlwvughaiZuIQ&lib=MRK9JCV_hCBBxn1ilxmzDhCwsu2EIHoHF')
+      .then((response) => response.json())
+      .then((data) => {
+        // Process the data and set it in the state
+        const processedData = data.map((stock) => ({
+          ...stock,
+          color: stock.Percent < 0 ? 'red' : stock.Percent > 0 ? 'green' : 'black',
+        }));
+        setStocks(processedData);
+      })
+      .catch((error) => console.error('Error fetching stock data:', error));
+  }, []);
 
   return (
-    <div className="tradingview-widget-container" ref={containerRef}>
-      <div className="tradingview-widget-container__widget"></div>
-      <div className="tradingview-widget-copyright">
-      </div>
+    <div className="ticker-container">
+      <Grid container spacing={2}>
+        {loading
+          ? // Display skeleton components while loading
+            [1, 2, 3, 4, 5, 6].map((index) => (
+              <Grid item xs={12} md={2} key={index} className="stock-grid-item">
+                <Skeleton variant="rect" width="100%" height={50} animation="wave" />
+              </Grid>
+            ))
+          : // Display stock data once loading is complete
+            stocks.map((stock, index) => (
+              <Grid item xs={12} md={2} key={index} className="stock-grid-item">
+                <div className={`stock-card ${stock.color}`}>
+                  <div className="stock-info"> {/* This is the new div for name and price */}
+                    <div className="stock-name">
+                      {stock.Name}
+                    </div>
+                    <div className="stock-price">
+                      {stock.Price}
+                    </div>
+                  </div>
+                  <div className="stock-percent">
+                    {stock.Percent}% <span className="arrow">{stock.Percent >= 0 ? '▲' : '▼'}</span>
+                  </div>
+                </div>
+              </Grid>
+            ))}
+      </Grid>
     </div>
   );
 };
