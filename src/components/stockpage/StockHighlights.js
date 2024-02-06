@@ -12,7 +12,10 @@ import {
   Skeleton // Import Skeleton from Material-UI
 } from '@mui/material';
 
-const StockHighlights = ({ highlights }) => {
+const StockHighlights = ({ highlights, general }) => {
+  const currencySymbol = general.currency_symbol || '$'; // Default to '$' if undefined
+
+
   const firstColumnHighlights = [
     { key: "wall_street_target_price", label: "Target Price" },
     { key: "market_capitalization", label: "Market Cap" },
@@ -37,19 +40,31 @@ const StockHighlights = ({ highlights }) => {
     if (data.key === "market_capitalization") {
       const marketCap = parseFloat(highlights[data.key]);
       if (!isNaN(marketCap)) {
-        formattedValue = (marketCap / 1000000000).toFixed(2) + "B";
+        const marketCapBillion = (marketCap / 1000000000).toFixed(2);
+        formattedValue = currencySymbol + marketCapBillion + "B";
       }
-    } else if (data.key === "dividend_yield") {
-      const dividendYield = parseFloat(highlights[data.key]);
-      if (!isNaN(dividendYield)) {
-        formattedValue = (dividendYield * 100).toFixed(2) + "%";
-      }
-    } else if (data.key === "pe_ratio") {
-      const peRatio = parseFloat(highlights[data.key]);
-      if (!isNaN(peRatio)) {
-        formattedValue = peRatio.toFixed(2);
-      }
+  } else if (data.key === "dividend_yield") {
+    const dividendYield = parseFloat(highlights[data.key]);
+    if (!isNaN(dividendYield)) {
+      formattedValue = (dividendYield * 100).toFixed(2) + "%";
     }
+  } else if (data.key === "pe_ratio") {
+    const peRatio = parseFloat(highlights[data.key]);
+    if (!isNaN(peRatio)) {
+      formattedValue = peRatio.toFixed(2);
+    }
+  } else if (data.key === "peg_ratio") {
+    const pegRatio = parseFloat(highlights[data.key]);
+    if (!isNaN(pegRatio)) {
+      formattedValue = pegRatio.toFixed(2);
+    }
+  } else if (data.key === "profit_margin") {
+    const profitMargin = parseFloat(highlights[data.key]);
+    if (!isNaN(profitMargin)) {
+      formattedValue = (profitMargin * 100).toFixed(2) + "%";
+    }
+  }
+
 
     return (
       <TableRow key={key}>

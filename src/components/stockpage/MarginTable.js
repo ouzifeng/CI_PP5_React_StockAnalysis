@@ -11,7 +11,9 @@ import {
   Skeleton
 } from '@mui/material';
 
-const MarginTable = ({ highlights }) => {
+const MarginTable = ({ highlights, general }) => {
+  const currencySymbol = general.currency_symbol || '$';
+
   const marginData = [
     { key: "operating_margin_ttm", label: "Operating Margin (TTM)" },
     { key: "return_on_assets_ttm", label: "Return on Assets (TTM)" },
@@ -24,8 +26,23 @@ const MarginTable = ({ highlights }) => {
     { key: "quarterly_earnings_growth_yoy", label: "Quarterly Earnings Growth (YoY)" },
   ];
 
+  const formatValue = (key, value) => {
+    if (key === "operating_margin_ttm" || key === "return_on_assets_ttm" || key === "return_on_equity_ttm" || key === "quarterly_earnings_growth_yoy" || key === "quarterly_earnings_growth_yoy") {
+      return `${(value * 100).toFixed(2)}%`;
+    }
+
+    if (key === "revenue_ttm" || key === "gross_profit_ttm") {
+      return `${currencySymbol}${(value / 1000000000).toFixed(2)}B`;
+    }
+
+    
+
+    return value;
+  };
+
+
   const renderRow = (data, key) => {
-    const formattedValue = highlights[data.key] || 'N/A';
+    const formattedValue = formatValue(data.key, highlights[data.key]) || 'N/A';
 
     return (
       <TableRow key={key}>
