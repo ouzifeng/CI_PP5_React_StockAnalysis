@@ -27,12 +27,16 @@ const MarginTable = ({ highlights, general }) => {
   ];
 
   const formatValue = (key, value) => {
-    if (key === "operating_margin_ttm" || key === "return_on_assets_ttm" || key === "return_on_equity_ttm" || key === "quarterly_earnings_growth_yoy" || key === "quarterly_earnings_growth_yoy") {
+    if (key === "operating_margin_ttm" || key === "return_on_assets_ttm" || key === "return_on_equity_ttm" || key === "quarterly_earnings_growth_yoy" || key === "quarterly_earnings_growth_yoy" || key === "quarterly_revenue_growth_yoy") {
       return `${(value * 100).toFixed(2)}%`;
     }
 
     if (key === "revenue_ttm" || key === "gross_profit_ttm") {
       return `${currencySymbol}${(value / 1000000000).toFixed(2)}B`;
+    }
+
+    if (key === "revenue_per_share_ttm") {
+      return `${currencySymbol}${(value)}`;
     }
 
     
