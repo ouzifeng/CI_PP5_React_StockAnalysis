@@ -222,7 +222,7 @@ const StockDetail = () => {
             <TechnicalsTable technicalsData={stockData.technicals} />
           </Grid>
           <Grid item md={3} xs={12}>
-            <SplitsDividendsTable splitsDividendsData={stockData.splits_dividends} />
+            <SplitsDividendsTable general={stockData} splitsDividendsData={stockData.splits_dividends} />
           </Grid>
           <Grid item xs={12}>
             <FinancialsTable incomeStatements={stockData.income_statements} />
