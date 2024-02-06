@@ -9,12 +9,13 @@ function DividendScreener() {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await axios.get('https://django-stocks-ecbc6bc5e208.herokuapp.com/api/stocks');
+                const response = await axios.get('https://django-stocks-ecbc6bc5e208.herokuapp.com/api/dividend_data');
                 setStocks(response.data);
             } catch (error) {
                 console.error('Error fetching stocks:', error);
             }
         };
+
 
         fetchData();
     }, []);
@@ -51,19 +52,20 @@ function DividendScreener() {
                             {/* Add more columns as needed */}
                         </TableRow>
                     </TableHead>
-                    <TableBody>
-                        {filteredStocks.map((stock) => (
-                            <TableRow key={stock.id}>
-                                <TableCell component="th" scope="row">
-                                    {stock.name}
-                                </TableCell>
-                                <TableCell align="right">{stock.dividendYield}</TableCell>
-                                <TableCell align="right">{stock.marketCap}</TableCell>
-                                <TableCell align="right">{stock.peRatio}</TableCell>
-                                {/* Add more cells as needed */}
-                            </TableRow>
-                        ))}
-                    </TableBody>
+<TableBody>
+    {filteredStocks.map((stock, index) => (
+        <TableRow key={index}>
+            {Object.entries(stock).map(([key, value]) => (
+                <React.Fragment key={key}>
+                    <TableCell component="th" scope="row">
+                        {key}
+                    </TableCell>
+                    <TableCell align="right">{value}</TableCell>
+                </React.Fragment>
+            ))}
+        </TableRow>
+    ))}
+</TableBody>
                 </Table>
             </Paper>
         </div>
