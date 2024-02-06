@@ -1,7 +1,9 @@
 import React from 'react';
 import { Typography, Table, TableBody, TableCell, TableContainer, TableRow, Paper, Box, Skeleton } from '@mui/material';
 
-const ValuationTable = ({ valuationData }) => {
+const ValuationTable = ({ valuationData, general }) => {
+  const currencySymbol = general.currency_symbol || '$';
+
   const valuationItems = [
     { label: 'Trailing P/E', key: 'trailing_pe' },
     { label: 'Forward P/E', key: 'forward_pe' },
@@ -12,8 +14,26 @@ const ValuationTable = ({ valuationData }) => {
     { label: 'Enterprise Value-to-EBITDA', key: 'enterprise_value_ebitda' },
   ];
 
+  const formatValue = (key, value) => {
+    // Convert value to a number if it's a valid numeric string
+    const numericValue = (typeof value === 'string' && !isNaN(value)) ? parseFloat(value) : value;
+
+    if (key === 'enterprise_value') {
+      // Format monetary values in billions and append 'B'
+      const valueBillion = numericValue / 1000000000;
+      return `${currencySymbol}${valueBillion.toFixed(2)}B`;
+    } else if (['trailing_pe', 'forward_pe', 'price_sales_ttm', 'price_book_mrq'].includes(key)) {
+      // Format ratios to 2 decimal places
+      return numericValue.toFixed(2);
+    } else {
+      // For other values, check if it's a number and format; otherwise, return as is
+      return (typeof numericValue === 'number') ? `${numericValue.toFixed(2)}` : value;
+    }
+  };
+
   const renderRow = (item, key) => {
-    const value = valuationData[item.key] || 'N/A';
+    const rawValue = valuationData[item.key];
+    const value = rawValue ? formatValue(item.key, rawValue) : 'N/A';
 
     return (
       <TableRow key={key}>
@@ -34,9 +54,7 @@ const ValuationTable = ({ valuationData }) => {
         <Table aria-label="Valuation Table">
           <TableBody>
             {valuationData ? (
-              valuationItems
-                .filter(item => item.key !== 'general') // Filter out "General"
-                .map((item, index) => renderRow(item, index))
+              valuationItems.map((item, index) => renderRow(item, index))
             ) : (
               <TableRow>
                 <TableCell>

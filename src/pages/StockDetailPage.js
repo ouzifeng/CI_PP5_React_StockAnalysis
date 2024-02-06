@@ -177,7 +177,7 @@ const StockDetail = () => {
         )}
         {!loadingStockData && stockData && (
           <Grid item md={5} xs={12}>
-            <StockHighlights highlights={stockData.highlights} />
+            <StockHighlights general={stockData} highlights={stockData.highlights} />
           </Grid>
         )}
         <Grid container item xs={12} spacing={3}>
@@ -213,10 +213,10 @@ const StockDetail = () => {
         </Grid>
         <Grid container item md={12} xs={12} spacing={3} sx={{ mt: 3 }}>
           <Grid item md={3} xs={12}>
-            <MarginTable highlights={stockData.highlights} />
+            <MarginTable general={stockData} highlights={stockData.highlights} />
           </Grid>
           <Grid item md={3} xs={12}>
-            <ValuationTable valuationData={stockData.valuation} />
+            <ValuationTable general={stockData} valuationData={stockData.valuation} />
           </Grid>
           <Grid item md={3} xs={12}>
             <TechnicalsTable technicalsData={stockData.technicals} />

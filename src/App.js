@@ -8,14 +8,14 @@ import HomePage from './pages/HomePage';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Helmet } from 'react-helmet';
 import './assets/styles/custom.css';
-import { AuthProvider } from './context/AuthContext'; // No need to import AuthContext here
+import { AuthProvider } from './context/AuthContext';
 import Follow from './pages/Following';
 import DividendScreener from './pages/DividendScreener';
 import ContactForm from './pages/ContactUs';
 import ForgotPassword from './pages/ForgotPassword';  
 import ResetPassword from './pages/ResetPassword';
-import ProtectedRoute from './components/common/ProtectedRoute'; // Ensure this component is implemented correctly
-import RestrictedRoute from './components/common/RestrictedRoute'; // Ensure this component is implemented correctly
+import ProtectedRoute from './components/common/ProtectedRoute';
+import RestrictedRoute from './components/common/RestrictedRoute';
 
 
 function App() {
@@ -41,7 +41,6 @@ function App() {
 
             {/* Accessible only when logged in */}
             <Route path="/following" element={<ProtectedRoute component={Follow} />} />
-            {/* ... other routes ... */}
           </Routes>
         </BaseLayout>
       </Router>
