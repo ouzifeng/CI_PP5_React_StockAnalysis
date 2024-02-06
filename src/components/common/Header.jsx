@@ -193,6 +193,7 @@ function Header() {
         </Menu>
     );
 
+    const [key, setKey] = useState(0);
 
     return (
         <Box sx={{ flexGrow: 1 }}>
@@ -222,6 +223,7 @@ function Header() {
                                 <SearchIcon />
                             </SearchIconWrapper>
                             <Autocomplete
+                                key={key} 
                                 freeSolo
                                 id="search-autocomplete"
                                 options={searchResults}
@@ -230,10 +232,11 @@ function Header() {
                                 setSearchInput(newInputValue);
                                 }}
                                 onChange={(event, value) => {
-                                if (value && value.primary_ticker) {
+                                    if (value && value.primary_ticker) {
                                     navigate(`/stocks/${value.primary_ticker}`);
                                     setSearchInput('');
-                                }
+                                    setKey(prev => prev + 1);
+                                    }
                                 }}
                                 getOptionLabel={(option) => `${option.name} (${option.primary_ticker})`}
                                 renderInput={(params) => (
@@ -249,7 +252,7 @@ function Header() {
                                         {params.InputProps.endAdornment}
                                         </React.Fragment>
                                     ),
-                                    style: { width: '100%', padding: '3px'  }, // Adjust width as needed
+                                    style: { width: '100%', padding: '3px'  }
                                     }}
                                 />
                                 )}
