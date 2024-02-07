@@ -124,6 +124,10 @@ body {
   .ticker-container {
     display: none;
   }  
+
+  .content-container {
+    padding-top: 150px;
+}
 }
 
 
