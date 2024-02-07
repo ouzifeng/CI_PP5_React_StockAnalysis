@@ -7,7 +7,6 @@ import StockDetail from './pages/StockDetailPage';
 import HomePage from './pages/HomePage';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Helmet } from 'react-helmet';
-import './assets/styles/custom.css';
 import { AuthProvider } from './context/AuthContext';
 import Follow from './pages/Following';
 import DividendScreener from './pages/DividendScreener';
@@ -16,13 +15,21 @@ import ForgotPassword from './pages/ForgotPassword';
 import ResetPassword from './pages/ResetPassword';
 import ProtectedRoute from './components/common/ProtectedRoute';
 import RestrictedRoute from './components/common/RestrictedRoute';
+import './assets/styles/custom.css';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
+
+const theme = createTheme({
+  typography: {
+    fontFamily: '"OPen Sans", sans-serif',
+  },
+});
 
 
 function App() {
   return (
+    <ThemeProvider theme={theme}>
     <AuthProvider> {/* AuthProvider wraps all components that need access to AuthContext */}
       <Helmet>
-        <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
       </Helmet>
       <Router>
         <BaseLayout>
@@ -45,6 +52,7 @@ function App() {
         </BaseLayout>
       </Router>
     </AuthProvider>
+    </ThemeProvider>
   );
 }
 
