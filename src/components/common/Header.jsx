@@ -28,7 +28,7 @@ import useDebounce from './useDebounce';
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',
   borderRadius: theme.shape.borderRadius,
-  backgroundColor: alpha(theme.palette.common.white, 0.75),
+  backgroundColor: alpha(theme.palette.common.white, 1),
   '&:hover': {
     backgroundColor: theme.palette.common.white,
   },
@@ -70,6 +70,7 @@ function Header() {
     const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
     const navigate = useNavigate();
     const [searchInput, setSearchInput] = useState('');
+    const [searchKey, setSearchKey] = useState(0);
     const [searchResults, setSearchResults] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
     const debouncedSearchInput = useDebounce(searchInput, 500);    
@@ -137,6 +138,7 @@ function Header() {
             console.error('Logout Error: ', error);
         }
     };
+  
 
 
     const renderMenu = (
@@ -222,38 +224,42 @@ function Header() {
                                 <SearchIcon />
                             </SearchIconWrapper>
                             <Autocomplete
-                                freeSolo
-                                id="search-autocomplete"
-                                options={searchResults}
-                                loading={isLoading}
-                                onInputChange={(event, newInputValue) => {
+                            key={searchKey}
+                            freeSolo
+                            id="search-autocomplete"
+                            options={searchResults}
+                            loading={isLoading}
+                            inputValue={searchInput} // This ensures the input value is controlled by your state
+                            onInputChange={(event, newInputValue) => {
                                 setSearchInput(newInputValue);
-                                }}
-                                onChange={(event, value) => {
-                                if (value && value.primary_ticker) {
-                                    navigate(`/stocks/${value.primary_ticker}`);
-                                    setSearchInput('');
-                                }
-                                }}
-                                getOptionLabel={(option) => `${option.name} (${option.primary_ticker})`}
-                                renderInput={(params) => (
+                            }}
+                            onChange={(event, value) => {
+                            if (value && value.primary_ticker) {
+                                navigate(`/stocks/${value.primary_ticker}`);
+                                setSearchInput(''); // This should clear the input, but now also is tied to inputValue prop
+                                setSearchKey(prevKey => prevKey + 1); // Increment a key to force re-render
+                            }
+                            }}
+                            getOptionLabel={(option) => `${option.name} (${option.primary_ticker})`}
+                            renderInput={(params) => (
                                 <TextField
-                                    {...params}
-                                    onFocus={() => setFocused(true)}
-                                    onBlur={() => setFocused(false)}
-                                    InputProps={{
+                                {...params}
+                                onFocus={() => setFocused(true)}
+                                onBlur={() => setFocused(false)}
+                                InputProps={{
                                     ...params.InputProps,
                                     endAdornment: (
-                                        <React.Fragment>
+                                    <React.Fragment>
                                         {isLoading ? <CircularProgress color="inherit" size={16} /> : null}
                                         {params.InputProps.endAdornment}
-                                        </React.Fragment>
+                                    </React.Fragment>
                                     ),
-                                    style: { width: '100%', padding: '3px'  }, // Adjust width as needed
-                                    }}
+                                    style: { width: '100%', padding: '3px' },
+                                }}
                                 />
-                                )}
+                            )}
                             />
+
                             </Search>
                         <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
                             <IconButton size="large" aria-label="show 4 new mails" color="inherit">
