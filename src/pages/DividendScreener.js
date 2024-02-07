@@ -1,28 +1,34 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Slider, Typography, Table, TableBody, TableCell, TableHead, TableRow, Paper, Box } from '@mui/material';
+import { Slider, Typography, Table, TableBody, TableCell, TableHead, TableRow, Paper, Box, Skeleton, Grid } from '@mui/material';
 import ReactCountryFlag from "react-country-flag";
 import { useNavigate } from 'react-router-dom';
 
 function DividendScreener() {
   const [stocks, setStocks] = useState([]);
-  const [dividendThreshold, setDividendThreshold] = useState(0);
+  const [dividendThreshold, setDividendThreshold] = useState([0, 20]); // Updated to accept an array of values
+  const [payoutRatio, setPayoutRatio] = useState([0, 100]);
+  const [peRatio, setPeRatio] = useState([0, 100]); // Updated to accept an array of values
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
+        setLoading(true); // Start loading
         const response = await axios.get('https://django-stocks-ecbc6bc5e208.herokuapp.com/api/dividend_data');
         setStocks(response.data.results);
       } catch (error) {
         console.error('Error fetching stocks:', error);
+      } finally {
+        setLoading(false); // Stop loading regardless of the outcome
       }
     };
 
     fetchData();
   }, []);
 
-    // Function to get style for Payout Ratio
+  // Function to get style for Payout Ratio
   const getPayoutRatioStyle = (ratio) => {
     if (ratio > 100) {
       return { color: 'red' }; // Red for high risk
@@ -42,12 +48,17 @@ function DividendScreener() {
     return { color: 'green' }; // Green for positive growth
   };
 
-  const handleSliderChange = (event, newValue) => {
+  const handleChangeDividend = (event, newValue) => {
     setDividendThreshold(newValue);
   };
 
-  // Assuming dividend_yield is a decimal like 0.0050 for 0.50%
-  const filteredStocks = stocks.filter(stock => (parseFloat(stock.dividend_yield) * 100) >= dividendThreshold);
+  const handleChangePayoutRatio = (event, newValue) => {
+    setPayoutRatio(newValue);
+  };
+
+  const handleChangePERatio = (event, newValue) => {
+    setPeRatio(newValue);
+  };  
 
   const formatMarketCap = (value) => {
     return `${(value / 1e9).toFixed(2)}b`;
@@ -61,21 +72,72 @@ function DividendScreener() {
     navigate(`/stocks/${primaryTicker}`);
   };
 
+  // Filter stocks based on dividend threshold
+  const filteredStocks = stocks.filter(stock => {
+    const dividendYield = parseFloat(stock.dividend_yield) * 100;
+    const payoutRatioValue = parseFloat(stock.payout_ratio) * 100;
+    const peRatioValue = parseFloat(stock.pe_ratio);
+
+    // Check if all criteria match
+    const dividendPass = dividendYield >= dividendThreshold[0] && dividendYield <= dividendThreshold[1];
+    const payoutRatioPass = payoutRatioValue >= payoutRatio[0] && payoutRatioValue <= payoutRatio[1];
+    const peRatioPass = peRatioValue >= peRatio[0] && peRatioValue <= peRatio[1];
+
+    return dividendPass && payoutRatioPass && peRatioPass;
+  });
+
   return (
     <div>
-      <Typography id="dividend-slider" gutterBottom>
-        Yield Filter: {dividendThreshold}%
-      </Typography>
-      <Slider
-        value={dividendThreshold}
-        onChange={handleSliderChange}
-        aria-labelledby="dividend-slider"
-        valueLabelDisplay="auto"
-        step={0.1}
-        marks
-        min={0}
-        max={20}
-      />
+<Grid container spacing={3} mt={4}>
+  <Grid item md={2}>
+    <Typography id="dividend-slider" variant="body2" gutterBottom>
+      Dividend Yield:<br></br> {dividendThreshold[0]}% - {dividendThreshold[1]}%
+    </Typography>
+    <Slider
+      size="small"
+      value={dividendThreshold}
+      onChange={handleChangeDividend}
+      aria-labelledby="dividend-slider"
+      valueLabelDisplay="auto"
+      getAriaValueText={(value) => `${value[0]}% - ${value[1]}%`}
+      min={0}
+      max={20}
+      sx={{ width: '80%' }}
+    />
+  </Grid>
+  <Grid item md={2}>
+    <Typography id="payout-ratio-slider" variant="body2" gutterBottom>
+      Payout Ratio:<br></br> {payoutRatio[0]}% - {payoutRatio[1]}%
+    </Typography>
+    <Slider
+      size="small"
+      value={payoutRatio}
+      onChange={handleChangePayoutRatio}
+      aria-labelledby="payout-ratio-slider"
+      valueLabelDisplay="auto"
+      getAriaValueText={(value) => `${value[0]}% - ${value[1]}%`}
+      min={0}
+      max={100}
+      sx={{ width: '80%' }}
+    />
+  </Grid>
+  <Grid item md={2}>
+  <Typography id="pe-ratio-slider" variant="body2" gutterBottom>
+    PE Ratio: <br></br>{peRatio[0]} - {peRatio[1]}
+  </Typography>
+  <Slider
+    size="small"
+    value={peRatio}
+    onChange={handleChangePERatio}
+    aria-labelledby="pe-ratio-slider"
+    valueLabelDisplay="auto"
+    getAriaValueText={(value) => `${value[0]} - ${value[1]}`}
+    min={0}
+    max={100}
+    sx={{ width: '80%' }}
+    />
+  </Grid>
+</Grid>
       <Paper>
         <Table>
           <TableHead>
@@ -86,44 +148,54 @@ function DividendScreener() {
               <TableCell align="right">Dividend Yield</TableCell>
               <TableCell align="right">Forward Yield</TableCell>
               <TableCell align="right">Payout Ratio</TableCell>
-              <TableCell align="right">Div 5 year Growth rate</TableCell>
-              <TableCell align="right">Div Date</TableCell>              
+              <TableCell align="right">Div 5yr CAGR</TableCell>
+              <TableCell align="right">Div Date</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {filteredStocks.map((stock, index) => (
-              <TableRow key={index} hover style={{ cursor: 'pointer' }} onClick={() => handleRowClick(stock.primary_ticker)}>
-                <TableCell component="th" scope="row">
-                  <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                    <ReactCountryFlag
-                      countryCode={stock.country_iso}
-                      svg
-                      style={{
-                        width: '2em',
-                        height: '2em',
-                        marginRight: '0.5em', // Add some space between the flag and the text
-                      }}
-                      title={stock.country_iso}
-                    />
-                    <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-                      <Typography variant="body1">{stock.name}</Typography>
-                      <Typography variant="body2" color="textSecondary">{stock.primary_ticker} - {stock.exchange}</Typography>
+            {loading ? (
+              [...Array(5)].map((e, i) => (
+                <TableRow key={i}>
+                  <TableCell colSpan={8}>
+                    <Skeleton variant="rectangular" width="100%" height={53} animation="wave" />
+                  </TableCell>
+                </TableRow>
+              ))
+            ) : (
+              filteredStocks.map((stock, index) => (
+                <TableRow key={index} hover style={{ cursor: 'pointer' }} onClick={() => handleRowClick(stock.primary_ticker)}>
+                  <TableCell component="th" scope="row">
+                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                      <ReactCountryFlag
+                        countryCode={stock.country_iso}
+                        svg
+                        style={{
+                          width: '2em',
+                          height: '2em',
+                          marginRight: '0.5em', // Add some space between the flag and the text
+                        }}
+                        title={stock.country_iso}
+                      />
+                      <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+                        <Typography variant="body1">{stock.name}</Typography>
+                        <Typography variant="body2" color="textSecondary">{stock.primary_ticker} - {stock.exchange}</Typography>
+                      </Box>
                     </Box>
-                  </Box>
-                </TableCell>
-                <TableCell align="right">{stock.currency_symbol	}{formatMarketCap(stock.market_capitalization)}</TableCell>
-                <TableCell align="right">{parseFloat(stock.pe_ratio).toFixed(2)}</TableCell>
-                <TableCell align="right">{formatPercentage(stock.dividend_yield)}</TableCell>
-                <TableCell align="right">{formatPercentage(stock.forward_annual_dividend_yield)}</TableCell>
-          <TableCell align="right" style={getPayoutRatioStyle(stock.payout_ratio)}>
-            {Number(stock.payout_ratio).toFixed(2)}%
-          </TableCell>
-          <TableCell align="right" style={getDividendGrowthStyle(stock.cagr_5_years)}>
-             {Number(stock.cagr_5_years).toFixed(2)}%
-          </TableCell>
-                <TableCell align="right">{stock.dividend_date}</TableCell>                
-              </TableRow>
-            ))}
+                  </TableCell>
+                  <TableCell align="right">{stock.currency_symbol}{formatMarketCap(stock.market_capitalization)}</TableCell>
+                  <TableCell align="right">{parseFloat(stock.pe_ratio).toFixed(2)}</TableCell>
+                  <TableCell align="right">{formatPercentage(stock.dividend_yield)}</TableCell>
+                  <TableCell align="right">{formatPercentage(stock.forward_annual_dividend_yield)}</TableCell>
+                  <TableCell align="right" style={getPayoutRatioStyle(stock.payout_ratio)}>
+                    {formatPercentage(stock.payout_ratio)}
+                  </TableCell>
+                  <TableCell align="right" style={getDividendGrowthStyle(stock.cagr_5_years)}>
+                    {Number(stock.cagr_5_years).toFixed(2)}%
+                  </TableCell>
+                  <TableCell align="right">{stock.dividend_date}</TableCell>
+                </TableRow>
+              ))
+            )}
           </TableBody>
         </Table>
       </Paper>
