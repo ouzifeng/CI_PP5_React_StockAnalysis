@@ -1,52 +1,35 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Slider, Typography, Table, TableBody, TableCell, TableHead, TableRow, Paper, Box, Skeleton, Grid } from '@mui/material';
+import { Slider, Typography, Table, TableBody, TableCell, TableHead, TableRow, Paper, Box, Skeleton, Grid, IconButton } from '@mui/material';
 import ReactCountryFlag from "react-country-flag";
+import FavoriteIcon from '@mui/icons-material/Favorite';
+import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import { useNavigate } from 'react-router-dom';
 
 function DividendScreener() {
   const [stocks, setStocks] = useState([]);
-  const [dividendThreshold, setDividendThreshold] = useState([0, 20]); // Updated to accept an array of values
+  const [dividendThreshold, setDividendThreshold] = useState([0, 20]);
   const [payoutRatio, setPayoutRatio] = useState([0, 100]);
-  const [peRatio, setPeRatio] = useState([0, 100]); // Updated to accept an array of values
+  const [peRatio, setPeRatio] = useState([0, 100]);
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
+  const [favoriteStocks, setFavoriteStocks] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        setLoading(true); // Start loading
+        setLoading(true);
         const response = await axios.get('https://django-stocks-ecbc6bc5e208.herokuapp.com/api/dividend_data');
         setStocks(response.data.results);
       } catch (error) {
         console.error('Error fetching stocks:', error);
       } finally {
-        setLoading(false); // Stop loading regardless of the outcome
+        setLoading(false);
       }
     };
 
     fetchData();
   }, []);
-
-  // Function to get style for Payout Ratio
-  const getPayoutRatioStyle = (ratio) => {
-    if (ratio > 100) {
-      return { color: 'red' }; // Red for high risk
-    } else if (ratio >= 60) {
-      return { color: 'orange' }; // Amber for moderate risk
-    }
-    return { color: 'green' }; // Green for low risk
-  };
-
-  // Function to get style for Dividend Growth
-  const getDividendGrowthStyle = (growth) => {
-    if (growth < 0) {
-      return { color: 'red' }; // Red for negative growth
-    } else if (growth === 0) {
-      return { color: 'orange' }; // Amber for no growth
-    }
-    return { color: 'green' }; // Green for positive growth
-  };
 
   const handleChangeDividend = (event, newValue) => {
     setDividendThreshold(newValue);
@@ -72,13 +55,47 @@ function DividendScreener() {
     navigate(`/stocks/${primaryTicker}`);
   };
 
-  // Filter stocks based on dividend threshold
+  const handleFavoriteClick = (event, primaryTicker) => {
+    event.stopPropagation();
+
+    const isFavorite = favoriteStocks.some(stock => stock.primary_ticker === primaryTicker);
+
+    if (isFavorite) {
+      const updatedFavorites = favoriteStocks.filter(stock => stock.primary_ticker !== primaryTicker);
+      setFavoriteStocks(updatedFavorites);
+    } else {
+      const updatedFavorites = [...favoriteStocks, { primary_ticker: primaryTicker }];
+      setFavoriteStocks(updatedFavorites);
+    }
+  };
+
+  const isFavoriteStock = (primaryTicker) => {
+    return favoriteStocks.some(stock => stock.primary_ticker === primaryTicker);
+  };  
+
+  const getPayoutRatioStyle = (ratio) => {
+    if (ratio > 100) {
+      return { color: 'red' };
+    } else if (ratio >= 60) {
+      return { color: 'orange' };
+    }
+    return { color: 'green' };
+  };
+
+  const getDividendGrowthStyle = (growth) => {
+    if (growth < 0) {
+      return { color: 'red' };
+    } else if (growth === 0) {
+      return { color: 'orange' };
+    }
+    return { color: 'green' };
+  };
+
   const filteredStocks = stocks.filter(stock => {
     const dividendYield = parseFloat(stock.dividend_yield) * 100;
     const payoutRatioValue = parseFloat(stock.payout_ratio) * 100;
     const peRatioValue = parseFloat(stock.pe_ratio);
 
-    // Check if all criteria match
     const dividendPass = dividendYield >= dividendThreshold[0] && dividendYield <= dividendThreshold[1];
     const payoutRatioPass = payoutRatioValue >= payoutRatio[0] && payoutRatioValue <= payoutRatio[1];
     const peRatioPass = peRatioValue >= peRatio[0] && peRatioValue <= peRatio[1];
@@ -88,56 +105,56 @@ function DividendScreener() {
 
   return (
     <div>
-<Grid container spacing={3} mt={4}>
-  <Grid item md={2}>
-    <Typography id="dividend-slider" variant="body2" gutterBottom>
-      Dividend Yield:<br></br> {dividendThreshold[0]}% - {dividendThreshold[1]}%
-    </Typography>
-    <Slider
-      size="small"
-      value={dividendThreshold}
-      onChange={handleChangeDividend}
-      aria-labelledby="dividend-slider"
-      valueLabelDisplay="auto"
-      getAriaValueText={(value) => `${value[0]}% - ${value[1]}%`}
-      min={0}
-      max={20}
-      sx={{ width: '80%' }}
-    />
-  </Grid>
-  <Grid item md={2}>
-    <Typography id="payout-ratio-slider" variant="body2" gutterBottom>
-      Payout Ratio:<br></br> {payoutRatio[0]}% - {payoutRatio[1]}%
-    </Typography>
-    <Slider
-      size="small"
-      value={payoutRatio}
-      onChange={handleChangePayoutRatio}
-      aria-labelledby="payout-ratio-slider"
-      valueLabelDisplay="auto"
-      getAriaValueText={(value) => `${value[0]}% - ${value[1]}%`}
-      min={0}
-      max={100}
-      sx={{ width: '80%' }}
-    />
-  </Grid>
-  <Grid item md={2}>
-  <Typography id="pe-ratio-slider" variant="body2" gutterBottom>
-    PE Ratio: <br></br>{peRatio[0]} - {peRatio[1]}
-  </Typography>
-  <Slider
-    size="small"
-    value={peRatio}
-    onChange={handleChangePERatio}
-    aria-labelledby="pe-ratio-slider"
-    valueLabelDisplay="auto"
-    getAriaValueText={(value) => `${value[0]} - ${value[1]}`}
-    min={0}
-    max={100}
-    sx={{ width: '80%' }}
-    />
-  </Grid>
-</Grid>
+      <Grid container spacing={3} mt={4}>
+        <Grid item md={2}>
+          <Typography id="dividend-slider" variant="body2" gutterBottom>
+            Dividend Yield:<br></br> {dividendThreshold[0]}% - {dividendThreshold[1]}%
+          </Typography>
+          <Slider
+            size="small"
+            value={dividendThreshold}
+            onChange={handleChangeDividend}
+            aria-labelledby="dividend-slider"
+            valueLabelDisplay="auto"
+            getAriaValueText={(value) => `${value[0]}% - ${value[1]}%`}
+            min={0}
+            max={20}
+            sx={{ width: '80%' }}
+          />
+        </Grid>
+        <Grid item md={2}>
+          <Typography id="payout-ratio-slider" variant="body2" gutterBottom>
+            Payout Ratio:<br></br> {payoutRatio[0]}% - {payoutRatio[1]}%
+          </Typography>
+          <Slider
+            size="small"
+            value={payoutRatio}
+            onChange={handleChangePayoutRatio}
+            aria-labelledby="payout-ratio-slider"
+            valueLabelDisplay="auto"
+            getAriaValueText={(value) => `${value[0]}% - ${value[1]}%`}
+            min={0}
+            max={100}
+            sx={{ width: '80%' }}
+          />
+        </Grid>
+        <Grid item md={2}>
+          <Typography id="pe-ratio-slider" variant="body2" gutterBottom>
+            PE Ratio: <br></br>{peRatio[0]} - {peRatio[1]}
+          </Typography>
+          <Slider
+            size="small"
+            value={peRatio}
+            onChange={handleChangePERatio}
+            aria-labelledby="pe-ratio-slider"
+            valueLabelDisplay="auto"
+            getAriaValueText={(value) => `${value[0]} - ${value[1]}`}
+            min={0}
+            max={100}
+            sx={{ width: '80%' }}
+          />
+        </Grid>
+      </Grid>
       <Paper>
         <Table>
           <TableHead>
@@ -150,13 +167,14 @@ function DividendScreener() {
               <TableCell align="right">Payout Ratio</TableCell>
               <TableCell align="right">Div 5yr CAGR</TableCell>
               <TableCell align="right">Div Date</TableCell>
+              <TableCell align="right">Favorite</TableCell> {/* New column */}
             </TableRow>
           </TableHead>
           <TableBody>
             {loading ? (
               [...Array(5)].map((e, i) => (
                 <TableRow key={i}>
-                  <TableCell colSpan={8}>
+                  <TableCell colSpan={9}>
                     <Skeleton variant="rectangular" width="100%" height={53} animation="wave" />
                   </TableCell>
                 </TableRow>
@@ -193,6 +211,11 @@ function DividendScreener() {
                     {Number(stock.cagr_5_years).toFixed(2)}%
                   </TableCell>
                   <TableCell align="right">{stock.dividend_date}</TableCell>
+                  <TableCell align="right">
+                    <IconButton onClick={(event) => handleFavoriteClick(event, stock.primary_ticker)}>
+                      {isFavoriteStock(stock.primary_ticker) ? <FavoriteIcon color="primary" /> : <FavoriteBorderIcon color="disabled" />}
+                    </IconButton>
+                  </TableCell>
                 </TableRow>
               ))
             )}

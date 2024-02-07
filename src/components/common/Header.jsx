@@ -200,7 +200,7 @@ function Header() {
         <Box sx={{ flexGrow: 1 }}>
             <AppBar className="stickyHeader">
                 <Container maxWidth="xl" style={{ maxWidth: '1280px', margin: '0 auto' }}>
-                    <Toolbar>
+                    <Toolbar sx={{ display: { xs: 'none', md: 'flex' } }}>
                         <IconButton
                             size="large"
                             edge="start"
@@ -309,6 +309,99 @@ function Header() {
                             </IconButton>
                         </Box>
                     </Toolbar>
+
+            <>
+                {/* Row 1 - Mobile Only */}
+            <Toolbar sx={{ display: { xs: 'flex', md: 'none' }, justifyContent: 'center' }}>
+                {/* Menu Button */}
+                <IconButton
+                    size="large"
+                    edge="start"
+                    color="inherit"
+                    aria-label="open drawer"
+                    sx={{ marginRight: 2 }}
+                    onClick={() => setIsDrawerOpen(true)}
+                >
+                    <MenuIcon />
+                </IconButton>
+                {/* Logo */}
+            <Link to="/" style={{ display: 'flex', alignItems: 'center', color: 'inherit', textDecoration: 'none', marginLeft: 'auto', marginRight: 'auto' }}>
+                <img 
+                    src="/bull_street_logo.png" 
+                    alt="Bull Street Logo" 
+                    style={{ height: 'auto', maxWidth: '100%', maxHeight: '50px', marginLeft: 'auto', marginRight: 'auto' }} // Adjust height and width as needed
+                />
+            </Link>
+
+                {/* Login Menu */}
+                <IconButton
+                    size="large"
+                    edge="end"
+                    aria-label="account of current user"
+                    aria-controls="primary-search-account-menu"
+                    aria-haspopup="true"
+                    onClick={handleProfileMenuOpen}
+                    color="inherit"
+                >
+                    {isAuthenticated ? (
+                        <img 
+                            src={require('../../assets/images/bull-avatar.jpg')} 
+                            alt="User Avatar" 
+                            style={{ width: '32px', height: '32px', borderRadius: '50%' }}
+                        />
+                    ) : (
+                        <AccountCircle />
+                    )}
+                </IconButton>
+            </Toolbar>
+
+
+                {/* Row 2 */}
+                <Toolbar sx={{ display: { xs: 'flex', md: 'none' } }}>
+                    {/* Search Bar */}
+                    <Search>
+                        <SearchIconWrapper focused={focused}>
+                            <SearchIcon />
+                        </SearchIconWrapper>
+                        <Autocomplete
+                            key={searchKey}
+                            freeSolo
+                            id="search-autocomplete"
+                            options={searchResults}
+                            loading={isLoading}
+                            inputValue={searchInput}
+                            onInputChange={(event, newInputValue) => {
+                                setSearchInput(newInputValue);
+                            }}
+                            onChange={(event, value) => {
+                                if (value && value.primary_ticker) {
+                                    navigate(`/stocks/${value.primary_ticker}`);
+                                    setSearchInput('');
+                                    setSearchKey(prevKey => prevKey + 1);
+                                }
+                            }}
+                            getOptionLabel={(option) => `${option.name} (${option.primary_ticker})`}
+                            renderInput={(params) => (
+                                <TextField
+                                    {...params}
+                                    onFocus={() => setFocused(true)}
+                                    onBlur={() => setFocused(false)}
+                                    InputProps={{
+                                        ...params.InputProps,
+                                        endAdornment: (
+                                            <React.Fragment>
+                                                {isLoading ? <CircularProgress color="inherit" size={16} /> : null}
+                                                {params.InputProps.endAdornment}
+                                            </React.Fragment>
+                                        ),
+                                        style: { width: '100%', padding: '3px' },
+                                    }}
+                                />
+                            )}
+                        />
+                    </Search>
+                </Toolbar>
+            </>
                 </Container>
                 <MenuDrawer isOpen={isDrawerOpen} onDrawerClose={() => setIsDrawerOpen(false)} />
             </AppBar>
