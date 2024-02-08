@@ -4,7 +4,6 @@ import axios from 'axios';
 import Container from '@mui/material/Container';
 import Alert from '@mui/material/Alert';
 import CircularProgress from '@mui/material/CircularProgress';
-import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 
 function EmailVerified() {
@@ -14,12 +13,11 @@ function EmailVerified() {
   const [verificationStatus, setVerificationStatus] = useState('');
 
   useEffect(() => {
-    // Directly define the async function inside useEffect
     const verifyEmail = async () => {
       try {
-        await axios.post(
+        // Use axios.get instead of axios.post
+        await axios.get(
           `https://django-stocks-ecbc6bc5e208.herokuapp.com/auth/verify-email/${uidb64}/${token}/`,
-          {}, // Assuming no body is needed, send an empty object
           {
             headers: {
               'Authorization': 'Token 13502af70a55d1fcddf7c094e4418c65904ef6eb',
@@ -36,7 +34,7 @@ function EmailVerified() {
     };
 
     verifyEmail();
-  }, [uidb64, token, navigate]); // Adding `navigate` to useEffect dependencies is safe but unnecessary unless you use it inside the effect
+  }, [uidb64, token]); // Removed `navigate` from dependencies as it's not used directly
 
   const handleRedirect = () => {
     navigate('/login');
