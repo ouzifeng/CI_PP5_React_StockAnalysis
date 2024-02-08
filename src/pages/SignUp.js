@@ -15,6 +15,9 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { useState } from 'react';
 import axios from 'axios';
 import CircularProgress from '@mui/material/CircularProgress';
+import { useNavigate } from 'react-router-dom';
+import { Alert } from '@mui/material';
+
 
 const defaultTheme = createTheme();
 
@@ -27,7 +30,10 @@ export default function SignUp() {
         confirmPassword: '',
     });
     const [errors, setErrors] = useState({});
-    const [loading, setLoading] = useState(false); // State to handle loading
+    const [loading, setLoading] = useState(false);
+    const navigate = useNavigate();
+    const [showAlert, setShowAlert] = useState(false);
+
 
     const validateForm = () => {
         let tempErrors = {};
@@ -60,13 +66,22 @@ export default function SignUp() {
             });
             console.log('Sign up successful', response.data);
             setLoading(false); // Deactivate loading state
-            // navigate('/login'); // if you're using react-router-dom
+
+            // Set the alert to show
+            setShowAlert(true);
+
+            // Redirect after a slight delay to show the alert
+            setTimeout(() => {
+                navigate('/');
+            }, 3000)
         } catch (error) {
             console.error('Sign Up Error: ', error.response);
             setLoading(false); // Deactivate loading state
             // Display error message to the user
+            alert(error.response.data.message || "An error occurred during sign up."); // Use a notification system or keep the simple alert for errors
         }
     }
+
 
 
     const handleSubmit = async (event) => {
@@ -112,6 +127,12 @@ export default function SignUp() {
                         Sign up
                     </Typography>
                     <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 3 }}>
+                        {/* Show alert if showAlert is true */}
+                        {showAlert && (
+                            <Alert severity="success" onClose={() => setShowAlert(false)}>
+                                Please check your email to verify your account.
+                            </Alert>
+                        )}
                         <Grid container spacing={2}>
                             <Grid item xs={12} sm={6}>
                                 <TextField

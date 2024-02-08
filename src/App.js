@@ -5,6 +5,7 @@ import SignIn from './pages/Login';
 import SignUp from './pages/SignUp';
 import StockDetail from './pages/StockDetailPage';
 import HomePage from './pages/HomePage';
+import EmailVerified from './pages/EmailVerified';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Helmet } from 'react-helmet';
 import { AuthProvider } from './context/AuthContext';
@@ -20,7 +21,7 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 
 const theme = createTheme({
   typography: {
-    fontFamily: '"OPen Sans", sans-serif',
+    fontFamily: '"Open Sans", sans-serif',
   },
 });
 
@@ -39,7 +40,8 @@ function App() {
             <Route path="/stocks/:primary_ticker" element={<StockDetail />} />
             <Route path="/dividend-screener" element={<DividendScreener />} />
             <Route path="/contact" element={<ContactForm />} />
-
+            <Route path="/verify-email/:uidb64/:token" element={<EmailVerified />} />
+            
             {/* Accessible only when not logged in */}
             <Route path="/login" element={<RestrictedRoute component={SignIn} />} />
             <Route path="/signup" element={<RestrictedRoute component={SignUp} />} />
