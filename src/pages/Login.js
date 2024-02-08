@@ -21,7 +21,7 @@ import { AuthContext } from '../context/AuthContext';
 
 function SignIn() {
   const navigate = useNavigate();
-  const { setIsAuthenticated, setShowLoginSuccessAlert } = useContext(AuthContext);
+  const { setIsAuthenticated, setShowLoginSuccessAlert, setUserAvatarUrl } = useContext(AuthContext);
   const [loginError, setLoginError] = useState('');
   const [loading, setLoading] = useState(false);
 
@@ -52,29 +52,32 @@ function SignIn() {
     setLoading(false); // Deactivate loading state
   };
 
+const handleLoginSuccess = (token, avatarUrl) => {
+  localStorage.setItem('token', token);
+  setIsAuthenticated(true);
+  setShowLoginSuccessAlert(true);
+  setUserAvatarUrl(avatarUrl); // Assuming you've added this setter to your context
+  navigate('/'); // Redirect user to the homepage or another appropriate route
+};
+
   const handleGoogleSuccess = async (credentialResponse) => {
-    setLoading(true); // Activate loading state
+    setLoading(true);
 
     try {
-      // Use the token to create/find the user on your backend
       const response = await axios.post(
         'https://django-stocks-ecbc6bc5e208.herokuapp.com/auth/google/login/',
         { token: credentialResponse.credential },
         { headers: { 'Content-Type': 'application/json' } }
       );
 
-      localStorage.setItem('token', response.data.token);
-      setIsAuthenticated(true); // Update the global authentication state
-      setShowLoginSuccessAlert(true); // Trigger the global login success alert
-      navigate('/'); // Redirect user to the homepage or another appropriate route
-      console.log('Google sign-in successful!'); // Console log for successful login
+      // Now call handleLoginSuccess with the token and avatar URL
+      handleLoginSuccess(response.data.token, response.data.avatar_url);
     } catch (error) {
       console.error('Google Sign In Error: ', error);
       setLoginError('There was an error with Google Sign In.');
     }
-    setLoading(false); // Deactivate loading state
+    setLoading(false);
   };
-
   const handleGoogleFailure = (error) => {
     console.error('Google Sign In Error: ', error);
     setLoginError('Google Sign In was unsuccessful.');
