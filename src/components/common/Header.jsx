@@ -287,13 +287,17 @@ function Header() {
                                 color="inherit"
                             >
                                 {isAuthenticated ? (
-                                    <img 
-                                        src={require('../../assets/images/bull-avatar.jpg')} 
-                                        alt="User Avatar" 
-                                        style={{ width: '32px', height: '32px', borderRadius: '50%' }}
-                                    />
+                                    userAvatarUrl ? (
+                                        <img 
+                                            src={userAvatarUrl} // Use the avatar URL from context
+                                            alt="User Avatar" 
+                                            style={{ width: '32px', height: '32px', borderRadius: '50%' }}
+                                        />
+                                    ) : (
+                                        <AccountCircle /> // Fallback icon if no avatar URL
+                                    )
                                 ) : (
-                                    <AccountCircle />
+                                    <AccountCircle /> // Show this if not authenticated
                                 )}
                             </IconButton>
                         </Box>
