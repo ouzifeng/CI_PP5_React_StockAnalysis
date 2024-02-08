@@ -46,7 +46,7 @@ function EmailVerified() {
       {!loading && verificationStatus === 'success' && (
         <>
           <Alert severity="success">Your email has been successfully verified. You can now log in.</Alert>
-          <Button variant="contained" sx={{ mt: 2 }} onClick={handleRedirect}>Go to Login</Button>
+          <Button variant="contained" sx={{ mt: 2 }} onClick={handleRedirect}>Sign In</Button>
         </>
       )}
       {!loading && verificationStatus === 'error' && (

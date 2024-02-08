@@ -1,4 +1,5 @@
 import React, { useState, useContext } from 'react';
+import { GoogleLogin } from '@react-oauth/google';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -16,13 +17,13 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import Alert from '@mui/material/Alert';
 import CircularProgress from '@mui/material/CircularProgress';
-import { AuthContext } from '../context/AuthContext'; // Make sure the path is correct
+import { AuthContext } from '../context/AuthContext';
 
 function SignIn() {
   const navigate = useNavigate();
   const { setIsAuthenticated, setShowLoginSuccessAlert } = useContext(AuthContext);
   const [loginError, setLoginError] = useState('');
-  const [loading, setLoading] = useState(false); // State to handle loading
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -49,6 +50,34 @@ function SignIn() {
       console.log('Login failed: ', error); // Console log for login failure
     }
     setLoading(false); // Deactivate loading state
+  };
+
+  const handleGoogleSuccess = async (credentialResponse) => {
+    setLoading(true); // Activate loading state
+
+    try {
+      // Use the token to create/find the user on your backend
+      const response = await axios.post(
+        'https://django-stocks-ecbc6bc5e208.herokuapp.com/auth/google/login/',
+        { token: credentialResponse.credential },
+        { headers: { 'Content-Type': 'application/json' } }
+      );
+
+      localStorage.setItem('token', response.data.token);
+      setIsAuthenticated(true); // Update the global authentication state
+      setShowLoginSuccessAlert(true); // Trigger the global login success alert
+      navigate('/'); // Redirect user to the homepage or another appropriate route
+      console.log('Google sign-in successful!'); // Console log for successful login
+    } catch (error) {
+      console.error('Google Sign In Error: ', error);
+      setLoginError('There was an error with Google Sign In.');
+    }
+    setLoading(false); // Deactivate loading state
+  };
+
+  const handleGoogleFailure = (error) => {
+    console.error('Google Sign In Error: ', error);
+    setLoginError('Google Sign In was unsuccessful.');
   };
 
   return (
@@ -104,10 +133,15 @@ function SignIn() {
               fullWidth
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
-              disabled={loading} // Disable the button when loading
+              disabled={loading}
             >
               {loading ? <CircularProgress size={24} /> : 'Sign In'}
             </Button>
+            <GoogleLogin
+              onSuccess={handleGoogleSuccess}
+              onError={handleGoogleFailure}
+              useOneTap
+            />
             <Grid container>
               <Grid item xs>
                 <Link href="#" variant="body2">

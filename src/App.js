@@ -18,6 +18,7 @@ import ProtectedRoute from './components/common/ProtectedRoute';
 import RestrictedRoute from './components/common/RestrictedRoute';
 import './assets/styles/custom.css';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import { GoogleOAuthProvider } from '@react-oauth/google';
 
 const theme = createTheme({
   typography: {
@@ -25,36 +26,39 @@ const theme = createTheme({
   },
 });
 
+const googleClientId = "937907568797-kn78ea93kbq4puisnsqpagdtua1jtnvc.apps.googleusercontent.com";
 
 function App() {
   return (
-    <ThemeProvider theme={theme}>
-    <AuthProvider> {/* AuthProvider wraps all components that need access to AuthContext */}
-      <Helmet>
-      </Helmet>
-      <Router>
-        <BaseLayout>
-          <Routes>
-            {/* Accessible to all */}
-            <Route path="/" element={<HomePage />} />
-            <Route path="/stocks/:primary_ticker" element={<StockDetail />} />
-            <Route path="/dividend-screener" element={<DividendScreener />} />
-            <Route path="/contact" element={<ContactForm />} />
-            <Route path="/verify-email/:uidb64/:token" element={<EmailVerified />} />
-            
-            {/* Accessible only when not logged in */}
-            <Route path="/login" element={<RestrictedRoute component={SignIn} />} />
-            <Route path="/signup" element={<RestrictedRoute component={SignUp} />} />
-            <Route path="/forgot-password" element={<RestrictedRoute component={ForgotPassword} />} />
-            <Route path="/reset-password/:uidb64/:token" element={<RestrictedRoute component={ResetPassword} />} />
+    <GoogleOAuthProvider clientId={googleClientId}>
+      <ThemeProvider theme={theme}>
+      <AuthProvider> {/* AuthProvider wraps all components that need access to AuthContext */}
+        <Helmet>
+        </Helmet>
+        <Router>
+          <BaseLayout>
+            <Routes>
+              {/* Accessible to all */}
+              <Route path="/" element={<HomePage />} />
+              <Route path="/stocks/:primary_ticker" element={<StockDetail />} />
+              <Route path="/dividend-screener" element={<DividendScreener />} />
+              <Route path="/contact" element={<ContactForm />} />
+              <Route path="/verify-email/:uidb64/:token" element={<EmailVerified />} />
+              
+              {/* Accessible only when not logged in */}
+              <Route path="/login" element={<RestrictedRoute component={SignIn} />} />
+              <Route path="/signup" element={<RestrictedRoute component={SignUp} />} />
+              <Route path="/forgot-password" element={<RestrictedRoute component={ForgotPassword} />} />
+              <Route path="/reset-password/:uidb64/:token" element={<RestrictedRoute component={ResetPassword} />} />
 
-            {/* Accessible only when logged in */}
-            <Route path="/following" element={<ProtectedRoute component={Follow} />} />
-          </Routes>
-        </BaseLayout>
-      </Router>
-    </AuthProvider>
-    </ThemeProvider>
+              {/* Accessible only when logged in */}
+              <Route path="/following" element={<ProtectedRoute component={Follow} />} />
+            </Routes>
+          </BaseLayout>
+        </Router>
+      </AuthProvider>
+      </ThemeProvider>
+    </GoogleOAuthProvider>
   );
 }
 
