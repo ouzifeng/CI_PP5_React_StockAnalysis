@@ -137,11 +137,34 @@ function SignIn() {
             >
               {loading ? <CircularProgress size={24} /> : 'Sign In'}
             </Button>
-            <GoogleLogin
-              onSuccess={handleGoogleSuccess}
-              onError={handleGoogleFailure}
-              useOneTap
-            />
+            <Box sx={{ mt: 3, mb: 2 }}>
+              <GoogleLogin
+                onSuccess={handleGoogleSuccess}
+                onError={handleGoogleFailure}
+                useOneTap
+                render={renderProps => (
+                  <Button
+                    onClick={renderProps.onClick}
+                    disabled={renderProps.disabled}
+                    fullWidth // Make the button full width
+                    variant="contained"
+                    startIcon={<img src="path_to_google_icon" alt="Google sign-in" />} // Add the Google icon here
+                    sx={{ 
+                      justifyContent: "flex-start", // Align the icon and text to the left
+                      textTransform: "none", // Prevent uppercase styling
+                      backgroundColor: "white", // Set the background color you want for the button
+                      color: "black", // Set the text color you want for the button
+                      '&:hover': {
+                        backgroundColor: "whitesmoke", // Color of the button when hovered
+                      },
+                    }}
+                  >
+                    Sign in with Google
+                  </Button>
+                )}
+              />
+            </Box>
+
             <Grid container>
               <Grid item xs>
                 <Link href="#" variant="body2">
