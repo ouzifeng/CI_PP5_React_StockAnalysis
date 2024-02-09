@@ -215,7 +215,7 @@ function Header() {
                         {/* Replace Typography with img tag */}
                         <Link to="/" style={{ display: 'flex', alignItems: 'center', flexGrow: 1, color: 'inherit', textDecoration: 'none' }}>
                             <img 
-                                src="/bull_street_logo.png" 
+                                src="/bull-street-logo.png" 
                                 alt="Bull Street Logo" 
                                 style={{ height: 'auto', maxWidth: '100%', maxHeight: '50px' }} // Adjust height and width as needed
                             />
@@ -330,11 +330,11 @@ function Header() {
                     <MenuIcon />
                 </IconButton>
                 {/* Logo */}
-            <Link to="/" style={{ display: 'flex', alignItems: 'center', color: 'inherit', textDecoration: 'none', marginLeft: 'auto', marginRight: 'auto' }}>
+            <Link to="/" style={{ display: 'flex', alignItems: 'center', color: 'inherit', textDecoration: 'none', marginLeft: 'auto', marginRight: 'auto'}}>
                 <img 
-                    src="/bull_street_logo.png" 
+                    src="/bull-street-logo.png" 
                     alt="Bull Street Logo" 
-                    style={{ height: 'auto', maxWidth: '100%', maxHeight: '50px', marginLeft: 'auto', marginRight: 'auto' }} // Adjust height and width as needed
+                    style={{ height: 'auto', maxWidth: '100%', maxHeight: '45px', marginLeft: 'auto', marginRight: 'auto', paddingTop: '5px'  }} // Adjust height and width as needed
                 />
             </Link>
 
@@ -367,7 +367,7 @@ function Header() {
 
 
                 {/* Row 2 */}
-                <Toolbar sx={{ display: { xs: 'flex', md: 'none' } }}>
+                <Toolbar sx={{ display: { xs: 'flex', md: 'none' } }} className='mobileSearch'>
                     {/* Search Bar */}
                     <Search>
                         <SearchIconWrapper focused={focused}>
