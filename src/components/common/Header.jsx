@@ -353,7 +353,7 @@ function Header() {
                             <img 
                                 src={userAvatarUrl} // Use the avatar URL from context
                                 alt="User Avatar" 
-                                style={{ width: '32px', height: '32px', borderRadius: '50%' }}
+                                style={{ width: '35px', height: '35px', borderRadius: '50%' }}
                             />
                         ) : (
                             <AccountCircle /> // Fallback icon if no avatar URL
