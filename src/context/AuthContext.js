@@ -10,10 +10,10 @@ export const AuthProvider = ({ children }) => {
 
     useEffect(() => {
         const token = localStorage.getItem('token');
-        const avatarUrl = localStorage.getItem('avatarUrl'); // Retrieve avatar URL from localStorage
+        const avatarUrl = localStorage.getItem('avatarUrl');
         setIsAuthenticated(!!token);
         if (token && avatarUrl) {
-            setUserAvatarUrl(avatarUrl); // Set avatar URL if token is present
+            setUserAvatarUrl(avatarUrl);
         }
     }, []);
 

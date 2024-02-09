@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext, Suspense, lazy } from 'react';
+import React, { useEffect, useState, useContext, lazy } from 'react';
 import { useParams } from 'react-router-dom';
 import {
   Grid,
@@ -131,14 +131,13 @@ const StockDetail = () => {
   // Conditional rendering based on the loading states
   if (isLoadingInitialData) {
     return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '50vh' }}>
         <CircularProgress />
       </Box>
     );
   }
 
   return (
-    <Suspense fallback={<Box sx={{ display: 'flex', justifyContent: 'center', mt: 3 }}><CircularProgress /></Box>}>
       <Grid container spacing={3} sx={{ p: 3 }}>
         {showLoginAlert && (
           <Grid item xs={12} sx={{ p: 2 }}>
@@ -239,7 +238,6 @@ const StockDetail = () => {
 
         </Grid>
       </Grid>
-    </ Suspense>
   );
 };
 
