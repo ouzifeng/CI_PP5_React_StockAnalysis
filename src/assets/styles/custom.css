@@ -108,6 +108,14 @@ body {
 /* Extra Small Devices (phones) */
 @media (max-width: 576px) {
 
+  .css-tk088u-MuiGrid-root {
+    padding: 24px 10px !important;
+  }
+
+  .css-19r6kue-MuiContainer-root {
+    padding: 0 !important;
+  }
+
   .stockname {
     font-size: 24px !important;
   }
@@ -123,7 +131,6 @@ body {
 
   .content-container {
     padding-top: 150px;
-    margin: 0 10px;
 }
 
 .mobileSearch {
