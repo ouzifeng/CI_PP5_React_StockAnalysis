@@ -200,7 +200,7 @@ function Header() {
     return (
         <Box sx={{ flexGrow: 1 }}>
             <AppBar className="stickyHeader">
-                <Container maxWidth="xl" style={{ maxWidth: '1280px', margin: '0 auto' }}>
+                <Container maxWidth="xl" style={{ maxWidth: '1280px', margin: '0 auto' }} className="mobileMenu">
                     <Toolbar sx={{ display: { xs: 'none', md: 'flex' } }}>
                         <IconButton
                             size="large"
