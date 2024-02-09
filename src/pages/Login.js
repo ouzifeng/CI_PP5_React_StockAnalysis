@@ -144,7 +144,6 @@ const handleLoginSuccess = (token, avatarUrl) => {
               <GoogleLogin
                 onSuccess={handleGoogleSuccess}
                 onError={handleGoogleFailure}
-                useOneTap
                 render={renderProps => (
                   <Button
                     onClick={renderProps.onClick}
