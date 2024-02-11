@@ -40,7 +40,7 @@ function App() {
             <Routes>
               {/* Accessible to all */}
               <Route path="/" element={<HomePage />} />
-              <Route path="/stocks/:primary_ticker" element={<StockDetail />} />
+              <Route path="/stocks/:uid" element={<StockDetail />} />
               <Route path="/dividend-screener" element={<DividendScreener />} />
               <Route path="/contact" element={<ContactForm />} />
               <Route path="/verify-email/:uidb64/:token" element={<EmailVerified />} />

@@ -19,9 +19,6 @@ const AnalystOverallRating = lazy(() => import('../components/stockpage/AnalystO
 const CagrChart = lazy(() => import('../components/stockpage/CagrChart'));
 const CagrPercent = lazy(() => import('../components/stockpage/CagrPercents'));
 const BasicStats = lazy(() => import('../components/stockpage/BasicStats'));
-const FinancialsTable = lazy(() => import('../components/stockpage/IncomeStatements'));
-const BalanceSheets = lazy(() => import('../components/stockpage/BalanceSheet'));
-const CashFlows = lazy(() => import('../components/stockpage/Cashflow'));
 const ValuationTable = lazy(() => import('../components/stockpage/ValuationTable'));
 const TechnicalsTable = lazy(() => import('../components/stockpage/TechnicalTable'));
 const SplitsDividendsTable = lazy(() => import('../components/stockpage/SplitsDividendsTable'));
@@ -32,7 +29,7 @@ const DividendYieldChart = lazy(() => import('../components/stockpage/DividendYi
 
 
 const StockDetail = () => {
-  const { primary_ticker } = useParams();
+  const { uid } = useParams();
   const [stockData, setStockData] = useState(null);
   const [loadingStockData, setLoadingStockData] = useState(true);  // Loading state for stockData
   const [tradingViewSymbol, setTradingViewSymbol] = useState('');
@@ -49,7 +46,7 @@ const StockDetail = () => {
 
 
   useEffect(() => {
-    const formattedTicker = primary_ticker.replace('-', '.');
+    const formattedTicker = uid ? uid.replace('-', '.') : '';
     
     const fetchStockData = async () => {
       try {
@@ -94,14 +91,14 @@ const StockDetail = () => {
     } else {
       setLoadingIsFollowing(false);  // If not authenticated, there's no need to fetch following status
     }
-  }, [primary_ticker, isAuthenticated]);
+  }, [uid, isAuthenticated]);
 
   const handleFollowClick = async () => {
     if (!isAuthenticated) {
       setShowLoginAlert(true);
       return;
     }
-    const formattedTicker = primary_ticker.replace('-', '.');
+    const formattedTicker = uid.replace('-', '.');
     try {
       const response = await fetch(`https://django-stocks-ecbc6bc5e208.herokuapp.com/api/stocks/${formattedTicker}/toggle_follow/`, {
         method: 'POST',
@@ -165,7 +162,7 @@ const StockDetail = () => {
           </Grid>
           <Grid item xs={5} sm={1}>
             <Button variant="outlined" className='follow-button' onClick={handleMyNotesClick}>My Notes</Button>
-            <MyNotesDrawer open={myNotesOpen} onClose={() => setMyNotesOpen(false)} stockId={primary_ticker} stockData={stockData} />
+            <MyNotesDrawer open={myNotesOpen} onClose={() => setMyNotesOpen(false)} stockId={uid} stockData={stockData} />
           </Grid>
         </Grid>
 
@@ -222,18 +219,6 @@ const StockDetail = () => {
           </Grid>
           <Grid item md={3} xs={12}>
             <SplitsDividendsTable general={stockData} splitsDividendsData={stockData.splits_dividends} />
-          </Grid>
-
-        </Grid>
-        <Grid container item md={12} xs={12} spacing={3} sx={{ mt: 3 }}>
-                        <Grid item xs={12} md={4}>
-            <FinancialsTable incomeStatements={stockData.income_statements} />
-          </Grid>
-          <Grid item xs={12} md={4}>
-            <BalanceSheets balanceSheets={stockData.balance_sheets} />
-          </Grid>
-          <Grid item xs={12} md={4}>
-            <CashFlows cashFlows={stockData.cash_flows} />
           </Grid>
 
         </Grid>

@@ -2,7 +2,6 @@ import React from 'react';
 import { Bar } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js';
 import { Box, Paper, Typography, useTheme } from '@mui/material';
-import { Skeleton } from '@mui/material';
 
 // Register the chart.js components we will use
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
@@ -10,11 +9,14 @@ ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend)
 const AnalystRatingsBarChart = ({ ratings }) => {
   const theme = useTheme(); // Using the theme for consistent styling
 
+  // Check if there are any ratings available
+  const hasRatings = ratings && Object.values(ratings).some(value => value > 0);
+
   const data = {
     labels: ['Strong Buy', 'Buy', 'Hold', 'Sell', 'Strong Sell'],
     datasets: [{
       label: 'Analyst Ratings',
-      data: [ratings?.strong_buy, ratings?.buy, ratings?.hold, ratings?.sell, ratings?.strong_sell],
+      data: hasRatings ? [ratings.strong_buy, ratings.buy, ratings.hold, ratings.sell, ratings.strong_sell] : [0, 0, 0, 0, 0], // Provide default values if no ratings
       backgroundColor: ['#4caf50', '#8bc34a', '#ffeb3b', '#ff9800', '#f44336'],
     }],
   };
@@ -44,14 +46,15 @@ const AnalystRatingsBarChart = ({ ratings }) => {
   return (
     <Paper elevation={3} sx={{ mb: 3, overflow: 'hidden' }}>
       <Box sx={{ p: 1, bgcolor: theme.palette.primary.main, textAlign: 'center' }}>
-        {/* Typography component for the chart title */}
         <Typography variant="subtitle1" sx={{ color: 'common.white', textAlign: 'center' }}>Analyst Ratings Past Month</Typography>
       </Box>
       <Box sx={{ height: 'auto', p: 2 }}>
-        {ratings ? (
+        {hasRatings ? (
           <Bar data={data} options={options} />
         ) : (
-          <Skeleton animation="wave" height={200} />
+          <Typography variant="body2" align="center" sx={{ mt: 2 }}>
+            No analyst ratings available.
+          </Typography>
         )}
       </Box>
     </Paper>

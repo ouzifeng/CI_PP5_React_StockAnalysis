@@ -2,8 +2,8 @@ import React from 'react';
 import { Line } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, LineElement, PointElement, Title, Tooltip, Legend } from 'chart.js';
 import { Box, Paper, Typography, useTheme } from '@mui/material';
-import { Skeleton } from '@mui/material';
 
+// Register the necessary Chart.js components
 ChartJS.register(CategoryScale, LinearScale, LineElement, PointElement, Title, Tooltip, Legend);
 
 const CagrChart = ({ incomeStatements }) => {
@@ -13,6 +13,9 @@ const CagrChart = ({ incomeStatements }) => {
   const yearlyData = incomeStatements
     .filter(item => item.type === 'yearly')
     .sort((a, b) => new Date(a.date) - new Date(b.date));
+
+  // Check if there's any data to display
+  const hasData = yearlyData.length > 0;
 
   const data = {
     labels: yearlyData.map(financial => financial.date),
@@ -46,15 +49,14 @@ const CagrChart = ({ incomeStatements }) => {
       title: {
         display: true,
         text: 'Yearly Financials Over 5 Years',
-        // Customize title styling
         font: {
-          size: 16, // Adjust font size as needed
-          weight: 'bold', // Make it bold
+          size: 16,
+          weight: 'bold',
         },
-        color: 'white', // Text color
-        padding: 10, // Add padding
-        backgroundColor: theme.palette.primary.main, // Background color
-        textAlign: 'center', // Center the text
+        color: 'white',
+        padding: 10,
+        backgroundColor: theme.palette.primary.main,
+        textAlign: 'center',
       },
       legend: {
         position: 'top',
@@ -66,33 +68,27 @@ const CagrChart = ({ incomeStatements }) => {
       y: {
         beginAtZero: false,
         ticks: {
-          callback: function(value, index, ticks) {
+          callback: function(value) {
             return value / 1e9 + 'B';
           }
         }
-      },
-      x: {}
+      }
     }
   };
 
-
   return (
     <Paper elevation={3}>
-      {/* Box component for the chart title */}
       <Box sx={{ p: 1, bgcolor: theme.palette.primary.main, textAlign: 'center' }}>
-        {/* Typography component for the chart title */}
         <Typography variant="subtitle1" sx={{ color: 'common.white', textAlign: 'center' }}>5 Year Income</Typography>
       </Box>
-      <Box sx={{ paddingTop: theme.spacing(1), paddingLeft: theme.spacing(2), paddingRight: theme.spacing(2) }}>
-        <Box sx={{ height: '300px' }}>
-          {yearlyData ? (
-            // Render the chart if yearlyData is available
-            <Line data={data} options={options} />
-          ) : (
-            // Render a skeleton loader if yearlyData is not available
-            <Skeleton variant="rectangular" height={300} />
-          )}
-        </Box>
+      <Box sx={{ paddingTop: theme.spacing(1), paddingLeft: theme.spacing(2), paddingRight: theme.spacing(2), height: '300px' }}>
+        {hasData ? (
+          <Line data={data} options={options} />
+        ) : (
+          <Typography variant="body2" align="center" sx={{ mt: 2 }}>
+            No CAGRs available.
+          </Typography>
+        )}
       </Box>
     </Paper>
   );
