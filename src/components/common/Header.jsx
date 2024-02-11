@@ -94,6 +94,7 @@ function Header() {
                             'Authorization': `Token 13502af70a55d1fcddf7c094e4418c65904ef6eb`,
                         },
                     });
+                    console.log(response.data);
                     setSearchResults(response.data || []);
                 } catch (error) {
                     console.error('Search Error: ', error);
@@ -235,13 +236,15 @@ function Header() {
                                 setSearchInput(newInputValue);
                             }}
                             onChange={(event, value) => {
-                            if (value && value.primary_ticker) {
-                                navigate(`/stocks/${value.primary_ticker}`);
-                                setSearchInput(''); // This should clear the input, but now also is tied to inputValue prop
-                                setSearchKey(prevKey => prevKey + 1); // Increment a key to force re-render
+                            console.log('Selected value:', value);
+                            if (value != null && value.uid) {
+                                console.log('Navigating to:', `/stocks/${value.uid}`);
+                                navigate(`/stocks/${value.uid}`);
                             }
                             }}
-                            getOptionLabel={(option) => `${option.name} (${option.primary_ticker})`}
+
+
+                            getOptionLabel={(option) => `${option.name}`}
                             renderInput={(params) => (
                                 <TextField
                                 {...params}
@@ -384,13 +387,13 @@ function Header() {
                                 setSearchInput(newInputValue);
                             }}
                             onChange={(event, value) => {
-                                if (value && value.primary_ticker) {
-                                    navigate(`/stocks/${value.primary_ticker}`);
+                                if (value && value.uid) {
+                                    navigate(`/stocks/${value.uid}`);
                                     setSearchInput('');
                                     setSearchKey(prevKey => prevKey + 1);
                                 }
                             }}
-                            getOptionLabel={(option) => `${option.name} (${option.primary_ticker})`}
+                            getOptionLabel={(option) => `${option.name}`}
                             renderInput={(params) => (
                                 <TextField
                                     {...params}
