@@ -51,8 +51,8 @@ function DividendScreener() {
     return `${(value * 100).toFixed(2)}%`;
   };
 
-  const handleRowClick = (primaryTicker) => {
-    navigate(`/stocks/${primaryTicker}`);
+  const handleRowClick = (uid) => {
+    navigate(`/stocks/${uid}`);
   };
 
   const handleFavoriteClick = (event, primaryTicker) => {
@@ -190,7 +190,7 @@ function DividendScreener() {
                         style={{
                           width: '2em',
                           height: '2em',
-                          marginRight: '0.5em', // Add some space between the flag and the text
+                          marginRight: '0.5em',
                         }}
                         title={stock.country_iso}
                       />
