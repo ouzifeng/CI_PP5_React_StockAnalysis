@@ -181,7 +181,7 @@ function DividendScreener() {
               ))
             ) : (
               filteredStocks.map((stock, index) => (
-                <TableRow key={index} hover style={{ cursor: 'pointer' }} onClick={() => handleRowClick(stock.primary_ticker)}>
+                <TableRow key={index} hover style={{ cursor: 'pointer' }} onClick={() => handleRowClick(stock.uid)}>
                   <TableCell component="th" scope="row">
                     <Box sx={{ display: 'flex', alignItems: 'center' }}>
                       <ReactCountryFlag
