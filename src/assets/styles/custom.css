@@ -54,6 +54,7 @@ body {
   background-color: white;
   border-radius: 8px;
   height: 70px;
+  margin-bottom: 30px;
 }
 
 .stock-grid-item {
