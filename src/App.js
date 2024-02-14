@@ -4,7 +4,6 @@ import BaseLayout from './layouts/BaseLayout';
 import SignIn from './pages/Login';
 import SignUp from './pages/SignUp';
 import StockDetail from './pages/StockDetailPage';
-import HomePage from './pages/HomePage';
 import EmailVerified from './pages/EmailVerified';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Helmet } from 'react-helmet';
@@ -39,9 +38,8 @@ function App() {
           <BaseLayout>
             <Routes>
               {/* Accessible to all */}
-              <Route path="/" element={<HomePage />} />
+              <Route path="/" element={<DividendScreener />} />
               <Route path="/stocks/:uid" element={<StockDetail />} />
-              <Route path="/dividend-screener" element={<DividendScreener />} />
               <Route path="/contact" element={<ContactForm />} />
               <Route path="/verify-email/:uidb64/:token" element={<EmailVerified />} />
               
