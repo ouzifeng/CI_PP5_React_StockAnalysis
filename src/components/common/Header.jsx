@@ -23,6 +23,7 @@ import Autocomplete from '@mui/material/Autocomplete';
 import CircularProgress from '@mui/material/CircularProgress';
 import TextField from '@mui/material/TextField';
 import useDebounce from './useDebounce';
+import ReactCountryFlag from "react-country-flag";
 
 // Styled components
 const Search = styled('div')(({ theme }) => ({
@@ -213,12 +214,11 @@ function Header() {
                         >
                             <MenuIcon />
                         </IconButton>
-                        {/* Replace Typography with img tag */}
                         <Link to="/" style={{ display: 'flex', alignItems: 'center', flexGrow: 1, color: 'inherit', textDecoration: 'none' }}>
                             <img 
                                 src="/bull-street-logo.png" 
                                 alt="Bull Street Logo" 
-                                style={{ height: 'auto', maxWidth: '100%', maxHeight: '50px' }} // Adjust height and width as needed
+                                style={{ height: 'auto', maxWidth: '100%', maxHeight: '50px' }}
                             />
                         </Link>
                         <Search>
@@ -231,20 +231,32 @@ function Header() {
                             id="search-autocomplete"
                             options={searchResults}
                             loading={isLoading}
-                            inputValue={searchInput} // This ensures the input value is controlled by your state
+                            inputValue={searchInput}
                             onInputChange={(event, newInputValue) => {
                                 setSearchInput(newInputValue);
                             }}
                             onChange={(event, value) => {
-                            console.log('Selected value:', value);
                             if (value != null && value.uid) {
-                                console.log('Navigating to:', `/stocks/${value.uid}`);
                                 navigate(`/stocks/${value.uid}`);
                             }
                             }}
-
-
                             getOptionLabel={(option) => `${option.name}`}
+                            renderOption={(props, option) => (
+                            <li {...props}>
+                                <ReactCountryFlag
+                                countryCode={option.country_iso}
+                                svg
+                                style={{
+                                    width: '2em',
+                                    height: '2em',
+                                    marginRight: '0.5em',
+                                    verticalAlign: 'middle',
+                                }}
+                                title={option.country_iso}
+                                />
+                                {option.name}
+                            </li>
+                            )}
                             renderInput={(params) => (
                                 <TextField
                                 {...params}
@@ -394,6 +406,22 @@ function Header() {
                                 }
                             }}
                             getOptionLabel={(option) => `${option.name}`}
+                            renderOption={(props, option) => (
+                            <li {...props}>
+                                <ReactCountryFlag
+                                countryCode={option.country_iso}
+                                svg
+                                style={{
+                                    width: '2em',
+                                    height: '2em',
+                                    marginRight: '0.5em',
+                                    verticalAlign: 'middle',
+                                }}
+                                title={option.country_iso}
+                                />
+                                {option.name}
+                            </li>
+                            )}
                             renderInput={(params) => (
                                 <TextField
                                     {...params}

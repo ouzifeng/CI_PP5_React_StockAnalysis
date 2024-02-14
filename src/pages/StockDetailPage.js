@@ -143,28 +143,30 @@ const StockDetail = () => {
             </Alert>
           </Grid>
         )}
-        <Grid container alignItems="center" className='stock-follow'>
-          <Grid item xs={12} sm={10}>
+        <Grid container alignItems="center" className='stock-follow' spacing={2}>
+          <Grid item xs={12} sm={8}>
             <Typography variant="h4" className='stockname'>{stockData.name} Fundamental Analysis</Typography>
           </Grid>
-          <Grid item xs={4} sm={1}>
+          <Grid item xs={6} sm={2} style={{ display: 'flex', justifyContent: 'center' }}>
             {!loadingIsFollowing && isAuthenticated ? (
               <Button
                 variant={isFollowing ? 'contained' : 'outlined'}
                 className='follow-button'
                 onClick={handleFollowClick}
+                fullWidth
               >
                 {isFollowing ? 'Following' : 'Follow'}
               </Button>
             ) : (
-              <Button variant="outlined" onClick={() => setShowLoginAlert(true)}>Follow</Button>
+              <Button variant="outlined" onClick={() => setShowLoginAlert(true)} fullWidth>Follow</Button>
             )}
           </Grid>
-          <Grid item xs={5} sm={1}>
-            <Button variant="outlined" className='follow-button' onClick={handleMyNotesClick}>My Notes</Button>
+          <Grid item xs={6} sm={2} style={{ display: 'flex', justifyContent: 'center' }}>
+            <Button variant="outlined" className='follow-button' onClick={handleMyNotesClick} fullWidth>My Notes</Button>
             <MyNotesDrawer open={myNotesOpen} onClose={() => setMyNotesOpen(false)} stockId={uid} stockData={stockData} />
           </Grid>
         </Grid>
+
 
         {!loadingTradingViewSymbol && tradingViewSymbol && (
           <Grid item md={7} xs={12} className="chart-container">
