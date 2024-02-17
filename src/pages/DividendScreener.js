@@ -1,11 +1,14 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
-import { Slider, Typography, Table, TableBody, TableCell, TableHead, TableRow, Paper, Box, Skeleton, Grid, IconButton } from '@mui/material';
+import { Slider, Typography, Table, TableBody, TableCell, TableHead, TableRow, Paper, Box, Skeleton, Grid, IconButton, Container, TableContainer } from '@mui/material';
 import ReactCountryFlag from "react-country-flag";
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import { useNavigate } from 'react-router-dom';
 import TablePagination from '@mui/material/TablePagination';
+import { useTheme } from '@mui/material/styles';
+import useMediaQuery from '@mui/material/useMediaQuery';
+
 
 function DividendScreener() {
   // State hooks
@@ -18,6 +21,8 @@ function DividendScreener() {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalStocks, setTotalStocks] = useState(0);
   const navigate = useNavigate();
+  const theme = useTheme();
+  const matches = useMediaQuery(theme.breakpoints.down('md'));  
 
   // Callback for fetching data
   const [isFiltering, setIsFiltering] = useState(false);
@@ -139,7 +144,7 @@ function DividendScreener() {
   });
 
   return (
-    <div>
+    <Container maxWidth="lg">
       <Grid container spacing={3} mt={4}>
         <Grid item md={2}>
             <Typography id="dividend-slider" variant="body2" gutterBottom>
@@ -190,8 +195,8 @@ function DividendScreener() {
             />
           </Grid>
       </Grid>
-      <Paper>
-        <Table>
+      <TableContainer component={Paper}>
+        <Table size={matches ? 'small' : 'medium'}>
           <TableHead>
             <TableRow>
               <TableCell>Name</TableCell>
@@ -263,8 +268,8 @@ function DividendScreener() {
             rowsPerPage={10}
             rowsPerPageOptions={[10]}
           />      
-      </Paper>
-    </div>
+      </TableContainer>
+    </Container>
   );
 }
 

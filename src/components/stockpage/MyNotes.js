@@ -14,10 +14,15 @@ import {
 import CloseIcon from '@mui/icons-material/Close';
 import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
+import EditIcon from '@mui/icons-material/Edit';
+import SaveIcon from '@mui/icons-material/Save';
+import CancelIcon from '@mui/icons-material/Cancel'
 
 const MyNotesDrawer = ({ open, onClose, stockId, stockData }) => {
   const [notes, setNotes] = useState([]);
   const [noteText, setNoteText] = useState('');
+  const [editNoteId, setEditNoteId] = useState(null);
+  const [editNoteText, setEditNoteText] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
@@ -28,7 +33,7 @@ const MyNotesDrawer = ({ open, onClose, stockId, stockData }) => {
       fetch(`https://django-stocks-ecbc6bc5e208.herokuapp.com/api/notes/?stock=${formattedStockId}`, {
         method: 'GET',
         headers: {
-          'Authorization': `Token 13502af70a55d1fcddf7c094e4418c65904ef6eb`, // Replace with the actual user's authentication token
+          'Authorization': `Token 13502af70a55d1fcddf7c094e4418c65904ef6eb`, 
         },
       })
         .then(response => response.json())
@@ -108,6 +113,43 @@ const MyNotesDrawer = ({ open, onClose, stockId, stockData }) => {
       });
   };
 
+  const startEditingNote = (note) => {
+    setEditNoteId(note.id);
+    setEditNoteText(note.content);
+  };
+
+  // Save edited note
+  const saveEditedNote = () => {
+    if (editNoteText.trim() === '') {
+      console.error('Note content cannot be empty');
+      return;
+    }
+    setIsLoading(true);
+    fetch(`https://django-stocks-ecbc6bc5e208.herokuapp.com/api/notes/${editNoteId}/`, {
+      method: 'PATCH',
+      headers: {
+        'Authorization': `Token 13502af70a55d1fcddf7c094e4418c65904ef6eb`, // Your token
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ content: editNoteText }),
+    })
+    .then(response => response.json())
+    .then(updatedNote => {
+      setNotes(notes.map(note => note.id === editNoteId ? updatedNote : note));
+      cancelEditing();
+    })
+    .catch(error => {
+      console.error('Error updating note:', error);
+    })
+    .finally(() => setIsLoading(false));
+  };
+
+  // Cancel editing
+  const cancelEditing = () => {
+    setEditNoteId(null);
+    setEditNoteText('');
+  };
+
   return (
     <Drawer anchor="right" open={open} onClose={onClose}>
       <div style={{ width: 350, padding: 16 }}>
@@ -138,19 +180,43 @@ const MyNotesDrawer = ({ open, onClose, stockId, stockData }) => {
             <CircularProgress />
           </Box>
         )}
-        <List>
-          {notes.map((note) => (
-            <ListItem key={note.id}>
-              <ListItemText
-                primary={note.content}
-                secondary={new Date(note.created_at).toLocaleDateString()}
-              />
-              <IconButton edge="end" onClick={() => deleteNote(note.id)}>
-                <DeleteIcon />
-              </IconButton>
-            </ListItem>
-          ))}
-        </List>
+<List>
+  {notes.map((note) => (
+    <ListItem
+      key={note.id}
+      secondaryAction={
+        <Box>
+          {editNoteId === note.id ? (
+            <>
+              <IconButton onClick={() => saveEditedNote(note.id)}><SaveIcon /></IconButton>
+              <IconButton onClick={cancelEditing}><CancelIcon /></IconButton>
+            </>
+          ) : (
+            <>
+              <IconButton onClick={() => startEditingNote(note)}><EditIcon /></IconButton>
+              <IconButton onClick={() => deleteNote(note.id)}><DeleteIcon /></IconButton>
+            </>
+          )}
+        </Box>
+      }
+    >
+      {editNoteId === note.id ? (
+        <TextField
+          fullWidth
+          value={editNoteText}
+          onChange={(e) => setEditNoteText(e.target.value)}
+        />
+      ) : (
+        <ListItemText
+          primary={note.content}
+          secondary={new Date(note.created_at).toLocaleDateString()}
+          primaryTypographyProps={{ style: { marginRight: '50px' } }} // Adjust the right margin to ensure text doesn't overlap with icons
+        />
+      )}
+    </ListItem>
+  ))}
+</List>
+
       </div>
     </Drawer>
   );
