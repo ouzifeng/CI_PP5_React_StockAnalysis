@@ -1,13 +1,10 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
-import { Slider, Typography, Table, TableBody, TableCell, TableHead, TableRow, Paper, Box, Skeleton, Grid, IconButton, Container, TableContainer } from '@mui/material';
+import { Button, Container, Fade, Grid, IconButton, Paper, Popper, Slider, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, Typography, useMediaQuery, useTheme, Box, Skeleton } from '@mui/material';
 import ReactCountryFlag from "react-country-flag";
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import { useNavigate } from 'react-router-dom';
-import TablePagination from '@mui/material/TablePagination';
-import { useTheme } from '@mui/material/styles';
-import useMediaQuery from '@mui/material/useMediaQuery';
 
 
 function DividendScreener() {
@@ -22,7 +19,12 @@ function DividendScreener() {
   const [totalStocks, setTotalStocks] = useState(0);
   const navigate = useNavigate();
   const theme = useTheme();
-  const matches = useMediaQuery(theme.breakpoints.down('md'));  
+  const matches = useMediaQuery(theme.breakpoints.down('md')); 
+  const [openPopper, setOpenPopper] = useState(null); // Tracks which popper is open
+  const [anchorEls, setAnchorEls] = useState({});
+  const [popperWidth, setPopperWidth] = useState(null);
+
+
 
   // Callback for fetching data
   const [isFiltering, setIsFiltering] = useState(false);
@@ -94,6 +96,32 @@ function DividendScreener() {
     setCurrentPage(newPage + 1);
   };
 
+    // Function to handle Popper for Dividend Yield Slider
+  const handlePopperClick = (popperId, event) => {
+    const newAnchorEls = { ...anchorEls };
+
+    // Always set the width for the popper based on the button's width
+    // whenever the button is clicked.
+    if (event.currentTarget && event.currentTarget.offsetWidth) {
+      setPopperWidth(event.currentTarget.offsetWidth);
+    }
+
+    // Toggle the popper. If it's already open, close it, otherwise open it and set the anchorEl.
+    if (openPopper === popperId) {
+      setOpenPopper(null); // Close the current popper
+      newAnchorEls[popperId] = null; // Clear the anchor element for this popper
+    } else {
+      setOpenPopper(popperId); // Open the new popper
+      newAnchorEls[popperId] = event.currentTarget; // Set the anchor element for this popper
+    }
+
+    setAnchorEls(newAnchorEls); // Update the state with the new anchor elements
+  };
+
+
+  const isPopperOpen = (popperId) => openPopper === popperId;
+
+
 
   const handleFavoriteClick = (event, primaryTicker) => {
     event.stopPropagation();
@@ -143,57 +171,95 @@ function DividendScreener() {
     return dividendPass && payoutRatioPass && peRatioPass;
   });
 
+  
+
   return (
     <Container maxWidth="lg">
-      <Grid container spacing={3} mt={4}>
+      <Grid container spacing={1} mt={4} mb={4}>
         <Grid item md={2}>
-            <Typography id="dividend-slider" variant="body2" gutterBottom>
-              Dividend Yield:<br /> {dividendThreshold[0]}% - {dividendThreshold[1]}%
-            </Typography>
-            <Slider
-              size="small"
-              value={dividendThreshold}
-              onChange={(event, newValue) => handleFilterChange(newValue, 'dividend')}
-              aria-labelledby="dividend-slider"
-              valueLabelDisplay="auto"
-              getAriaValueText={(value) => `${value[0]}% - ${value[1]}%`}
-              min={0}
-              max={20}
-              sx={{ width: '80%' }}
-            />
-          </Grid>
-          <Grid item md={2}>
-            <Typography id="payout-ratio-slider" variant="body2" gutterBottom>
-              Payout Ratio:<br /> {payoutRatio[0]}% - {payoutRatio[1]}%
-            </Typography>
-            <Slider
-              size="small"
-              value={payoutRatio}
-              onChange={(event, newValue) => handleFilterChange(newValue, 'payout')}
-              aria-labelledby="payout-ratio-slider"
-              valueLabelDisplay="auto"
-              getAriaValueText={(value) => `${value[0]}% - ${value[1]}%`}
-              min={0}
-              max={100}
-              sx={{ width: '80%' }}
-            />
-          </Grid>
-          <Grid item md={2}>
-            <Typography id="pe-ratio-slider" variant="body2" gutterBottom>
-              PE Ratio:<br /> {peRatio[0]} - {peRatio[1]}
-            </Typography>
-            <Slider
-              size="small"
-              value={peRatio}
-              onChange={(event, newValue) => handleFilterChange(newValue, 'pe')}
-              aria-labelledby="pe-ratio-slider"
-              valueLabelDisplay="auto"
-              getAriaValueText={(value) => `${value[0]}% - ${value[1]}%`}
-              min={0}
-              max={100}
-              sx={{ width: '80%' }}
-            />
-          </Grid>
+        <Button aria-describedby="dividend-popper" type="button" variant='contained' onClick={(event) => handlePopperClick('dividend', event)} fullWidth>
+          Dividend Yield
+        </Button>
+          <Popper id="dividend-popper" open={isPopperOpen('dividend')} anchorEl={anchorEls['dividend']} transition>
+            {({ TransitionProps }) => (
+              <Fade {...TransitionProps} timeout={350}>
+                <Paper sx={{ width: popperWidth ? `${popperWidth}px` : 'auto' }}>
+                  <Box p={2}>
+                    <Typography id="dividend-slider" variant="body2" gutterBottom>
+                      Dividend Yield:<br />{dividendThreshold[0]}% - {dividendThreshold[1]}%
+                    </Typography>
+                    <Slider
+                      size="small"
+                      value={dividendThreshold}
+                      onChange={(event, newValue) => handleFilterChange(newValue, 'dividend')}
+                      aria-labelledby="dividend-slider"
+                      valueLabelDisplay="auto"
+                      getAriaValueText={(value) => `${value[0]}% - ${value[1]}%`}
+                      min={0}
+                      max={20}
+                    />
+                  </Box>
+                </Paper>
+              </Fade>
+            )}
+          </Popper>
+        </Grid>
+        <Grid item md={2}>
+          <Button aria-describedby="payout-popper" type="button" variant='contained' onClick={(event) => handlePopperClick('payout', event)} fullWidth>
+            Payout Ratio
+          </Button>
+          <Popper id="payout-popper" open={isPopperOpen('payout')} anchorEl={anchorEls['payout']} transition>
+            {({ TransitionProps }) => (
+              <Fade {...TransitionProps} timeout={350}>
+                <Paper sx={{ width: popperWidth ? `${popperWidth}px` : 'auto' }}>
+                  <Box p={2}>
+                    <Typography id="payout-ratio-slider" variant="body2" gutterBottom>
+                      Payout Ratio:<br />{payoutRatio[0]}% - {payoutRatio[1]}%
+                    </Typography>
+                    <Slider
+                      size="small"
+                      value={payoutRatio}
+                      onChange={(event, newValue) => handleFilterChange(newValue, 'payout')}
+                      aria-labelledby="payout-ratio-slider"
+                      valueLabelDisplay="auto"
+                      getAriaValueText={(value) => `${value[0]}% - ${value[1]}%`}
+                      min={0}
+                      max={100}
+                    />
+                  </Box>
+                </Paper>
+              </Fade>
+            )}
+          </Popper>
+        </Grid>
+        <Grid item md={2}>
+          <Button aria-describedby="pe-popper" type="button" variant='contained' onClick={(event) => handlePopperClick('pe', event)} fullWidth>
+            PE Ratio
+          </Button>
+          <Popper id="pe-popper" open={isPopperOpen('pe')} anchorEl={anchorEls['pe']} transition>
+            {({ TransitionProps }) => (
+              <Fade {...TransitionProps} timeout={350}>
+                <Paper sx={{ width: popperWidth ? `${popperWidth}px` : 'auto' }}>
+                  <Box p={2}>
+                    <Typography id="pe-ratio-slider" variant="body2" gutterBottom>
+                      PE Ratio:<br />{peRatio[0]} - {peRatio[1]}
+                    </Typography>
+                    <Slider
+                      size="small"
+                      value={peRatio}
+                      onChange={(event, newValue) => handleFilterChange(newValue, 'pe')}
+                      aria-labelledby="pe-ratio-slider"
+                      valueLabelDisplay="auto"
+                      getAriaValueText={(value) => `${value[0]}% - ${value[1]}%`}
+                      min={0}
+                      max={100}
+                    />
+                  </Box>
+                </Paper>
+              </Fade>
+            )}
+          </Popper>
+        </Grid>
       </Grid>
       <TableContainer component={Paper}>
         <Table size={matches ? 'small' : 'medium'}>

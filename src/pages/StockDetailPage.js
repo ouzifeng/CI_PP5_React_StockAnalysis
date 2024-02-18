@@ -189,25 +189,25 @@ const StockDetail = () => {
           </Grid>
         </Grid>
         <Grid container item md={12} xs={12} spacing={3} sx={{ mt: 3 }}>
-<Grid item md={5} xs={12}>
-  {stockData.income_statements && <CagrChart incomeStatements={stockData.income_statements} />}
-  {stockData.dividend_yield_data && <div style={{ marginTop: '20px' }}></div>}
-  {stockData.dividend_yield_data && <DividendYieldChart dividendYieldData={stockData.dividend_yield_data} />}
+            <Grid item md={5} xs={12}>
+              {stockData.income_statements && <CagrChart incomeStatements={stockData.income_statements} />}
+              {stockData.dividend_yield_data && <div style={{ marginTop: '20px' }}></div>}
+              {stockData.dividend_yield_data && <DividendYieldChart dividendYieldData={stockData.dividend_yield_data} />}
+            </Grid>
+
+<Grid item md={3} xs={12}>
+    <CagrPercent
+        cagrData={stockData.general_cagr || {}}
+        stockPriceCagr={stockPriceCagr}
+        dividendYieldCagr={dividendYieldCagr}
+        hasData={!!stockData.general_cagr}
+    />
 </Grid>
 
-        <Grid item md={3} xs={12}>
-            {stockData.general_cagr && (
-                <CagrPercent
-                    cagrData={stockData.general_cagr}
-                    stockPriceCagr={stockPriceCagr}
-                    dividendYieldCagr={dividendYieldCagr}
-                />
-            )}
-        </Grid>
-          <Grid item md={4} xs={12}>
-            <AnalystOverallRating ratings={stockData.analyst_ratings} />
-            <AnalystRatingsBarChart ratings={stockData.analyst_ratings} />
-          </Grid>
+            <Grid item md={4} xs={12}>
+              <AnalystOverallRating ratings={stockData.analyst_ratings} />
+              <AnalystRatingsBarChart ratings={stockData.analyst_ratings} />
+            </Grid>
         </Grid>
         <Grid container item md={12} xs={12} spacing={3} sx={{ mt: 3 }}>
           <Grid item md={3} xs={12}>
