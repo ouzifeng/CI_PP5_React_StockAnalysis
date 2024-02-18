@@ -123,10 +123,11 @@ body {
 
   .stockname {
     font-size: 24px !important;
+    padding-left: 0 !important;
   }
 
-  .follow-button {
-    padding-left: 27px !important;
+  .stock-follow {
+    margin-left: 10px !important;
   }
 
   .ticker-container {
