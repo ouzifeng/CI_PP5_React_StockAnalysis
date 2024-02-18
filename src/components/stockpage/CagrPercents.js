@@ -11,8 +11,9 @@ const CagrPercent = ({ cagrData, stockPriceCagr, dividendYieldCagr }) => {
         { label: 'Dividend 5yr CAGR', key: 'dividend_cagr', value: dividendYieldCagr },
     ];
 
+    const allDataUnavailable = cagrItems.every(item => item.value === undefined || item.value === null);
+
     const renderRow = (item, key) => {
-        // Display 'N/A' if the value is undefined or null
         if (item.value === undefined || item.value === null) {
             return (
                 <TableRow key={key}>
@@ -22,7 +23,6 @@ const CagrPercent = ({ cagrData, stockPriceCagr, dividendYieldCagr }) => {
             );
         }
 
-        // Format the value as a percentage
         const formattedValue = `${(parseFloat(item.value) * 100).toFixed(2)}%`;
         return (
             <TableRow key={key}>
@@ -37,13 +37,17 @@ const CagrPercent = ({ cagrData, stockPriceCagr, dividendYieldCagr }) => {
             <Box sx={{ bgcolor: 'primary.main', p: 1 }}>
                 <Typography variant="subtitle1" sx={{ color: 'common.white', textAlign: 'center' }}>5 Year CAGR</Typography>
             </Box>
-            <TableContainer>
-                <Table aria-label="CAGR Table">
-                    <TableBody>
-                        {cagrItems.map((item, index) => renderRow(item, index))}
-                    </TableBody>
-                </Table>
-            </TableContainer>
+            {allDataUnavailable ? (
+                <Typography variant="body1" sx={{ textAlign: 'center', p: 2 }}>No data available.</Typography>
+            ) : (
+                <TableContainer>
+                    <Table aria-label="CAGR Table">
+                        <TableBody>
+                            {cagrItems.map((item, index) => renderRow(item, index))}
+                        </TableBody>
+                    </Table>
+                </TableContainer>
+            )}
         </Paper>
     );
 };
