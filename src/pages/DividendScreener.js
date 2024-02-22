@@ -26,59 +26,67 @@ function DividendScreener() {
 
 
 
-  // Callback for fetching data
-  const [isFiltering, setIsFiltering] = useState(false);
+ // State to control when to start fetching data
+const [shouldFetch, setShouldFetch] = useState(true);
+const [isFiltering, setIsFiltering] = useState(false);
 
-  // Callback for fetching data
-  const fetchData = useCallback(async (page = 1) => {
-    setIsFiltering(true); // Set filtering state to true when fetching starts
-    setLoading(true);
-    const params = new URLSearchParams({
-      page,
-      min_dividend_yield: dividendThreshold[0] / 100,
-      max_dividend_yield: dividendThreshold[1] / 100,
-      min_payout_ratio: payoutRatio[0] / 100,
-      max_payout_ratio: payoutRatio[1] / 100,
-      min_pe_ratio: peRatio[0],
-      max_pe_ratio: peRatio[1],
-    });
+// Adjusted fetchData to consider shouldFetch state
+const fetchData = useCallback(async (page = 1) => {
+  if (!shouldFetch) return; // Do not fetch if shouldFetch is false
+  setIsFiltering(true);
+  setLoading(true);
+  const params = new URLSearchParams({
+    page,
+    min_dividend_yield: dividendThreshold[0] / 100,
+    max_dividend_yield: dividendThreshold[1] / 100,
+    min_payout_ratio: payoutRatio[0] / 100,
+    max_payout_ratio: payoutRatio[1] / 100,
+    min_pe_ratio: peRatio[0],
+    max_pe_ratio: peRatio[1],
+  });
 
-    try {
-      const response = await axios.get(`https://django-stocks-ecbc6bc5e208.herokuapp.com/api/dividend_data?${params}`);
-      setStocks(response.data.results);
-      setTotalStocks(response.data.count);
-    } catch (error) {
-      console.error('Error fetching stocks:', error);
-    } finally {
-      setLoading(false);
-    }
-  }, [dividendThreshold, payoutRatio, peRatio]);
+  try {
+    const response = await axios.get(`https://django-stocks-ecbc6bc5e208.herokuapp.com/api/dividend_data?${params}`);
+    setStocks(response.data.results);
+    setTotalStocks(response.data.count);
+  } catch (error) {
+    console.error('Error fetching stocks:', error);
+  } finally {
+    setLoading(false);
+    setShouldFetch(false); // Reset shouldFetch to prevent repeated fetching on re-renders
+  }
+}, [dividendThreshold, payoutRatio, peRatio, shouldFetch]); // Added shouldFetch to the dependency array
 
-  const handleFilterChange = useCallback((newValue, filterType) => {
-    if (filterType === 'dividend') {
-      setDividendThreshold(newValue);
-    } else if (filterType === 'payout') {
-      setPayoutRatio(newValue);
-    } else if (filterType === 'pe') {
-      setPeRatio(newValue);
-    }
-    setCurrentPage(1);
-    fetchData(1); // This should also be wrapped to handle the filtering state
-  }, [fetchData])
+// Adjust handleFilterChange to not initiate fetching
+const handleFilterChange = useCallback((newValue, filterType) => {
+  if (filterType === 'dividend') {
+    setDividendThreshold(newValue);
+  } else if (filterType === 'payout') {
+    setPayoutRatio(newValue);
+  } else if (filterType === 'pe') {
+    setPeRatio(newValue);
+  }
+  // Removed fetchData call here to prevent immediate fetching on filter change
+}, []);
 
+// initiateSearch function triggers fetching by setting shouldFetch to true
+const initiateSearch = useCallback(() => {
+  setCurrentPage(1); // Reset to the first page as needed
+  setShouldFetch(true); // This will trigger fetchData in useEffect
+}, []);
 
-  // Use useEffect to watch filter and page changes, then fetch data
-  useEffect(() => {
-  
-    fetchData(currentPage);
-  }, [currentPage, dividendThreshold, payoutRatio, peRatio, fetchData]);
+// Adjust useEffect hook to call fetchData when currentPage changes or shouldFetch becomes true
+useEffect(() => {
+  fetchData(currentPage);
+}, [currentPage, fetchData]);
 
-  useEffect(() => {
-    // If we're not loading data anymore, we can assume filtering is done.
-    if (!loading) {
-      setIsFiltering(false);
-    }
-  }, [loading])
+// Existing useEffect for loading state remains unchanged
+useEffect(() => {
+  if (!loading) {
+    setIsFiltering(false);
+  }
+}, [loading]);
+
 
   const formatMarketCap = (value) => {
     return `${(value / 1e9).toFixed(2)}b`;
@@ -225,6 +233,7 @@ function DividendScreener() {
                       getAriaValueText={(value) => `${value[0]}% - ${value[1]}%`}
                       min={0}
                       max={100}
+
                     />
                   </Box>
                 </Paper>
@@ -259,7 +268,7 @@ function DividendScreener() {
               </Fade>
             )}
           </Popper>
-        </Grid>
+      </Grid>
       </Grid>
       <TableContainer component={Paper}>
         <Table size={matches ? 'small' : 'medium'}>
