@@ -1,10 +1,9 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
-import { Button, Container, Fade, Grid, IconButton, Paper, Popper, Slider, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, Typography, useMediaQuery, useTheme, Box, Skeleton } from '@mui/material';
+import { Button, Container, Fade, Grid, Paper, Popper, Slider, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, Typography, useMediaQuery, useTheme, Box, Skeleton } from '@mui/material';
 import ReactCountryFlag from "react-country-flag";
-import FavoriteIcon from '@mui/icons-material/Favorite';
-import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import { useNavigate } from 'react-router-dom';
+import { debounce } from 'lodash';
 
 
 function DividendScreener() {
@@ -14,7 +13,6 @@ function DividendScreener() {
   const [payoutRatio, setPayoutRatio] = useState([0, 100]);
   const [peRatio, setPeRatio] = useState([0, 100]);
   const [loading, setLoading] = useState(true);
-  const [favoriteStocks, setFavoriteStocks] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalStocks, setTotalStocks] = useState(0);
   const navigate = useNavigate();
@@ -24,6 +22,40 @@ function DividendScreener() {
   const [anchorEls, setAnchorEls] = useState({});
   const [popperWidth, setPopperWidth] = useState(null);
 
+  // Define a stable initiateSearch function that resets page and triggers fetching
+  const initiateSearch = useCallback(() => {
+    setCurrentPage(1); // Always start from the first page when filters change
+    setShouldFetch(true); // This flag will trigger fetching in useEffect
+  }, []);
+
+  const handleFilterChange = useCallback((newValue, filterType) => {
+    setLoading(true); // Trigger loading state immediately
+    if (filterType === 'dividend') {
+      setDividendThreshold(newValue);
+    } else if (filterType === 'payout') {
+      setPayoutRatio(newValue);
+    } else if (filterType === 'pe') {
+      setPeRatio(newValue);
+    }
+    // No direct call to initiateSearch or debounced search here
+  }, []);
+
+  // Use useEffect to debounce applying the filters and fetching data
+  useEffect(() => {
+    // Create a debounced version of the function that sets filters and triggers data fetching
+    const debouncedSetFiltersAndFetch = debounce(() => {
+      // Actual fetching is triggered here after debounce period
+      initiateSearch();
+    }, 2000);
+
+    if (loading) {
+      debouncedSetFiltersAndFetch();
+    }
+
+    // Cleanup function to cancel the debounce if component unmounts or filters change again
+    return () => debouncedSetFiltersAndFetch.cancel();
+  }, [dividendThreshold, payoutRatio, peRatio, initiateSearch, loading]);
+ 
 
 
  // State to control when to start fetching data
@@ -56,24 +88,6 @@ const fetchData = useCallback(async (page = 1) => {
     setShouldFetch(false); // Reset shouldFetch to prevent repeated fetching on re-renders
   }
 }, [dividendThreshold, payoutRatio, peRatio, shouldFetch]); // Added shouldFetch to the dependency array
-
-// Adjust handleFilterChange to not initiate fetching
-const handleFilterChange = useCallback((newValue, filterType) => {
-  if (filterType === 'dividend') {
-    setDividendThreshold(newValue);
-  } else if (filterType === 'payout') {
-    setPayoutRatio(newValue);
-  } else if (filterType === 'pe') {
-    setPeRatio(newValue);
-  }
-  // Removed fetchData call here to prevent immediate fetching on filter change
-}, []);
-
-// initiateSearch function triggers fetching by setting shouldFetch to true
-const initiateSearch = useCallback(() => {
-  setCurrentPage(1); // Reset to the first page as needed
-  setShouldFetch(true); // This will trigger fetchData in useEffect
-}, []);
 
 // Adjust useEffect hook to call fetchData when currentPage changes or shouldFetch becomes true
 useEffect(() => {
@@ -128,44 +142,6 @@ useEffect(() => {
 
 
   const isPopperOpen = (popperId) => openPopper === popperId;
-
-
-
-  const handleFavoriteClick = (event, primaryTicker) => {
-    event.stopPropagation();
-
-    const isFavorite = favoriteStocks.some(stock => stock.primary_ticker === primaryTicker);
-
-    if (isFavorite) {
-      const updatedFavorites = favoriteStocks.filter(stock => stock.primary_ticker !== primaryTicker);
-      setFavoriteStocks(updatedFavorites);
-    } else {
-      const updatedFavorites = [...favoriteStocks, { primary_ticker: primaryTicker }];
-      setFavoriteStocks(updatedFavorites);
-    }
-  };
-
-  const isFavoriteStock = (primaryTicker) => {
-    return favoriteStocks.some(stock => stock.primary_ticker === primaryTicker);
-  };  
-
-  const getPayoutRatioStyle = (ratio) => {
-    if (ratio > 100) {
-      return { color: 'red' };
-    } else if (ratio >= 60) {
-      return { color: 'orange' };
-    }
-    return { color: 'green' };
-  };
-
-  const getDividendGrowthStyle = (growth) => {
-    if (growth < 0) {
-      return { color: 'red' };
-    } else if (growth === 0) {
-      return { color: 'orange' };
-    }
-    return { color: 'green' };
-  };
 
   const filteredStocks = stocks.filter(stock => {
     const dividendYield = parseFloat(stock.dividend_yield) * 100;
@@ -281,7 +257,6 @@ useEffect(() => {
               <TableCell align="right">Forward Yield</TableCell>
               <TableCell align="right">Payout Ratio</TableCell>
               <TableCell align="right">Div 5yr CAGR</TableCell>
-              <TableCell align="right">Follow</TableCell>
 
             </TableRow>
           </TableHead>
@@ -319,17 +294,8 @@ useEffect(() => {
                   <TableCell align="right">{parseFloat(stock.pe_ratio).toFixed(2)}</TableCell>
                   <TableCell align="right">{formatPercentage(stock.dividend_yield)}</TableCell>
                   <TableCell align="right">{formatPercentage(stock.forward_annual_dividend_yield)}</TableCell>
-                  <TableCell align="right" style={getPayoutRatioStyle(stock.payout_ratio)}>
-                    {formatPercentage(stock.payout_ratio)}
-                  </TableCell>
-                  <TableCell align="right" style={getDividendGrowthStyle(stock.cagr_5_years)}>
-                    {Number(stock.cagr_5_years).toFixed(2)}%
-                  </TableCell>
-                  <TableCell align="right">
-                    <IconButton onClick={(event) => handleFavoriteClick(event, stock.primary_ticker)}>
-                      {isFavoriteStock(stock.primary_ticker) ? <FavoriteIcon color="primary" /> : <FavoriteBorderIcon color="disabled" />}
-                    </IconButton>
-                  </TableCell>
+                  <TableCell align="right" >{formatPercentage(stock.payout_ratio)}</TableCell>
+                  <TableCell align="right">{Number(stock.cagr_5_years).toFixed(2)}%</TableCell>
                 </TableRow>
               ))
             )}
