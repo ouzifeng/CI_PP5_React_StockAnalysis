@@ -155,7 +155,7 @@ useEffect(() => {
     return dividendPass && payoutRatioPass && peRatioPass;
   });
 
-  
+  const sortedStocks = filteredStocks.sort((a, b) => parseFloat(b.dividend_yield) - parseFloat(a.dividend_yield));
 
   return (
     <Container maxWidth="lg">
@@ -270,36 +270,36 @@ useEffect(() => {
                   </TableRow>
                 ))
               ) : (
-                filteredStocks.map((stock, index) => (
-                <TableRow key={index} hover style={{ cursor: 'pointer' }} onClick={() => handleRowClick(stock.uid)}>
-                  <TableCell component="th" scope="row">
-                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                      <ReactCountryFlag
-                        countryCode={stock.country_iso}
-                        svg
-                        style={{
-                          width: '2em',
-                          height: '2em',
-                          marginRight: '0.5em',
-                        }}
-                        title={stock.country_iso}
-                      />
-                      <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-                        <Typography variant="body1">{stock.name}</Typography>
-                        <Typography variant="body2" color="textSecondary">{stock.primary_ticker} - {stock.exchange}</Typography>
+                sortedStocks.map((stock, index) => (
+                  <TableRow key={index} hover style={{ cursor: 'pointer' }} onClick={() => handleRowClick(stock.uid)}>
+                    <TableCell component="th" scope="row">
+                      <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                        <ReactCountryFlag
+                          countryCode={stock.country_iso}
+                          svg
+                          style={{
+                            width: '2em',
+                            height: '2em',
+                            marginRight: '0.5em',
+                          }}
+                          title={stock.country_iso}
+                        />
+                        <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+                          <Typography variant="body1">{stock.name}</Typography>
+                          <Typography variant="body2" color="textSecondary">{stock.primary_ticker} - {stock.exchange}</Typography>
+                        </Box>
                       </Box>
-                    </Box>
-                  </TableCell>
-                  <TableCell align="right">{stock.currency_symbol}{formatMarketCap(stock.market_capitalization)}</TableCell>
-                  <TableCell align="right">{parseFloat(stock.pe_ratio).toFixed(2)}</TableCell>
-                  <TableCell align="right">{formatPercentage(stock.dividend_yield)}</TableCell>
-                  <TableCell align="right">{formatPercentage(stock.forward_annual_dividend_yield)}</TableCell>
-                  <TableCell align="right" >{formatPercentage(stock.payout_ratio)}</TableCell>
-                  <TableCell align="right">{Number(stock.cagr_5_years).toFixed(2)}%</TableCell>
-                </TableRow>
-              ))
-            )}
-          </TableBody>
+                    </TableCell>
+                    <TableCell align="right">{stock.currency_symbol}{formatMarketCap(stock.market_capitalization)}</TableCell>
+                    <TableCell align="right">{parseFloat(stock.pe_ratio).toFixed(2)}</TableCell>
+                    <TableCell align="right">{formatPercentage(stock.dividend_yield)}</TableCell>
+                    <TableCell align="right">{formatPercentage(stock.forward_annual_dividend_yield)}</TableCell>
+                    <TableCell align="right" >{formatPercentage(stock.payout_ratio)}</TableCell>
+                    <TableCell align="right">{Number(stock.cagr_5_years).toFixed(2)}%</TableCell>
+                  </TableRow>
+                ))
+              )}
+            </TableBody>
         </Table>
           <TablePagination
             component="div"
