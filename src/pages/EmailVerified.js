@@ -17,7 +17,7 @@ function EmailVerified() {
       try {
         // Use axios.get instead of axios.post
         await axios.get(
-          `https://django-stocks-ecbc6bc5e208.herokuapp.com/auth/verify-email/${uidb64}/${token}/`,
+          `https://django-stocks-ecbc6bc5e208.herokuapp.com/api/user/verify-email/${uidb64}/${token}/`,
           {
             headers: {
               'Authorization': 'Token 13502af70a55d1fcddf7c094e4418c65904ef6eb',
