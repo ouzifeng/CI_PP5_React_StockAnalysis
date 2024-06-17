@@ -34,7 +34,7 @@ function SignIn() {
 
     try {
       const response = await axios.post(
-        'https://django-stocks-ecbc6bc5e208.herokuapp.com/auth/login/',
+        'https://django-stocks-ecbc6bc5e208.herokuapp.com/api/user/login/',
         { username, password },
         { headers: { 'Content-Type': 'application/json' } }
       );
@@ -65,7 +65,7 @@ const handleLoginSuccess = (token, avatarUrl) => {
 
     try {
       const response = await axios.post(
-        'https://django-stocks-ecbc6bc5e208.herokuapp.com/auth/google/login/',
+        'https://django-stocks-ecbc6bc5e208.herokuapp.com/api/user/google/login/',
         { token: credentialResponse.credential },
         { headers: { 'Content-Type': 'application/json' } }
       );
