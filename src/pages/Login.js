@@ -26,30 +26,34 @@ function SignIn() {
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (event) => {
-    event.preventDefault();
-    setLoading(true); // Activate loading state
-    const data = new FormData(event.currentTarget);
-    const username = data.get('email');
-    const password = data.get('password');
+      event.preventDefault();
+      setLoading(true); // Activate loading state
+      const data = new FormData(event.currentTarget);
+      const email = data.get('email');
+      const password = data.get('password');
 
-    try {
-      const response = await axios.post(
-        'https://django-stocks-ecbc6bc5e208.herokuapp.com/api/user/login/',
-        { username, password },
-        { headers: { 'Content-Type': 'application/json' } }
-      );
+      console.log({ email, password }); // Log the data being sent
 
-      localStorage.setItem('token', response.data.key);
-      setIsAuthenticated(true); // Update the global authentication state
-      setShowLoginSuccessAlert(true); // Trigger the global login success alert
-      navigate('/'); // Redirect user to the homepage or another appropriate route
-      console.log('Logged in successfully!'); // Console log for successful login
-    } catch (error) {
-      console.error('Login Error: ', error);
-      setLoginError('Invalid login credentials.');
-      console.log('Login failed: ', error); // Console log for login failure
-    }
-    setLoading(false); // Deactivate loading state
+      try {
+          const response = await axios.post(
+              'https://django-stocks-ecbc6bc5e208.herokuapp.com/auth/login/',
+              { email, username: email, password }, // Include email, username, and password
+              { headers: { 'Content-Type': 'application/json' } }
+          );
+
+          console.log(response.data); // Log the response data
+
+          localStorage.setItem('token', response.data.token);
+          setIsAuthenticated(true); // Update the global authentication state
+          setShowLoginSuccessAlert(true); // Trigger the global login success alert
+          navigate('/'); // Redirect user to the homepage or another appropriate route
+          console.log('Logged in successfully!'); // Console log for successful login
+      } catch (error) {
+          console.error('Login Error: ', error.response ? error.response.data : error.message);
+          setLoginError('Invalid login credentials.');
+          console.log('Login failed: ', error); // Console log for login failure
+      }
+      setLoading(false); // Deactivate loading state
   };
 
 const handleLoginSuccess = (token, avatarUrl) => {

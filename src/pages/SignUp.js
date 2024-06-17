@@ -18,7 +18,6 @@ import CircularProgress from '@mui/material/CircularProgress';
 import { useNavigate } from 'react-router-dom';
 import { Alert } from '@mui/material';
 
-
 const defaultTheme = createTheme();
 
 export default function SignUp() {
@@ -33,7 +32,6 @@ export default function SignUp() {
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
     const [showAlert, setShowAlert] = useState(false);
-
 
     const validateForm = () => {
         let tempErrors = {};
@@ -50,19 +48,16 @@ export default function SignUp() {
     }
 
     // Function to handle sign up
-    const handleSignUp = async (email, password, firstName, lastName) => {
+    const handleSignUp = async (email, username, password, firstName, lastName) => {
         try {
             setLoading(true); // Activate loading state
             const endpoint = 'https://django-stocks-ecbc6bc5e208.herokuapp.com/api/user/register/';
             const response = await axios.post(endpoint, {
                 email,
+                username, // Include username in the request payload
                 password,
                 first_name: firstName,
                 last_name: lastName
-            }, {
-                headers: {
-                    'Authorization': 'Token 13502af70a55d1fcddf7c094e4418c65904ef6eb' // Include the token in the request headers
-                }
             });
             console.log('Sign up successful', response.data);
             setLoading(false); // Deactivate loading state
@@ -82,8 +77,6 @@ export default function SignUp() {
         }
     }
 
-
-
     const handleSubmit = async (event) => {
         event.preventDefault();
         if (!validateForm()) {
@@ -93,7 +86,8 @@ export default function SignUp() {
 
         // Use formData fields directly since they match the expected fields
         await handleSignUp(
-            formData.email, 
+            formData.email,
+            formData.email, // Set username to the same as email
             formData.password, 
             formData.firstName, 
             formData.lastName
