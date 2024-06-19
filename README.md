@@ -79,3 +79,85 @@ The project is split into a react based backend which can be found [here](https:
 23. As a logged in user, I want to be able to edit investment notes as I go about my research
 24. As a logged in user, I want to be able to delete investment notes as I go about my research
 
+
+### Site Structure
+
+In an attempt to follow React best design practices, the site has been broken down into three main sections:
+
+1. **Base Layout**
+   - **Location**: `src/layouts/BaseLayout.js`
+   - **Description**: This is the foundational layout upon which all other pages are built. It includes common elements such as the header, footer, and navigation menu, providing a consistent structure across the application.
+
+2. **Pages**
+   - **Location**: `src/pages/`
+   - **Description**: These are the main views of the application, layered on top of the base layout. Each page represents a specific route and functionality within the app. Key pages include:
+     - `ContactUs.js`: The contact information and form for user inquiries.
+     - `DividendScreener.js`: A tool for users to screen and filter dividend stocks.
+     - `EmailVerified.js`: The confirmation page displayed after a user verifies their email address.
+     - `Following.js`: A page showing the stocks the user is following.
+     - `ForgotPassword.js`: The password recovery page for users who have forgotten their password.
+     - `Login.js`: The login page for user authentication.
+     - `ResetPassword.js`: The page for resetting the user’s password.
+     - `SignUp.js`: The registration page for new users.
+     - `StockDetailPage.js`: The detailed view of an individual stock, including metrics, notes, and historical data.
+
+3. **Components**
+   - **Location**: `src/components/`
+   - **Description**: Reusable UI elements and functionalities that are used across various pages and layouts. This directory is further organized into subdirectories for better manageability. Key components include:
+
+     - **Common Components (`src/components/common/`)**:
+       - **Footer.js**: 
+         - **Description**: The footer component that appears at the bottom of each page. It includes links to various sections of the site and other relevant information.
+         - **Usage**: Included in the `BaseLayout.js` to ensure it appears on all pages.
+       - **Header.jsx**: 
+         - **Description**: The header component that appears at the top of each page. It contains the logo, navigation links, and user account options.
+         - **Usage**: Included in the `BaseLayout.js` to ensure it appears on all pages.
+       - **MenuDrawer.js**: 
+         - **Description**: A sidebar menu component that provides navigation links in a collapsible drawer format.
+         - **Usage**: Used in the `Header.jsx` to provide additional navigation options for mobile and tablet users.
+
+     - **Context (`src/context/`)**:
+       - **AuthContext.js**: 
+         - **Description**: Provides a context for managing authentication state across the application. It includes methods for logging in, logging out, and checking the current user's authentication status.
+         - **Usage**: Wrapped around the main application component to provide authentication state to all components.
+
+     - **Routes (`src/components/`)**:
+       - **ProtectedRoute.js**: 
+         - **Description**: A higher-order component (HOC) that restricts access to certain routes. It checks if the user is authenticated before rendering the route's component; otherwise, it redirects to the login page.
+         - **Usage**: Used to protect pages that require user authentication, such as the `StockDetailPage.js`.
+       - **RestrictedRoute.js**: 
+         - **Description**: Similar to `ProtectedRoute.js`, but used to restrict routes for authenticated users only. It renders a different component or redirects based on the user's authentication status.
+         - **Usage**: Used for routes like `Login.js` and `SignUp.js` to prevent authenticated users from accessing them.
+
+     - **Utility Components**:
+       - **useDebounce.js**: 
+         - **Description**: A custom hook that debounces a given value. Useful for optimizing performance by limiting the rate at which a function is executed, such as search input handlers.
+         - **Usage**: Used in components that require debounced input handling, like search bars.
+
+       - **MessageAndRedirect.js**: 
+         - **Description**: A component that displays a message to the user and redirects them after a certain period.
+         - **Usage**: Used for actions that require user feedback and subsequent redirection, such as after a successful form submission.
+
+4. **Assets**
+   - **Location**: `src/assets/`
+   - **Description**: Static files such as images and stylesheets. This directory is organized to include:
+     - `images/`: All image files used in the application.
+     - `styles/`: Custom CSS files like `custom.css` for styling the application.
+
+5. **Utilities**
+   - **Location**: `src/utils/`
+   - **Description**: Utility functions and helpers that are used across the application for various purposes.
+
+6. **Services**
+   - **Location**: `src/services/`
+   - **Description**: Modules for handling API calls and interactions with backend services.
+
+### Development Practices
+
+- **Environment Configuration**
+  - **Location**: `.env.local`
+  - **Description**: Configuration file for environment variables, ensuring sensitive data like API keys are not hardcoded.
+
+- **Global Styles**
+  - **Location**: `App.css`
+  - **Description**: Contains global CSS styles that apply to the entire application.
