@@ -161,3 +161,8 @@ In an attempt to follow React best design practices, the site has been broken do
 - **Global Styles**
   - **Location**: `App.css`
   - **Description**: Contains global CSS styles that apply to the entire application.
+
+
+### Testing
+
+User story testing can be found on a separate file [![here]](/README.md)
