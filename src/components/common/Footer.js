@@ -5,7 +5,6 @@ import BottomNavigation from '@mui/material/BottomNavigation';
 import BottomNavigationAction from '@mui/material/BottomNavigationAction';
 import RestoreIcon from '@mui/icons-material/Restore';
 import FavoriteIcon from '@mui/icons-material/Favorite';
-import ArchiveIcon from '@mui/icons-material/Archive';
 import Paper from '@mui/material/Paper';
 import { useNavigate } from 'react-router-dom';
 
@@ -23,9 +22,6 @@ export default function StickyFooter() {
       case 1:
         navigate('/following');
         break;
-      case 2:
-        navigate('/archive');
-        break;
       default:
         break;
     }
@@ -42,7 +38,6 @@ export default function StickyFooter() {
         >
           <BottomNavigationAction label="Contact" icon={<RestoreIcon />} />
           <BottomNavigationAction label="Following" icon={<FavoriteIcon />} />
-          <BottomNavigationAction label="Archive" icon={<ArchiveIcon />} />
         </BottomNavigation>
       </Paper>
     </Box>
