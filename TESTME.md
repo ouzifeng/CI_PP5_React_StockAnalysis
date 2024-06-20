@@ -12,6 +12,7 @@ This document outlines the manual testing procedures for the Bull Street investm
 2. [Finding Stocks](#finding-stocks)
 3. [Individual Stock Research](#individual-stock-research)
 4. [Notes](#notes)
+5. [ESLint Results](#eslint-results)
 
 ---
 
@@ -256,4 +257,42 @@ This document outlines the manual testing procedures for the Bull Street investm
 | 2 | Click the "Delete" button next to a note | Note is deleted from the list of notes |
 
 [![Delete Investment Notes Video]](https://www.loom.com/share/dcf4cbe2ba79445d9dc10f0fa1449221)
+
+---
+
+## ESLint Results
+
+The Bull Street investment app uses ESLint for maintaining code quality and consistency. ESLint helps identify and fix problems in the JavaScript codebase.
+
+### ESLint Configuration
+
+The ESLint setup includes the following configurations and plugins:
+
+- **ESLint**: The core linter engine.
+- **@eslint/js**: The recommended configuration for ESLint.
+- **eslint-plugin-react**: A plugin to support React-specific linting rules.
+- **@babel/eslint-parser**: A parser that allows ESLint to lint all valid Babel code.
+- **globals**: A library for defining global variables that are predefined.
+
+### ESLint Plugins and Settings
+
+- **Parser Options**:
+  - **ecmaVersion**: 2021
+  - **sourceType**: module
+  - **ecmaFeatures**: 
+    - **jsx**: true
+  - **requireConfigFile**: false
+
+- **Globals**: The `globals.browser` settings are used to define global variables for browser environments.
+
+- **React Version Detection**: The React version is automatically detected using `eslint-plugin-react` settings.
+
+### ESLint Results Image
+
+The following image shows the ESLint results after running the linter on the codebase:
+
+![ESLint Results](docs/tests/eslint-results.png)
+
+No errors where found.
+---
 

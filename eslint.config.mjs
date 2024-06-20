@@ -30,5 +30,8 @@ export default [
     plugins: {
       react,
     },
+    rules: {
+      'no-unused-vars': 'off',
+    },
   },
 ];
