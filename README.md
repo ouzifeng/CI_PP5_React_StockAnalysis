@@ -166,3 +166,84 @@ In an attempt to follow React best design practices, the site has been broken do
 ### Testing
 
 User story testing can be found on a separate file [![here]](/TESTME.md)
+
+
+### Libraries Used
+
+This document provides an overview of the libraries and dependencies used in the Bull Street investment app project.
+
+---
+
+#### Dependencies
+
+##### Core Libraries
+
+- **react** (`^18.2.0`)
+  - A JavaScript library for building user interfaces.
+- **react-dom** (`^18.2.0`)
+  - This package serves as the entry point to the DOM and server renderers for React.
+
+##### UI Components and Styling
+
+- **@emotion/react** (`^11.11.3`)
+  - A library designed for writing CSS styles with JavaScript.
+- **@emotion/styled** (`^11.11.0`)
+  - Styled component library for React and other frameworks.
+- **@fontsource/roboto** (`^5.0.8`)
+  - Self-host Open Source fonts in neatly bundled NPM packages.
+- **@mui/icons-material** (`^5.15.6`)
+  - Material Design icons library for React.
+- **@mui/lab** (`^5.0.0-alpha.163`)
+  - Components that are not yet ready for production use in Material-UI.
+- **@mui/material** (`^5.15.6`)
+  - React components for faster and easier web development based on Material Design.
+- **bootstrap** (`^5.3.2`)
+  - The most popular CSS Framework for developing responsive and mobile-first websites.
+- **react-bootstrap** (`^2.10.0`)
+  - Bootstrap components built with React.
+
+##### Authentication
+
+- **@react-oauth/google** (`^0.12.1`)
+  - Google OAuth 2.0 integration for React.
+
+
+##### Data Fetching and Manipulation
+
+- **axios** (`^1.7.2`)
+  - Promise based HTTP client for the browser and node.js.
+- **json-2-csv** (`^5.0.1`)
+  - Convert JSON to CSV or CSV to JSON.
+- **papaparse** (`^5.4.1`)
+  - The powerful, in-browser CSV parser for big boys and girls.
+- **jwt-decode** (`^4.0.0`)
+  - A small browser library that helps decoding JWTs token which are Base64Url encoded.
+
+##### Data Visualization
+
+- **chart.js** (`^4.4.1`)
+  - Simple yet flexible JavaScript charting for designers & developers.
+- **chartjs-adapter-date-fns** (`^3.0.0`)
+  - A lightweight date adapter for Chart.js with date-fns.
+- **lightweight-charts** (`^4.1.2`)
+  - Financial lightweight charts built with HTML5 canvas.
+- **react-chartjs-2** (`^5.2.0`)
+  - React wrapper for Chart.js 2.
+
+##### Utilities
+
+- **lodash** (`^4.17.21`)
+  - A modern JavaScript utility library delivering modularity, performance, and extras.
+- **react-country-flag** (`^3.1.0`)
+  - A simple and tiny React component for rendering country flags.
+- **react-helmet** (`^6.1.0`)
+  - A document head manager for React.
+- **react-router-dom** (`^6.21.3`)
+  - DOM bindings for React Router.
+- **react-scripts** (`5.0.1`)
+  - Configuration and scripts for Create React App.
+- **react-toastify** (`^10.0.4`)
+  - React notification made easy.
+- **web-vitals** (`^2.1.4`)
+  - A small, modular library for measuring all the metrics that Google cares about.
+
