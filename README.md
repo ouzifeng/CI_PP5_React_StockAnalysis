@@ -207,7 +207,7 @@ This document provides an overview of the libraries and dependencies used in the
 - **@react-oauth/google** (`^0.12.1`)
   - Google OAuth 2.0 integration for React.
 
-
+npm audit
 ##### Data Fetching and Manipulation
 
 - **axios** (`^1.7.2`)
