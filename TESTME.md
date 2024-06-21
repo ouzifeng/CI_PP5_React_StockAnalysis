@@ -293,6 +293,6 @@ The following image shows the ESLint results after running the linter on the cod
 
 ![ESLint Results](docs/tests/eslint-results.png)
 
-No errors where found.
+No errors were found.
 ---
 

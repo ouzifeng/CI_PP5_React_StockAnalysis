@@ -247,3 +247,78 @@ npm audit
 - **web-vitals** (`^2.1.4`)
   - A small, modular library for measuring all the metrics that Google cares about.
 
+### Wireframes
+
+Although the investment platform is primarily designed to work on desktop as mobile device screens are considered too small to perform proper analysis, the platform still needed to be responsive both on tablets and mobile devices, for analysis on the go.
+
+<details><summary>Contact Page - Desktop</summary>
+<img src="docs/wireframes/contact_desktop.png">
+</details>
+
+<details><summary>Contact Page - Mobile</summary>
+<img src="docs/wireframes/contact_mobile.png">
+</details>
+
+<details><summary>Contact Page - Tablet</summary>
+<img src="docs/wireframes/contact_tablet.png">
+</details>
+
+<details><summary>Following Page - Desktop</summary>
+<img src="docs/wireframes/following_desktop.png">
+</details>
+
+<details><summary>Following Page - Mobile</summary>
+<img src="docs/wireframes/following_mobile.png">
+</details>
+
+<details><summary>Following Page - Tablet</summary>
+<img src="docs/wireframes/following_tablet.png">
+</details>
+
+<details><summary>Home Page - Desktop</summary>
+<img src="docs/wireframes/home_desktop.png">
+</details>
+
+<details><summary>Home Page - Mobile</summary>
+<img src="docs/wireframes/home_mobile.png">
+</details>
+
+<details><summary>Home Page - Tablet</summary>
+<img src="docs/wireframes/home_tablet.png">
+</details>
+
+<details><summary>Register Page - Desktop</summary>
+<img src="docs/wireframes/register_desktop.png">
+</details>
+
+<details><summary>Register Page - Mobile</summary>
+<img src="docs/wireframes/register_mobile.png">
+</details>
+
+<details><summary>Register Page - Tablet</summary>
+<img src="docs/wireframes/register_tablet.png">
+</details>
+
+<details><summary>Sign In Page - Desktop</summary>
+<img src="docs/wireframes/signin_desktop.png">
+</details>
+
+<details><summary>Sign In Page - Mobile</summary>
+<img src="docs/wireframes/signin_mobile.png">
+</details>
+
+<details><summary>Sign In Page - Tablet</summary>
+<img src="docs/wireframes/signin_tablet.png">
+</details>
+
+<details><summary>Stock Home Page</summary>
+<img src="docs/wireframes/stock_home.png">
+</details>
+
+<details><summary>Stock Page - Mobile</summary>
+<img src="docs/wireframes/stock_mobile.png">
+</details>
+
+<details><summary>Stock Page - Tablet</summary>
+<img src="docs/wireframes/stock_tablet.png">
+</details>
