@@ -192,6 +192,75 @@ User story testing details can be found in a separate file [here](/TESTME.md).
 - **react-toastify** (`^10.0.4`)
 - **web-vitals** (`^2.1.4`)
 
+## Styling
+
+The React MUI (Material UI) library was used for the core design.
+
+MUI (Material-UI) is a popular React UI framework that implements Google's Material Design. It provides a comprehensive collection of pre-styled components that are highly customizable and easy to use, which helps in building responsive and visually appealing web applications.
+
+### Why MUI is a Good Choice for React Projects
+
+* Comprehensive Component Library: MUI offers a vast library of components, such as buttons, cards, dialogs, and forms, which are all built with accessibility and responsiveness in mind. This saves a lot of development time as you don't have to build these components from scratch.
+
+* Consistent Design Language: By adhering to Material Design principles, MUI ensures a consistent look and feel across your application. This helps in creating a cohesive user experience.
+
+* Customizability: While MUI components come with default styles, they are highly customizable. You can override styles using various methods like the sx prop, styled function, or by creating custom themes.
+
+* Theming: MUI provides a robust theming mechanism, allowing you to define global design tokens (such as colors, typography, and spacing) that can be applied consistently across your application.
+
+* Accessibility: MUI components follow WAI-ARIA guidelines, ensuring that the interfaces built with MUI are accessible to all users, including those using assistive technologies.
+
+* Community and Documentation: MUI has a large community and extensive documentation, making it easier to find solutions to common problems and get help when needed.
+
+* Integration with Other Libraries: MUI works well with other libraries and tools in the React ecosystem, such as Formik for forms, React Router for navigation, and Redux for state management.
+
+## Font
+
+Open Sans was used as the main font due to its egibility across print, web, and mobile interfaces.
+
+## Colour Scheme
+
+The color scheme of the Bull Street investment platform was designed to follow the principles of Material UI (MUI) to create a visually appealing and user-friendly interface. MUI provides a structured approach to color usage, ensuring consistency and accessibility across the application.
+
+### Primary Colors
+
+Primary Color: The primary color is used predominantly across the platform for elements like buttons, links, and active states. This color is a shade of blue (#1976d2), which is both professional and calming, aligning well with the financial theme of the application.
+
+### Secondary Color
+
+The secondary color is used for highlighting and accentuating elements that need to draw attention, such as secondary buttons and icons. A complementary shade of green (#388e3c) was chosen for its positive connotations, often associated with growth and success.
+
+### Background Colors
+
+Main Background: The main background color is a very light grey (#f5f5f5), providing a neutral and clean canvas that enhances readability and reduces strain on the eyes during extended use.
+
+### Paper Background
+
+Components like cards and modals use a slightly darker shade of grey (#ffffff) to distinguish them from the main background while maintaining a cohesive look.
+
+### Text Colors
+
+Primary Text: The primary text color is a dark grey (#333333), ensuring high readability and contrast against the lighter background colors.
+
+Secondary Text: The secondary text color is a medium grey (#757575), used for less critical information, such as secondary labels and inactive states.
+
+### Button Colors
+
+Primary Button: The primary buttons use the primary color (#1976d2) for their background, with white text (#ffffff) to ensure high contrast and readability.
+
+Secondary Button: The secondary buttons use the secondary color (#388e3c) for their background, also with white text (#ffffff).
+
+### Alerts and Notifications
+
+Success: Success messages use a bright green (#4caf50) to convey positive actions and confirmations.
+Error: Error messages use a vivid red (#f44336) to immediately draw attention to critical issues.
+Warning: Warning messages use a bold yellow (#ff9800) to highlight cautionary information.
+Info: Informational messages use a soft blue (#2196f3) to convey neutral or helpful information.
+Accessibility
+
+
+All colors were chosen not only for their aesthetic appeal but also to ensure accessibility. High contrast ratios were maintained to meet WCAG guidelines, making the platform usable for individuals with visual impairments.
+
 ## Wireframes
 
 Although the investment platform is primarily designed to work on desktop as mobile device screens are considered too small to perform proper analysis, the platform still needed to be responsive both on tablets and mobile devices, for analysis on the go.
@@ -285,3 +354,94 @@ Although the investment platform is primarily designed to work on desktop as mob
   <summary>Stock Page - Tablet</summary>
   <img src="docs/wireframes/stock_tablet.png">
 </details>
+
+## Bug Fixes
+
+| **Bug** | **Fix** |
+| ------- | ------- |
+| Incorrect navigation after Google Sign-In | Modified the Google Sign-In handler to correctly redirect users to the homepage after successful login |
+| Alert component not closing on click in the SignIn page | Updated the Alert component logic to ensure it closes properly when the close button is clicked |
+| Form validation not triggering on the SignUp page | Added form validation logic to trigger correctly on the SignUp page and display relevant error messages |
+| Stock search results not clearing when input is less than 3 characters | Implemented a check to clear stock search results when the input length is less than 3 characters |
+| Infinite loading spinner on the Header search bar | Fixed the search bar to correctly stop the loading spinner once results are fetched |
+| Pagination issue on the stock list page | Added pagination logic to handle large lists of stocks and improve performance on the stock list page |
+| Footer navigation not redirecting correctly on mobile devices | Corrected the Footer navigation logic to ensure proper redirection on mobile devices |
+| ReactCountryFlag component not rendering flags in the search results | Updated the search results rendering logic to correctly display country flags using the ReactCountryFlag component |
+| Responsive design issues on the Contact and Following pages | Adjusted CSS and layout to ensure the Contact and Following pages render correctly on all devices |
+| Missing alt attributes for images causing accessibility issues | Added alt attributes to all images in the project to improve accessibility compliance |
+| User context not updating on login/logout actions | Fixed the user context provider to properly update the state on login and logout actions |
+| Issue with static assets not loading in production | Added a static.json file to configure serving of static assets correctly in the production environment |
+| Error handling for API requests not displaying messages | Implemented error handling to display relevant error messages for API request failures |
+| Navigation bar not collapsing on mobile view | Fixed the navigation bar logic to collapse correctly on smaller screens and mobile devices |
+| Header component rendering incorrectly on page refresh | Modified the Header component to ensure it renders correctly after a page refresh |
+
+
+
+
+## Deployment Guide
+
+### Step 1: Fork the Repository
+
+1. Go to the GitHub repository: [CI_PP5_React_StockAnalysis](https://github.com/ouzifeng/CI_PP5_React_StockAnalysis.git).
+2. Click on the "Fork" button at the top right corner of the repository page.
+3. Choose your GitHub account to fork the repository.
+
+### Step 2: Create a Heroku Account
+
+1. If you don't already have a Heroku account, go to [Heroku](https://www.heroku.com/) and sign up for a free account.
+2. Log in to your Heroku account.
+
+### Step 3: Create a New Heroku App
+
+1. In the Heroku Dashboard, click on the "New" button.
+2. Select "Create new app" from the dropdown menu.
+3. Enter a unique name for your app and choose your region.
+4. Click on the "Create app" button.
+
+### Step 4: Connect GitHub to Heroku
+
+1. In the Heroku Dashboard, navigate to the "Deploy" tab of your newly created app.
+2. In the "Deployment method" section, select "GitHub".
+3. Click the "Connect to GitHub" button.
+4. If prompted, authorize Heroku to access your GitHub account.
+5. In the "Connect to GitHub" section, search for your forked repository by name.
+6. Once you find your repository, click the "Connect" button.
+
+### Step 5: Configure Buildpacks
+
+1. In the Heroku Dashboard, navigate to the "Settings" tab of your app.
+2. Scroll down to the "Buildpacks" section and click "Add buildpack".
+3. Select "nodejs" from the buildpack list and click "Save changes".
+
+### Step 6: Configure Automatic Deploys (Optional)
+
+1. In the "Automatic deploys" section, select the branch you want to deploy (e.g., `main`).
+2. Click the "Enable Automatic Deploys" button.
+
+### Step 7: Deploy the Application
+
+1. In the "Manual deploy" section, ensure the correct branch is selected.
+2. Click the "Deploy Branch" button.
+3. Wait for the deployment process to complete. You can monitor the build process in the activity log.
+
+### Step 8: Configure Environment Variables
+
+1. In the Heroku Dashboard, navigate to the "Settings" tab.
+2. Click the "Reveal Config Vars" button.
+3. Add the required environment variables for your application. For example:
+   - `NODE_ENV`: `production`
+   - `REACT_APP_API_URL`: `<your_api_url>`
+
+### Troubleshooting
+
+- If you encounter any issues during the deployment, check the build logs in the Heroku Dashboard under the "Activity" tab.
+- Ensure that all environment variables are correctly set.
+- Refer to the Heroku documentation for additional troubleshooting tips: [Heroku Dev Center](https://devcenter.heroku.com/).
+
+Congratulations! You have successfully deployed the CI_PP5_React_StockAnalysis project on Heroku.
+
+
+## Thank You
+
+* To the CI for allowing me to take a leave of absence, this allowed me to come back focused and excited to finish the project
+* To my mentor Mo Shami
