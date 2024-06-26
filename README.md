@@ -14,7 +14,7 @@ The platform needs to focus on three areas:
 2. **Individual Stock Pages**: Provides a breakdown of the company's fundamental performance.
 3. **Investment Note-Taking Feature**: Enables users to take, edit, and delete notes, which are easily accessible for internal memos.
 
-The project includes a React-based backend, available [here](https://github.com/ouzifeng/CI_PP5_API). This repository is dedicated to the frontend, built using React JS.
+The project includes a DRF-based backend, available [here](https://github.com/ouzifeng/CI_PP5_API). This repository is dedicated to the frontend, built using React JS.
 
 ## User Experience
 
@@ -365,9 +365,9 @@ Although the investment platform is primarily designed to work on desktop as mob
 
 User stories: 1, 2
 
-[![Account Registration with Email Video](https://www.loom.com/share/16d45ca6b6484fe8ad7187c0da06d0dd)](https://www.loom.com/share/16d45ca6b6484fe8ad7187c0da06d0dd)
+[Account Registration with Email Video](https://www.loom.com/share/16d45ca6b6484fe8ad7187c0da06d0dd)
 
-[![Account Registration with Google Video](https://www.loom.com/share/c52d5a5cb1fb4c0c877f06aa252e8acb)](https://www.loom.com/share/c52d5a5cb1fb4c0c877f06aa252e8acb)
+[Account Registration with Google Video](https://www.loom.com/share/c52d5a5cb1fb4c0c877f06aa252e8acb)
 
 ### Finding Stocks
 
@@ -380,17 +380,17 @@ User stories: 1, 2
 
 User stories: 3, 4, 5, 6, 7, 8
 
-[![Search Stocks by Company Name Video](https://www.loom.com/share/e6c4ef2427854b0cb5d962b3edf461bf)](https://www.loom.com/share/e6c4ef2427854b0cb5d962b3edf461bf)
+[Search Stocks by Company Name Video](https://www.loom.com/share/e6c4ef2427854b0cb5d962b3edf461bf)
 
-[![Filter Stocks by Yield Video](https://www.loom.com/share/98b14cd89c764a7386c0634b63fcb035)](https://www.loom.com/share/98b14cd89c764a7386c0634b63fcb035)
+[Filter Stocks by Yield Video](https://www.loom.com/share/98b14cd89c764a7386c0634b63fcb035)
 
-[![Filter Stocks by Dividend Payout Ratio Video](https://www.loom.com/share/9f7f65160c9547b68889eecfc6b6e715)](https://www.loom.com/share/9f7f65160c9547b68889eecfc6b6e715)
+[Filter Stocks by Dividend Payout Ratio Video](https://www.loom.com/share/9f7f65160c9547b68889eecfc6b6e715)
 
-[![Filter Stocks by Price to Earnings Ratio Video](https://www.loom.com/share/bb42a69675a04ef3910c5ec2679bbc10)](https://www.loom.com/share/bb42a69675a04ef3910c5ec2679bbc10)
+[Filter Stocks by Price to Earnings Ratio Video](https://www.loom.com/share/bb42a69675a04ef3910c5ec2679bbc10)
 
-[![Build Shortlist Video](https://www.loom.com/share/7d3ce2110ef9460eaac31c37b370b44f)](https://www.loom.com/share/7d3ce2110ef9460eaac31c37b370b44f)
+[Build Shortlist Video](https://www.loom.com/share/7d3ce2110ef9460eaac31c37b370b44f)
 
-[![Compare Stocks Video](https://www.loom.com/share/c762c4e4a341418787b9d3dbf34fbc1a)](https://www.loom.com/share/c762c4e4a341418787b9d3dbf34fbc1a)
+[Compare Stocks Video](https://www.loom.com/share/c762c4e4a341418787b9d3dbf34fbc1a)
 
 ### Individual Stock Research
 
@@ -410,31 +410,31 @@ User stories: 3, 4, 5, 6, 7, 8
 
 User stories: 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21
 
-[![Global Index Prices Video](https://www.loom.com/share/aea568fb36c240aa9caff7df4f917607)](https://www.loom.com/share/aea568fb36c240aa9caff7df4f917607)
+[Global Index Prices Video](https://www.loom.com/share/aea568fb36c240aa9caff7df4f917607)
 
-[![Stock Price Over 12 Months Video](https://www.loom.com/share/121f23bd8d354dbfa71ff5e56ba3c6e7)](https://www.loom.com/share/121f23bd8d354dbfa71ff5e56ba3c6e7)
+[Stock Price Over 12 Months Video](https://www.loom.com/share/121f23bd8d354dbfa71ff5e56ba3c6e7)
 
-[![Key Financial Highlights Video](https://www.loom.com/share/6c4c72b39c544a03b499bd282f156a93)](https://www.loom.com/share/6c4c72b39c544a03b499bd282f156a93)
+[Key Financial Highlights Video](https://www.loom.com/share/6c4c72b39c544a03b499bd282f156a93)
 
-[![Basic Stock Information Video](https://www.loom.com/share/79553eedcb4f496c99cc7c7eb29775d3)](https://www.loom.com/share/79553eedcb4f496c99cc7c7eb29775d3)
+[Basic Stock Information Video](https://www.loom.com/share/79553eedcb4f496c99cc7c7eb29775d3)
 
-[![Company Description Video](https://www.loom.com/share/14b5d78be5ca4d63b31be5fb9d3e3eb0)](https://www.loom.com/share/14b5d78be5ca4d63b31be5fb9d3e3eb0)
+[Company Description Video](https://www.loom.com/share/14b5d78be5ca4d63b31be5fb9d3e3eb0)
 
-[![Graphical Representation of Financials Video](https://www.loom.com/share/9f70ca9af03a41ee99c7477165ec1a66)](https://www.loom.com/share/9f70ca9af03a41ee99c7477165ec1a66)
+[Graphical Representation of Financials Video](https://www.loom.com/share/9f70ca9af03a41ee99c7477165ec1a66)
 
-[![5-Year CAGR Metrics Video](https://www.loom.com/share/04cdbb99c33b4baf80de8375f46bd738)](https://www.loom.com/share/04cdbb99c33b4baf80de8375f46bd738)
+[5-Year CAGR Metrics Video](https://www.loom.com/share/04cdbb99c33b4baf80de8375f46bd738)
 
-[![Analyst Ratings Video](https://www.loom.com/share/1975da9435404137be5af0f9eb815300)](https://www.loom.com/share/1975da9435404137be5af0f9eb815300)
+[Analyst Ratings Video](https://www.loom.com/share/1975da9435404137be5af0f9eb815300)
 
-[![Dividend Payments Video](https://www.loom.com/share/c3b9e6cc2c7440b9ac4f2cb6d7c7d096)](https://www.loom.com/share/c3b9e6cc2c7440b9ac4f2cb6d7c7d096)
+[Dividend Payments Video](https://www.loom.com/share/c3b9e6cc2c7440b9ac4f2cb6d7c7d096)
 
-[![Margin Metrics Video](https://www.loom.com/share/406e85be1ae74d068fb86ba723966af9)](https://www.loom.com/share/406e85be1ae74d068fb86ba723966af9)
+[Margin Metrics Video](https://www.loom.com/share/406e85be1ae74d068fb86ba723966af9)
 
-[![Valuation Metrics Video](https://www.loom.com/share/6c14fe5a790647378c47d17243016aff)](https://www.loom.com/share/6c14fe5a790647378c47d17243016aff)
+[Valuation Metrics Video](https://www.loom.com/share/6c14fe5a790647378c47d17243016aff)
 
-[![Technical Metrics Video](https://www.loom.com/share/dcd8d1a101644e4e803d4dde80667e05)](https://www.loom.com/share/dcd8d1a101644e4e803d4dde80667e05)
+[Technical Metrics Video](https://www.loom.com/share/dcd8d1a101644e4e803d4dde80667e05)
 
-[![Splits and Dividend Data Video](https://www.loom.com/share/24d8c2d409a74d378a7aa0f672073c0a)](https://www.loom.com/share/24d8c2d409a74d378a7aa0f672073c0a)
+[Splits and Dividend Data Video](https://www.loom.com/share/24d8c2d409a74d378a7aa0f672073c0a)
 
 ### Notes
 
@@ -444,13 +444,11 @@ User stories: 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21
 
 User stories: 22, 23, 24
 
-[![Take Investment Notes Video](https://www.loom.com/share/3bebf62e586d4280be502cf7cd9e3ee0)](https://www.loom.com/share/3bebf62e586d4280be502cf7cd9e3ee0)
+[Take Investment Notes Video](https://www.loom.com/share/3bebf62e586d4280be502cf7cd9e3ee0)
 
-[![Edit Investment Notes Video](https://www.loom.com/share/a3aaba2a33cd48358453c9435d793bd3)](https://www.loom.com/share/a3aaba2a33cd48358453c9435d793bd3)
+[Edit Investment Notes Video](https://www.loom.com/share/a3aaba2a33cd48358453c9435d793bd3)
 
-[![Delete Investment Notes Video](https://www.loom.com/share/dcf4cbe2ba79445d9dc10f0fa1449221)](https://www.loom.com/share/dcf4cbe2ba79445d9dc10f0fa1449221)
-
-
+[Delete Investment Notes Video](https://www.loom.com/share/dcf4cbe2ba79445d9dc10f0fa1449221)
 
 
 ## Bug Fixes
