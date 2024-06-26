@@ -5,6 +5,7 @@ import MessageAndRedirect from './MessageAndRedirect';
 const ProtectedRoute = ({ component: Component }) => {
   const { isAuthenticated } = useContext(AuthContext);
 
+  // If the user is not authenticated, display a message and redirect to the login page
   if (!isAuthenticated) {
     return (
       <MessageAndRedirect
@@ -14,6 +15,7 @@ const ProtectedRoute = ({ component: Component }) => {
     );
   }
 
+  // If the user is authenticated, render the protected component
   return <Component />;
 };
 

@@ -27,7 +27,6 @@ const MarginTable = ({ highlights, general }) => {
   ];
 
   const formatValue = (key, value) => {
-    // Ensure the value is a number if it's a string representing a number
     const numericValue = (typeof value === 'string' && !isNaN(value)) ? parseFloat(value) : value;
 
     if (key === "operating_margin_ttm" || key === "return_on_assets_ttm" || key === "return_on_equity_ttm" || key === "quarterly_earnings_growth_yoy" || key === "quarterly_earnings_growth_yoy" || key === "quarterly_revenue_growth_yoy") {
@@ -42,10 +41,8 @@ const MarginTable = ({ highlights, general }) => {
       return `${currencySymbol}${numericValue.toFixed(2)}`;
     }
 
-    // If it's not one of the specific keys, check if it's a number and format; otherwise, return as is
     return (typeof numericValue === 'number') ? numericValue.toFixed(2) : value;
   };
-
 
   const renderRow = (data, key) => {
     const formattedValue = formatValue(data.key, highlights[data.key]) || 'N/A';
@@ -71,7 +68,6 @@ const MarginTable = ({ highlights, general }) => {
             {highlights ? (
               marginData.map((data, index) => renderRow(data, index))
             ) : (
-              // Render skeleton loader if highlights data is not available
               Array.from({ length: marginData.length }, (_, index) => (
                 <TableRow key={index}>
                   <TableCell>

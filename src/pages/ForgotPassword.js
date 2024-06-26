@@ -1,43 +1,50 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { TextField, Button, Typography, Box, Paper } from "@mui/material";
+import { API_URL, AUTHORIZATION_TOKEN } from '../config';
 
 const ForgotPassword = () => {
+    // State variables for managing form data, submission status, and feedback messages
     const [email, setEmail] = useState('');
     const [message, setMessage] = useState('');
     const [isError, setIsError] = useState(false);
     const [submitting, setSubmitting] = useState(false);
 
+    // Handler for form submission
     const handleSubmit = (e) => {
         e.preventDefault();
         setSubmitting(true);
 
-        const apiUrl = 'https://django-stocks-ecbc6bc5e208.herokuapp.com/auth/custom-password-reset/';
-        const token = '13502af70a55d1fcddf7c094e4418c65904ef6eb';
+        // URL of the password reset endpoint
+        const apiUrl = `${API_URL}/auth/custom-password-reset/`;
 
+        // Configuration for the Axios request, including authorization token
         const config = {
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': `Token ${token}`,
+                'Authorization': `Token ${AUTHORIZATION_TOKEN}`,
             }
         };
 
-        const formData = {
-            email,
-        };
+        // Data to be sent in the request
+        const formData = { email };
 
+        // Make a POST request to send the reset link
         axios.post(apiUrl, formData, config)
             .then(response => {
+                // Handle success: show success message and clear the email field
                 setMessage('Reset link sent successfully');
                 setIsError(false);
                 setEmail('');
             })
             .catch(error => {
+                // Handle error: show error message
                 setMessage('Error sending reset link');
                 setIsError(true);
                 console.error('Error sending email:', error);
             })
             .finally(() => {
+                // Reset the submitting state
                 setSubmitting(false);
             });
     };

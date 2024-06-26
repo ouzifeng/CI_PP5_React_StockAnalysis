@@ -1,14 +1,10 @@
 import React, { useState } from 'react';
-import {
-  Typography,
-  Paper,
-  Box,
-  Button
-} from '@mui/material';
+import { Typography, Paper, Box, Button } from '@mui/material';
 
 const Description = ({ text, maxLines = 2 }) => {
   const [expanded, setExpanded] = useState(false);
 
+  // Toggles the expanded state
   const toggleExpand = () => {
     setExpanded(!expanded);
   };
@@ -20,17 +16,17 @@ const Description = ({ text, maxLines = 2 }) => {
     WebkitBoxOrient: 'vertical',
     overflow: 'hidden',
     textOverflow: 'ellipsis',
-    maxHeight: `${maxLines * 1.2}em`, // Line height * number of lines
-    lineHeight: '1.2' // Adjust as needed
+    maxHeight: `${maxLines * 1.2}em`,
+    lineHeight: '1.2'
   };
 
   return (
-    <Paper elevation={3} sx={{ margin: 'auto', overflow: 'hidden', }}>
+    <Paper elevation={3} sx={{ margin: 'auto', overflow: 'hidden' }}>
       <Box p={2}>
         <Typography style={textStyle}>
           {text}
         </Typography>
-        {text && text.length > 100 && ( // Adjust 100 based on your needs
+        {text && text.length > 100 && (
           <Button onClick={toggleExpand} size="small">
             {expanded ? 'Read less' : 'Read more'}
           </Button>

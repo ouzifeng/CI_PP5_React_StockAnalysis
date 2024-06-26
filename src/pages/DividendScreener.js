@@ -4,10 +4,9 @@ import { Button, Container, Fade, Grid, Paper, Popper, Slider, Table, TableBody,
 import ReactCountryFlag from "react-country-flag";
 import { useNavigate } from 'react-router-dom';
 import { debounce } from 'lodash';
-
+import { API_URL, AUTHORIZATION_TOKEN } from '../config';
 
 function DividendScreener() {
-  // State hooks
   const [stocks, setStocks] = useState([]);
   const [dividendThreshold, setDividendThreshold] = useState([0, 20]);
   const [payoutRatio, setPayoutRatio] = useState([0, 100]);
@@ -18,18 +17,19 @@ function DividendScreener() {
   const navigate = useNavigate();
   const theme = useTheme();
   const matches = useMediaQuery(theme.breakpoints.down('md')); 
-  const [openPopper, setOpenPopper] = useState(null); // Tracks which popper is open
+  const [openPopper, setOpenPopper] = useState(null);
   const [anchorEls, setAnchorEls] = useState({});
   const [popperWidth, setPopperWidth] = useState(null);
+  const [shouldFetch, setShouldFetch] = useState(true);
+  const [isFiltering, setIsFiltering] = useState(false);
 
-  // Define a stable initiateSearch function that resets page and triggers fetching
   const initiateSearch = useCallback(() => {
-    setCurrentPage(1); // Always start from the first page when filters change
-    setShouldFetch(true); // This flag will trigger fetching in useEffect
+    setCurrentPage(1);
+    setShouldFetch(true);
   }, []);
 
   const handleFilterChange = useCallback((newValue, filterType) => {
-    setLoading(true); // Trigger loading state immediately
+    setLoading(true);
     if (filterType === 'dividend') {
       setDividendThreshold(newValue);
     } else if (filterType === 'payout') {
@@ -37,14 +37,10 @@ function DividendScreener() {
     } else if (filterType === 'pe') {
       setPeRatio(newValue);
     }
-    // No direct call to initiateSearch or debounced search here
   }, []);
 
-  // Use useEffect to debounce applying the filters and fetching data
   useEffect(() => {
-    // Create a debounced version of the function that sets filters and triggers data fetching
     const debouncedSetFiltersAndFetch = debounce(() => {
-      // Actual fetching is triggered here after debounce period
       initiateSearch();
     }, 2000);
 
@@ -52,55 +48,48 @@ function DividendScreener() {
       debouncedSetFiltersAndFetch();
     }
 
-    // Cleanup function to cancel the debounce if component unmounts or filters change again
     return () => debouncedSetFiltersAndFetch.cancel();
   }, [dividendThreshold, payoutRatio, peRatio, initiateSearch, loading]);
- 
 
+  const fetchData = useCallback(async (page = 1) => {
+    if (!shouldFetch) return;
+    setIsFiltering(true);
+    setLoading(true);
+    const params = new URLSearchParams({
+      page,
+      min_dividend_yield: dividendThreshold[0] / 100,
+      max_dividend_yield: dividendThreshold[1] / 100,
+      min_payout_ratio: payoutRatio[0] / 100,
+      max_payout_ratio: payoutRatio[1] / 100,
+      min_pe_ratio: peRatio[0],
+      max_pe_ratio: peRatio[1],
+    });
 
- // State to control when to start fetching data
-const [shouldFetch, setShouldFetch] = useState(true);
-const [isFiltering, setIsFiltering] = useState(false);
+    try {
+      const response = await axios.get(`${API_URL}/api/dividend_data?${params}`, {
+        headers: {
+          'Authorization': `Token ${AUTHORIZATION_TOKEN}`,
+        }
+      });
+      setStocks(response.data.results);
+      setTotalStocks(response.data.count);
+    } catch (error) {
+      console.error('Error fetching stocks:', error);
+    } finally {
+      setLoading(false);
+      setShouldFetch(false);
+    }
+  }, [dividendThreshold, payoutRatio, peRatio, shouldFetch]);
 
-// Adjusted fetchData to consider shouldFetch state
-const fetchData = useCallback(async (page = 1) => {
-  if (!shouldFetch) return; // Do not fetch if shouldFetch is false
-  setIsFiltering(true);
-  setLoading(true);
-  const params = new URLSearchParams({
-    page,
-    min_dividend_yield: dividendThreshold[0] / 100,
-    max_dividend_yield: dividendThreshold[1] / 100,
-    min_payout_ratio: payoutRatio[0] / 100,
-    max_payout_ratio: payoutRatio[1] / 100,
-    min_pe_ratio: peRatio[0],
-    max_pe_ratio: peRatio[1],
-  });
+  useEffect(() => {
+    fetchData(currentPage);
+  }, [currentPage, fetchData]);
 
-  try {
-    const response = await axios.get(`https://django-stocks-ecbc6bc5e208.herokuapp.com/api/dividend_data?${params}`);
-    setStocks(response.data.results);
-    setTotalStocks(response.data.count);
-  } catch (error) {
-    console.error('Error fetching stocks:', error);
-  } finally {
-    setLoading(false);
-    setShouldFetch(false); // Reset shouldFetch to prevent repeated fetching on re-renders
-  }
-}, [dividendThreshold, payoutRatio, peRatio, shouldFetch]); // Added shouldFetch to the dependency array
-
-// Adjust useEffect hook to call fetchData when currentPage changes or shouldFetch becomes true
-useEffect(() => {
-  fetchData(currentPage);
-}, [currentPage, fetchData]);
-
-// Existing useEffect for loading state remains unchanged
-useEffect(() => {
-  if (!loading) {
-    setIsFiltering(false);
-  }
-}, [loading]);
-
+  useEffect(() => {
+    if (!loading) {
+      setIsFiltering(false);
+    }
+  }, [loading]);
 
   const formatMarketCap = (value) => {
     return `${(value / 1e9).toFixed(2)}b`;
@@ -118,28 +107,23 @@ useEffect(() => {
     setCurrentPage(newPage + 1);
   };
 
-    // Function to handle Popper for Dividend Yield Slider
   const handlePopperClick = (popperId, event) => {
     const newAnchorEls = { ...anchorEls };
 
-    // Always set the width for the popper based on the button's width
-    // whenever the button is clicked.
     if (event.currentTarget && event.currentTarget.offsetWidth) {
       setPopperWidth(event.currentTarget.offsetWidth);
     }
 
-    // Toggle the popper. If it's already open, close it, otherwise open it and set the anchorEl.
     if (openPopper === popperId) {
-      setOpenPopper(null); // Close the current popper
-      newAnchorEls[popperId] = null; // Clear the anchor element for this popper
+      setOpenPopper(null);
+      newAnchorEls[popperId] = null;
     } else {
-      setOpenPopper(popperId); // Open the new popper
-      newAnchorEls[popperId] = event.currentTarget; // Set the anchor element for this popper
+      setOpenPopper(popperId);
+      newAnchorEls[popperId] = event.currentTarget;
     }
 
-    setAnchorEls(newAnchorEls); // Update the state with the new anchor elements
+    setAnchorEls(newAnchorEls);
   };
-
 
   const isPopperOpen = (popperId) => openPopper === popperId;
 
@@ -161,9 +145,9 @@ useEffect(() => {
     <Container maxWidth="lg">
       <Grid container spacing={1} mt={4} mb={4}>
         <Grid item md={2}>
-        <Button aria-describedby="dividend-popper" type="button" variant='contained' onClick={(event) => handlePopperClick('dividend', event)} fullWidth>
-          Dividend Yield
-        </Button>
+          <Button aria-describedby="dividend-popper" type="button" variant='contained' onClick={(event) => handlePopperClick('dividend', event)} fullWidth>
+            Dividend Yield
+          </Button>
           <Popper id="dividend-popper" open={isPopperOpen('dividend')} anchorEl={anchorEls['dividend']} transition>
             {({ TransitionProps }) => (
               <Fade {...TransitionProps} timeout={350}>
@@ -209,7 +193,6 @@ useEffect(() => {
                       getAriaValueText={(value) => `${value[0]}% - ${value[1]}%`}
                       min={0}
                       max={100}
-
                     />
                   </Box>
                 </Paper>
@@ -244,7 +227,7 @@ useEffect(() => {
               </Fade>
             )}
           </Popper>
-      </Grid>
+        </Grid>
       </Grid>
       <TableContainer component={Paper}>
         <Table size={matches ? 'small' : 'medium'}>
@@ -257,58 +240,57 @@ useEffect(() => {
               <TableCell align="right">Forward Yield</TableCell>
               <TableCell align="right">Payout Ratio</TableCell>
               <TableCell align="right">Div 5yr CAGR</TableCell>
-
             </TableRow>
           </TableHead>
-            <TableBody>
-              {loading || isFiltering ? ( 
-                [...Array(10)].map((e, i) => (
-                  <TableRow key={i}>
-                    <TableCell colSpan={9}>
-                      <Skeleton variant="rectangular" width="100%" height={53} animation="wave" />
-                    </TableCell>
-                  </TableRow>
-                ))
-              ) : (
-                sortedStocks.map((stock, index) => (
-                  <TableRow key={index} hover style={{ cursor: 'pointer' }} onClick={() => handleRowClick(stock.uid)}>
-                    <TableCell component="th" scope="row">
-                      <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                        <ReactCountryFlag
-                          countryCode={stock.country_iso}
-                          svg
-                          style={{
-                            width: '2em',
-                            height: '2em',
-                            marginRight: '0.5em',
-                          }}
-                          title={stock.country_iso}
-                        />
-                        <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-                          <Typography variant="body1">{stock.name}</Typography>
-                          <Typography variant="body2" color="textSecondary">{stock.primary_ticker} - {stock.exchange}</Typography>
-                        </Box>
+          <TableBody>
+            {loading || isFiltering ? (
+              [...Array(10)].map((e, i) => (
+                <TableRow key={i}>
+                  <TableCell colSpan={9}>
+                    <Skeleton variant="rectangular" width="100%" height={53} animation="wave" />
+                  </TableCell>
+                </TableRow>
+              ))
+            ) : (
+              sortedStocks.map((stock, index) => (
+                <TableRow key={index} hover style={{ cursor: 'pointer' }} onClick={() => handleRowClick(stock.uid)}>
+                  <TableCell component="th" scope="row">
+                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                      <ReactCountryFlag
+                        countryCode={stock.country_iso}
+                        svg
+                        style={{
+                          width: '2em',
+                          height: '2em',
+                          marginRight: '0.5em',
+                        }}
+                        title={stock.country_iso}
+                      />
+                      <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+                        <Typography variant="body1">{stock.name}</Typography>
+                        <Typography variant="body2" color="textSecondary">{stock.primary_ticker} - {stock.exchange}</Typography>
                       </Box>
-                    </TableCell>
-                    <TableCell align="right">{stock.currency_symbol}{formatMarketCap(stock.market_capitalization)}</TableCell>
-                    <TableCell align="right">{parseFloat(stock.pe_ratio).toFixed(2)}</TableCell>
-                    <TableCell align="right">{formatPercentage(stock.dividend_yield)}</TableCell>
-                    <TableCell align="right">{formatPercentage(stock.forward_annual_dividend_yield)}</TableCell>
-                    <TableCell align="right" >{formatPercentage(stock.payout_ratio)}</TableCell>
-                    <TableCell align="right">{Number(stock.cagr_5_years).toFixed(2)}%</TableCell>
-                  </TableRow>
-                ))
-              )}
-            </TableBody>
+                    </Box>
+                  </TableCell>
+                  <TableCell align="right">{stock.currency_symbol}{formatMarketCap(stock.market_capitalization)}</TableCell>
+                  <TableCell align="right">{parseFloat(stock.pe_ratio).toFixed(2)}</TableCell>
+                  <TableCell align="right">{formatPercentage(stock.dividend_yield)}</TableCell>
+                  <TableCell align="right">{formatPercentage(stock.forward_annual_dividend_yield)}</TableCell>
+                  <TableCell align="right">{formatPercentage(stock.payout_ratio)}</TableCell>
+                  <TableCell align="right">{Number(stock.cagr_5_years).toFixed(2)}%</TableCell>
+                </TableRow>
+              ))
+            )}
+          </TableBody>
         </Table>
-          <TablePagination
-            component="div"
-            count={totalStocks}
-            page={currentPage - 1}
-            onPageChange={handlePageChange}
-            rowsPerPage={10}
-            rowsPerPageOptions={[10]}
-          />      
+        <TablePagination
+          component="div"
+          count={totalStocks}
+          page={currentPage - 1}
+          onPageChange={handlePageChange}
+          rowsPerPage={10}
+          rowsPerPageOptions={[10]}
+        />      
       </TableContainer>
     </Container>
   );

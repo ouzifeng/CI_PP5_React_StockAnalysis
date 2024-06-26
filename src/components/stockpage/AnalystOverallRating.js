@@ -8,9 +8,11 @@ import { useTheme } from '@mui/material/styles';
 const AnalystOverallRating = ({ ratings }) => {
   const theme = useTheme();
 
+  // Function to calculate the overall rating based on analyst ratings
   const calculateOverallRating = (ratings) => {
-    if (!ratings) return 'N/A'; // Add check here
+    if (!ratings) return 'N/A'; // Return 'N/A' if ratings is null
 
+    // Weights for different rating categories
     const weights = {
       strong_buy: 5,
       buy: 4,
@@ -22,6 +24,7 @@ const AnalystOverallRating = ({ ratings }) => {
     let weightedSum = 0;
     let totalRatingsCount = 0;
 
+    // Calculate the weighted sum and total count of ratings
     Object.keys(weights).forEach(key => {
       if (ratings[key]) {
         weightedSum += ratings[key] * weights[key];
@@ -29,16 +32,18 @@ const AnalystOverallRating = ({ ratings }) => {
       }
     });
 
+    // Return the overall rating or 'N/A' if there are no ratings
     return totalRatingsCount > 0 ? (weightedSum / totalRatingsCount).toFixed(1) : 'N/A';
   };
 
   const overallRating = calculateOverallRating(ratings);
 
-  // Ensure ratings is not null before proceeding
+  // Calculate the number of analysts based on available ratings
   const numberOfAnalysts = ratings ? Object.keys(ratings)
     .filter(key => ['strong_buy', 'buy', 'hold', 'sell', 'strong_sell'].includes(key))
     .reduce((sum, key) => sum + ratings[key], 0) : 0;
 
+  // Define marks for the slider
   const marks = [
     { value: 1, label: 'Strong Sell' },
     { value: 2, label: 'Sell' },

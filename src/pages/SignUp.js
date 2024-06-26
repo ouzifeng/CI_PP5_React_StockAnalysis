@@ -17,6 +17,7 @@ import axios from 'axios';
 import CircularProgress from '@mui/material/CircularProgress';
 import { useNavigate } from 'react-router-dom';
 import { Alert } from '@mui/material';
+import { API_URL } from '../config'; // Import the API_URL from the config file
 
 const defaultTheme = createTheme();
 
@@ -51,7 +52,7 @@ export default function SignUp() {
     const handleSignUp = async (email, username, password, firstName, lastName) => {
         try {
             setLoading(true); // Activate loading state
-            const endpoint = 'https://django-stocks-ecbc6bc5e208.herokuapp.com/api/user/register/';
+            const endpoint = `${API_URL}/api/user/register/`;
             const response = await axios.post(endpoint, {
                 email,
                 username, // Include username in the request payload

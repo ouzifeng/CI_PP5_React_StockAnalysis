@@ -7,12 +7,14 @@ import Box from '@mui/material/Box';
 import { Link } from 'react-router-dom';
 
 const MenuDrawer = ({ isOpen, onDrawerClose }) => {
+  // Define menu items with their respective links
   const menuItems = [
-    { text: 'Home', link: '/' },
-    { text: 'Dividend Screener', link: '/dividend-screener' },
-    // Add other menu items here
+    { text: 'Stock Screener', link: '/' },
+    { text: 'Contact', link: '/contact' },
+    { text: 'Following', link: '/following' }
   ];
 
+  // List component to render menu items
   const list = (
     <Box
       sx={{
@@ -55,8 +57,8 @@ const MenuDrawer = ({ isOpen, onDrawerClose }) => {
       onClose={onDrawerClose}
       sx={{
         '& .MuiDrawer-paper': { 
-          backgroundColor: 'background.paper', // use your theme color
-          color: 'text.primary', // use your theme color
+          backgroundColor: 'background.paper',
+          color: 'text.primary',
         },
       }}
     >

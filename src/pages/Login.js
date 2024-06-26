@@ -18,6 +18,7 @@ import { useNavigate } from 'react-router-dom';
 import Alert from '@mui/material/Alert';
 import CircularProgress from '@mui/material/CircularProgress';
 import { AuthContext } from '../context/AuthContext';
+import { API_URL } from '../config';
 
 function SignIn() {
   const navigate = useNavigate();
@@ -26,50 +27,50 @@ function SignIn() {
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (event) => {
-      event.preventDefault();
-      setLoading(true); // Activate loading state
-      const data = new FormData(event.currentTarget);
-      const email = data.get('email');
-      const password = data.get('password');
+    event.preventDefault();
+    setLoading(true); // Activate loading state
+    const data = new FormData(event.currentTarget);
+    const email = data.get('email');
+    const password = data.get('password');
 
-      console.log({ email, password }); // Log the data being sent
+    console.log({ email, password }); // Log the data being sent
 
-      try {
-          const response = await axios.post(
-              'https://django-stocks-ecbc6bc5e208.herokuapp.com/auth/login/',
-              { email, username: email, password }, // Include email, username, and password
-              { headers: { 'Content-Type': 'application/json' } }
-          );
+    try {
+      const response = await axios.post(
+        `${API_URL}/auth/login/`,
+        { email, username: email, password }, // Include email, username, and password
+        { headers: { 'Content-Type': 'application/json' } }
+      );
 
-          console.log(response.data); // Log the response data
+      console.log(response.data); // Log the response data
 
-          localStorage.setItem('token', response.data.token);
-          setIsAuthenticated(true); // Update the global authentication state
-          setShowLoginSuccessAlert(true); // Trigger the global login success alert
-          navigate('/'); // Redirect user to the homepage or another appropriate route
-          console.log('Logged in successfully!'); // Console log for successful login
-      } catch (error) {
-          console.error('Login Error: ', error.response ? error.response.data : error.message);
-          setLoginError('Invalid login credentials.');
-          console.log('Login failed: ', error); // Console log for login failure
-      }
-      setLoading(false); // Deactivate loading state
+      localStorage.setItem('token', response.data.token);
+      setIsAuthenticated(true); // Update the global authentication state
+      setShowLoginSuccessAlert(true); // Trigger the global login success alert
+      navigate('/'); // Redirect user to the homepage or another appropriate route
+      console.log('Logged in successfully!'); // Console log for successful login
+    } catch (error) {
+      console.error('Login Error: ', error.response ? error.response.data : error.message);
+      setLoginError('Invalid login credentials.');
+      console.log('Login failed: ', error); // Console log for login failure
+    }
+    setLoading(false); // Deactivate loading state
   };
 
-const handleLoginSuccess = (token, avatarUrl) => {
-  localStorage.setItem('token', token);
-  setIsAuthenticated(true);
-  setShowLoginSuccessAlert(true);
-  setUserAvatarUrl(avatarUrl); // Assuming you've added this setter to your context
-  navigate('/'); // Redirect user to the homepage or another appropriate route
-};
+  const handleLoginSuccess = (token, avatarUrl) => {
+    localStorage.setItem('token', token);
+    setIsAuthenticated(true);
+    setShowLoginSuccessAlert(true);
+    setUserAvatarUrl(avatarUrl); // Assuming you've added this setter to your context
+    navigate('/'); // Redirect user to the homepage or another appropriate route
+  };
 
   const handleGoogleSuccess = async (credentialResponse) => {
     setLoading(true);
 
     try {
       const response = await axios.post(
-        'https://django-stocks-ecbc6bc5e208.herokuapp.com/api/user/google/login/',
+        `${API_URL}/api/user/google/login/`,
         { token: credentialResponse.credential },
         { headers: { 'Content-Type': 'application/json' } }
       );
@@ -82,6 +83,7 @@ const handleLoginSuccess = (token, avatarUrl) => {
     }
     setLoading(false);
   };
+
   const handleGoogleFailure = (error) => {
     console.error('Google Sign In Error: ', error);
     setLoginError('Google Sign In was unsuccessful.');
@@ -148,27 +150,27 @@ const handleLoginSuccess = (token, avatarUrl) => {
               <GoogleLogin
                 onSuccess={handleGoogleSuccess}
                 onError={handleGoogleFailure}
-              render={renderProps => (
-                <Button
-                  onClick={renderProps.onClick}
-                  disabled={renderProps.disabled}
-                  fullWidth // Make the button full width
-                  variant="contained"
-                  startIcon={<img src="path_to_google_icon" alt="Google sign-in" />} // Add the correct path to your Google icon here
-                  sx={{ 
-                    justifyContent: "flex-start", // Align the icon and text to the left
-                    textTransform: "none", // Prevent uppercase styling
-                    backgroundColor: "white", // Set the background color you want for the button
-                    color: "black", // Set the text color you want for the button
-                    '&:hover': {
-                      backgroundColor: "whitesmoke", // Color of the button when hovered
-                    },
-                  }}
-                >
-                  Sign in with Google
-                </Button>
-              )}
-            />
+                render={(renderProps) => (
+                  <Button
+                    onClick={renderProps.onClick}
+                    disabled={renderProps.disabled}
+                    fullWidth // Make the button full width
+                    variant="contained"
+                    startIcon={<img src="path_to_google_icon" alt="Google sign-in" />} // Add the correct path to your Google icon here
+                    sx={{ 
+                      justifyContent: "flex-start", // Align the icon and text to the left
+                      textTransform: "none", // Prevent uppercase styling
+                      backgroundColor: "white", // Set the background color you want for the button
+                      color: "black", // Set the text color you want for the button
+                      '&:hover': {
+                        backgroundColor: "whitesmoke", // Color of the button when hovered
+                      },
+                    }}
+                  >
+                    Sign in with Google
+                  </Button>
+                )}
+              />
             </Box>
 
             <Grid container>

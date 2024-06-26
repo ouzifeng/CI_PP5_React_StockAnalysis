@@ -3,6 +3,7 @@ import { TableContainer, Table, TableRow, TableCell, Paper, Link } from '@mui/ma
 import { Skeleton } from '@mui/material';
 
 const BasicStats = ({ data }) => {
+  // Define the columns to display in the table
   const columns = [
     { key: 'Sector', value: data?.sector },
     { key: 'Industry', value: data?.industry },

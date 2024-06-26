@@ -4,6 +4,7 @@ import { Typography, Table, TableBody, TableCell, TableContainer, TableRow, Pape
 const SplitsDividendsTable = ({ splitsDividendsData, general }) => {
   const currencySymbol = general.currency_symbol || '$';
 
+  // Define the items to display in the splits and dividends table
   const splitsDividendsItems = [
     { label: 'Forward Annual Dividend', key: 'forward_annual_dividend_rate' },
     { label: 'Forward Annual Dividend Yield', key: 'forward_annual_dividend_yield' },
@@ -14,10 +15,11 @@ const SplitsDividendsTable = ({ splitsDividendsData, general }) => {
     { label: 'Last Split Date', key: 'last_split_date' },
   ];
 
+  // Render a table row for each item
   const renderRow = (item, key) => {
     let value = splitsDividendsData[item.key];
 
-    // Check if the value should be formatted as a percentage
+    // Format value as a percentage if applicable
     if (item.key === 'forward_annual_dividend_yield' || item.key === 'payout_ratio') {
       value = value ? `${(value * 100).toFixed(2)}%` : 'N/A';
     } else {
@@ -48,9 +50,7 @@ const SplitsDividendsTable = ({ splitsDividendsData, general }) => {
         <Table aria-label="Splits & Dividends Table">
           <TableBody>
             {splitsDividendsData ? (
-              splitsDividendsItems
-                .filter(item => item.key !== 'general') // Filter out "General"
-                .map((item, index) => renderRow(item, index))
+              splitsDividendsItems.map((item, index) => renderRow(item, index))
             ) : (
               <TableRow>
                 <TableCell>

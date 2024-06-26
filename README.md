@@ -360,6 +360,8 @@ Although the investment platform is primarily designed to work on desktop as mob
 
 ### Account Registration
 
+It is important to note that Mailtrap SMTP dev servie is currently being used for email validation. This means that any new users who want to register will have to have their verification emails verified through Mailtrap. Once the final domain has been decided and the platform deployed to it, the domains SMTP settings can be used in mailtrap to forward all emails to the users email address. 
+
 * New User Registration with Email
 * New User Registration with Google
 

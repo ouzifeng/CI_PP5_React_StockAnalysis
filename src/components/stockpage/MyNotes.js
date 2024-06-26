@@ -10,13 +10,16 @@ import {
   Typography,
   CircularProgress,
   Box,
+  Snackbar,
+  Alert,
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import SaveIcon from '@mui/icons-material/Save';
-import CancelIcon from '@mui/icons-material/Cancel'
+import CancelIcon from '@mui/icons-material/Cancel';
+import { API_URL, AUTHORIZATION_TOKEN } from '../../config';
 
 const MyNotesDrawer = ({ open, onClose, stockId, stockData }) => {
   const [notes, setNotes] = useState([]);
@@ -24,124 +27,126 @@ const MyNotesDrawer = ({ open, onClose, stockId, stockData }) => {
   const [editNoteId, setEditNoteId] = useState(null);
   const [editNoteText, setEditNoteText] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [deleteNotification, setDeleteNotification] = useState(false);
 
   useEffect(() => {
     if (open && stockId) {
       const formattedStockId = stockId.replace('-', '.');
-      
-      setIsLoading(true);
-      fetch(`https://django-stocks-ecbc6bc5e208.herokuapp.com/api/notes/?stock=${formattedStockId}`, {
-        method: 'GET',
-        headers: {
-          'Authorization': `Token 13502af70a55d1fcddf7c094e4418c65904ef6eb`, 
-        },
-      })
-        .then(response => response.json())
-        .then(data => {
-          setNotes(data);
-          setIsLoading(false);
-        })
-        .catch(error => {
-          console.error('Error fetching notes:', error);
-          setIsLoading(false);
-        });
+      fetchNotes(formattedStockId);
     }
   }, [open, stockId]);
 
-  const addNote = () => {
-    if (noteText.trim() !== '') {
-      // Ensure stockData and stockData.id are available
-      if (!stockData || !stockData.id) {
-        console.error('Stock data or stock ID is missing');
-        return;
-      }
+  // Fetch notes from the API
+  const fetchNotes = async (formattedStockId) => {
+    setIsLoading(true);
+    try {
+      const response = await fetch(`${API_URL}/api/notes/?stock=${formattedStockId}`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Token ${AUTHORIZATION_TOKEN}`,
+        },
+      });
+      const data = await response.json();
+      setNotes(data);
+    } catch (error) {
+      console.error('Error fetching notes:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
+  // Add a new note
+  const addNote = async () => {
+    if (noteText.trim() !== '' && stockData?.id) {
       const newNote = {
-        stock: stockData.id, // Use the stock's ID from stockData
+        stock: stockData.id,
         content: noteText,
       };
 
       setIsLoading(true);
-      fetch('https://django-stocks-ecbc6bc5e208.herokuapp.com/api/notes/', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Token 13502af70a55d1fcddf7c094e4418c65904ef6eb`, // Replace with your token
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(newNote),
-      })
-        .then(response => {
-          if (response.ok) {
-            return response.json();
-          } else {
-            response.json().then(data => console.error('Error adding note:', data));
-            throw new Error('Failed to add note');
-          }
-        })
-        .then(data => {
+      try {
+        const response = await fetch(`${API_URL}/api/notes/`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Token ${AUTHORIZATION_TOKEN}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(newNote),
+        });
+
+        if (response.ok) {
+          const data = await response.json();
           setNotes([...notes, data]);
           setNoteText('');
-          setIsLoading(false);
-        })
-        .catch(error => {
-          console.error('Error adding note:', error);
-          setIsLoading(false);
-        });
+        } else {
+          const errorData = await response.json();
+          console.error('Error adding note:', errorData);
+          throw new Error('Failed to add note');
+        }
+      } catch (error) {
+        console.error('Error adding note:', error);
+      } finally {
+        setIsLoading(false);
+      }
     }
   };
 
-  const deleteNote = (noteId) => {
+  // Delete a note
+  const deleteNote = async (noteId) => {
     setIsLoading(true);
-    fetch(`https://django-stocks-ecbc6bc5e208.herokuapp.com/api/notes/${noteId}/`, {
-      method: 'DELETE',
-      headers: {
-        'Authorization': `Token 13502af70a55d1fcddf7c094e4418c65904ef6eb`, // Replace with your token
-      },
-    })
-      .then(response => {
-        if (response.ok) {
-          setNotes(notes.filter(note => note.id !== noteId));
-          setIsLoading(false);
-        } else {
-          response.json().then(data => console.error('Error deleting note:', data));
-          throw new Error('Failed to delete note');
-        }
-      })
-      .catch(error => {
-        console.error('Error deleting note:', error);
-        setIsLoading(false);
+    try {
+      const response = await fetch(`${API_URL}/api/notes/${noteId}/`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Token ${AUTHORIZATION_TOKEN}`,
+        },
       });
+
+      if (response.ok) {
+        setNotes(notes.filter(note => note.id !== noteId));
+        setDeleteNotification(true);
+      } else {
+        const errorData = await response.json();
+        console.error('Error deleting note:', errorData);
+        throw new Error('Failed to delete note');
+      }
+    } catch (error) {
+      console.error('Error deleting note:', error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
+  // Start editing a note
   const startEditingNote = (note) => {
     setEditNoteId(note.id);
     setEditNoteText(note.content);
   };
 
   // Save edited note
-  const saveEditedNote = () => {
+  const saveEditedNote = async () => {
     if (editNoteText.trim() === '') {
       console.error('Note content cannot be empty');
       return;
     }
     setIsLoading(true);
-    fetch(`https://django-stocks-ecbc6bc5e208.herokuapp.com/api/notes/${editNoteId}/`, {
-      method: 'PATCH',
-      headers: {
-        'Authorization': `Token 13502af70a55d1fcddf7c094e4418c65904ef6eb`, // Your token
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ content: editNoteText }),
-    })
-    .then(response => response.json())
-    .then(updatedNote => {
+    try {
+      const response = await fetch(`${API_URL}/api/notes/${editNoteId}/`, {
+        method: 'PATCH',
+        headers: {
+          'Authorization': `Token ${AUTHORIZATION_TOKEN}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ content: editNoteText }),
+      });
+      const updatedNote = await response.json();
       setNotes(notes.map(note => note.id === editNoteId ? updatedNote : note));
       cancelEditing();
-    })
-    .catch(error => {
+    } catch (error) {
       console.error('Error updating note:', error);
-    })
-    .finally(() => setIsLoading(false));
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   // Cancel editing
@@ -180,43 +185,51 @@ const MyNotesDrawer = ({ open, onClose, stockId, stockData }) => {
             <CircularProgress />
           </Box>
         )}
-<List>
-  {notes.map((note) => (
-    <ListItem
-      key={note.id}
-      secondaryAction={
-        <Box>
-          {editNoteId === note.id ? (
-            <>
-              <IconButton onClick={() => saveEditedNote(note.id)}><SaveIcon /></IconButton>
-              <IconButton onClick={cancelEditing}><CancelIcon /></IconButton>
-            </>
-          ) : (
-            <>
-              <IconButton onClick={() => startEditingNote(note)}><EditIcon /></IconButton>
-              <IconButton onClick={() => deleteNote(note.id)}><DeleteIcon /></IconButton>
-            </>
-          )}
-        </Box>
-      }
-    >
-      {editNoteId === note.id ? (
-        <TextField
-          fullWidth
-          value={editNoteText}
-          onChange={(e) => setEditNoteText(e.target.value)}
-        />
-      ) : (
-        <ListItemText
-          primary={note.content}
-          secondary={new Date(note.created_at).toLocaleDateString()}
-          primaryTypographyProps={{ style: { marginRight: '50px' } }} // Adjust the right margin to ensure text doesn't overlap with icons
-        />
-      )}
-    </ListItem>
-  ))}
-</List>
-
+        <List>
+          {notes.map((note) => (
+            <ListItem
+              key={note.id}
+              secondaryAction={
+                <Box>
+                  {editNoteId === note.id ? (
+                    <>
+                      <IconButton onClick={saveEditedNote}><SaveIcon /></IconButton>
+                      <IconButton onClick={cancelEditing}><CancelIcon /></IconButton>
+                    </>
+                  ) : (
+                    <>
+                      <IconButton onClick={() => startEditingNote(note)}><EditIcon /></IconButton>
+                      <IconButton onClick={() => deleteNote(note.id)}><DeleteIcon /></IconButton>
+                    </>
+                  )}
+                </Box>
+              }
+            >
+              {editNoteId === note.id ? (
+                <TextField
+                  fullWidth
+                  value={editNoteText}
+                  onChange={(e) => setEditNoteText(e.target.value)}
+                />
+              ) : (
+                <ListItemText
+                  primary={note.content}
+                  secondary={new Date(note.created_at).toLocaleDateString()}
+                  primaryTypographyProps={{ style: { marginRight: '50px' } }}
+                />
+              )}
+            </ListItem>
+          ))}
+        </List>
+        <Snackbar
+          open={deleteNotification}
+          autoHideDuration={6000}
+          onClose={() => setDeleteNotification(false)}
+        >
+          <Alert onClose={() => setDeleteNotification(false)} severity="success">
+            Note deleted successfully!
+          </Alert>
+        </Snackbar>
       </div>
     </Drawer>
   );

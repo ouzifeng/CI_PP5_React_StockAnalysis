@@ -5,44 +5,47 @@ import Container from '@mui/material/Container';
 import Alert from '@mui/material/Alert';
 import CircularProgress from '@mui/material/CircularProgress';
 import Button from '@mui/material/Button';
+import { API_URL, AUTHORIZATION_TOKEN } from '../config'; // Use config file for URL and Token
 
 function EmailVerified() {
-  const { uidb64, token } = useParams();
-  const navigate = useNavigate();
-  const [loading, setLoading] = useState(true);
-  const [verificationStatus, setVerificationStatus] = useState('');
+  const { uidb64, token } = useParams(); // Get URL parameters
+  const navigate = useNavigate(); // Navigate to different routes
+  const [loading, setLoading] = useState(true); // Loading state
+  const [verificationStatus, setVerificationStatus] = useState(''); // Verification status
 
   useEffect(() => {
+    // Function to verify email
     const verifyEmail = async () => {
       try {
-        // Use axios.get instead of axios.post
+        // Make GET request to verify email
         await axios.get(
-          `https://django-stocks-ecbc6bc5e208.herokuapp.com/api/user/verify-email/${uidb64}/${token}/`,
+          `${API_URL}/api/user/verify-email/${uidb64}/${token}/`,
           {
             headers: {
-              'Authorization': 'Token 13502af70a55d1fcddf7c094e4418c65904ef6eb',
+              'Authorization': `Token ${AUTHORIZATION_TOKEN}`,
             },
           }
         );
-        setVerificationStatus('success');
+        setVerificationStatus('success'); // Set status to success
       } catch (error) {
         console.error('Email Verification Error: ', error.response || error);
-        setVerificationStatus('error');
+        setVerificationStatus('error'); // Set status to error
       } finally {
-        setLoading(false);
+        setLoading(false); // Stop loading
       }
     };
 
-    verifyEmail();
-  }, [uidb64, token]); // Removed `navigate` from dependencies as it's not used directly
+    verifyEmail(); // Call the verification function
+  }, [uidb64, token]); // Dependencies
 
+  // Handle redirect to login page
   const handleRedirect = () => {
     navigate('/login');
   };
 
   return (
     <Container component="main" maxWidth="sm" sx={{ mt: 4 }}>
-      {loading && <CircularProgress />}
+      {loading && <CircularProgress />} {/* Show loading spinner */}
       {!loading && verificationStatus === 'success' && (
         <>
           <Alert severity="success">Your email has been successfully verified. You can now log in.</Alert>

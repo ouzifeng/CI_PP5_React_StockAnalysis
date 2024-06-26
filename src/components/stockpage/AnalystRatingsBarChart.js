@@ -12,6 +12,7 @@ const AnalystRatingsBarChart = ({ ratings }) => {
   // Check if there are any ratings available
   const hasRatings = ratings && Object.values(ratings).some(value => value > 0);
 
+  // Data for the bar chart
   const data = {
     labels: ['Strong Buy', 'Buy', 'Hold', 'Sell', 'Strong Sell'],
     datasets: [{
@@ -21,6 +22,7 @@ const AnalystRatingsBarChart = ({ ratings }) => {
     }],
   };
 
+  // Options for the bar chart
   const options = {
     plugins: {
       legend: {

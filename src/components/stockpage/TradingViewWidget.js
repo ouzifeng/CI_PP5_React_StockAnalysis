@@ -4,7 +4,9 @@ import { Grid, CircularProgress, Box } from '@mui/material';
 import { Line } from 'react-chartjs-2';
 import 'chart.js/auto';
 import 'chartjs-adapter-date-fns';
+import { API_KEY } from '../../config';
 
+// Component for rendering the End-of-Day (EOD) chart
 const EodChart = ({ eodData }) => {
   const chartData = {
     labels: eodData.map(item => new Date(item.date).toISOString().split('T')[0]),
@@ -36,20 +38,20 @@ const EodChart = ({ eodData }) => {
   return <Line data={chartData} options={options} />;
 };
 
+// Main component for rendering the TradingView widget
 const TradingViewWidget = () => {
   const { uid } = useParams();
   const [eodData, setEodData] = useState([]);
   const [loadingEodData, setLoadingEodData] = useState(true);
 
   useEffect(() => {
+    // Fetch End-of-Day (EOD) data from the API
     const fetchEodData = async () => {
       const today = new Date();
       const pastDate = new Date(new Date().setFullYear(today.getFullYear() - 1));
       const from = `${pastDate.getFullYear()}-${String(pastDate.getMonth() + 1).padStart(2, '0')}-${String(pastDate.getDate()).padStart(2, '0')}`;
       
-      const apiKey = '649401f5eeff73.67939383'; // Replace with your actual API key
-
-      const url = `https://eodhd.com/api/eod/${uid}?api_token=${apiKey}&fmt=json&from=${from}&order=d`;
+      const url = `https://eodhd.com/api/eod/${uid}?api_token=${API_KEY}&fmt=json&from=${from}&order=d`;
       
       try {
         const response = await fetch(url);

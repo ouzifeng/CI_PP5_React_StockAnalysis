@@ -9,12 +9,15 @@ import Paper from '@mui/material/Paper';
 import { useNavigate } from 'react-router-dom';
 
 export default function StickyFooter() {
+  // State to keep track of the selected navigation value
   const [value, setValue] = React.useState(0);
   const navigate = useNavigate();
 
+  // Function to handle changes in the bottom navigation
   const handleChange = (event, newValue) => {
     setValue(newValue);
 
+    // Navigate to different routes based on the selected navigation value
     switch (newValue) {
       case 0:
         navigate('/contact');

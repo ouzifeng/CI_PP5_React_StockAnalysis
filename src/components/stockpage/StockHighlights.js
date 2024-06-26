@@ -9,13 +9,13 @@ import {
   Paper,
   Box,
   Grid,
-  Skeleton // Import Skeleton from Material-UI
+  Skeleton
 } from '@mui/material';
 
 const StockHighlights = ({ highlights, general }) => {
-  const currencySymbol = general.currency_symbol || '$'; // Default to '$' if undefined
+  const currencySymbol = general.currency_symbol || '$';
 
-
+  // Define the items to display in the first column
   const firstColumnHighlights = [
     { key: "wall_street_target_price", label: "Target Price" },
     { key: "market_capitalization", label: "Market Cap" },
@@ -25,46 +25,48 @@ const StockHighlights = ({ highlights, general }) => {
     { key: "eps_estimate_next_year", label: "EPS Est. Next Yr" },
   ];
 
+  // Define the items to display in the second column
   const secondColumnHighlights = [
     { key: "dividend_yield", label: "Dividend Yield" },
     { key: "pe_ratio", label: "P/E Ratio" },
     { key: "peg_ratio", label: "PEG Ratio" },
     { key: "profit_margin", label: "Profit Margin" },
     { key: "eps_estimate_current_quarter", label: "EPS Estimate Qtr" },
-    { key: "eps_estimate_next_quarter", label: "EPS Est. Next Qtr" },    
+    { key: "eps_estimate_next_quarter", label: "EPS Est. Next Qtr" },
   ];
 
+  // Render a table row for each item
   const renderRow = (data, key) => {
     let formattedValue = highlights[data.key];
 
+    // Format market capitalization
     if (data.key === "market_capitalization") {
       const marketCap = parseFloat(highlights[data.key]);
       if (!isNaN(marketCap)) {
         const marketCapBillion = (marketCap / 1000000000).toFixed(2);
         formattedValue = currencySymbol + marketCapBillion + "B";
       }
-  } else if (data.key === "dividend_yield") {
-    const dividendYield = parseFloat(highlights[data.key]);
-    if (!isNaN(dividendYield)) {
-      formattedValue = (dividendYield * 100).toFixed(2) + "%";
+    } else if (data.key === "dividend_yield") {
+      const dividendYield = parseFloat(highlights[data.key]);
+      if (!isNaN(dividendYield)) {
+        formattedValue = (dividendYield * 100).toFixed(2) + "%";
+      }
+    } else if (data.key === "pe_ratio") {
+      const peRatio = parseFloat(highlights[data.key]);
+      if (!isNaN(peRatio)) {
+        formattedValue = peRatio.toFixed(2);
+      }
+    } else if (data.key === "peg_ratio") {
+      const pegRatio = parseFloat(highlights[data.key]);
+      if (!isNaN(pegRatio)) {
+        formattedValue = pegRatio.toFixed(2);
+      }
+    } else if (data.key === "profit_margin") {
+      const profitMargin = parseFloat(highlights[data.key]);
+      if (!isNaN(profitMargin)) {
+        formattedValue = (profitMargin * 100).toFixed(2) + "%";
+      }
     }
-  } else if (data.key === "pe_ratio") {
-    const peRatio = parseFloat(highlights[data.key]);
-    if (!isNaN(peRatio)) {
-      formattedValue = peRatio.toFixed(2);
-    }
-  } else if (data.key === "peg_ratio") {
-    const pegRatio = parseFloat(highlights[data.key]);
-    if (!isNaN(pegRatio)) {
-      formattedValue = pegRatio.toFixed(2);
-    }
-  } else if (data.key === "profit_margin") {
-    const profitMargin = parseFloat(highlights[data.key]);
-    if (!isNaN(profitMargin)) {
-      formattedValue = (profitMargin * 100).toFixed(2) + "%";
-    }
-  }
-
 
     return (
       <TableRow key={key}>
@@ -87,10 +89,8 @@ const StockHighlights = ({ highlights, general }) => {
             <Table aria-label="Highlights Table">
               <TableBody>
                 {highlights ? (
-                  // Render content if highlights data is available
                   firstColumnHighlights.map((data) => renderRow(data, data.key))
                 ) : (
-                  // Render skeleton loader if highlights data is not available
                   Array.from({ length: firstColumnHighlights.length }, (_, index) => (
                     <TableRow key={index}>
                       <TableCell>
@@ -111,10 +111,8 @@ const StockHighlights = ({ highlights, general }) => {
             <Table aria-label="Highlights Table">
               <TableBody>
                 {highlights ? (
-                  // Render content if highlights data is available
                   secondColumnHighlights.map((data) => renderRow(data, data.key))
                 ) : (
-                  // Render skeleton loader if highlights data is not available
                   Array.from({ length: secondColumnHighlights.length }, (_, index) => (
                     <TableRow key={index}>
                       <TableCell>

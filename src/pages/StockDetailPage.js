@@ -10,6 +10,7 @@ import {
   CircularProgress,
 } from '@mui/material';
 import { AuthContext } from '../context/AuthContext';
+import { API_URL, AUTHORIZATION_TOKEN } from '../config'; // Import the config file
 
 // Lazy load components
 const StockHighlights = lazy(() => import('../components/stockpage/StockHighlights'));
@@ -27,9 +28,21 @@ const MarginTable = lazy(() => import('../components/stockpage/MarginTable'));
 const Description = lazy(() => import('../components/stockpage/Description'));
 const DividendYieldChart = lazy(() => import('../components/stockpage/DividendYieldChart'));
 
+// Function to format ticker for API
+const formatTickerForApi = (ticker) => {
+  if (!ticker) return '';
+  const dotIndex = ticker.lastIndexOf('.');
+  if (dotIndex !== -1) {
+    return ticker.substring(0, dotIndex).replace('-', '-') + '.' + ticker.substring(dotIndex + 1);
+  }
+  return ticker.replace('-', '-');
+};
+
+
 
 const StockDetail = () => {
   const { uid } = useParams();
+  const formattedTicker = formatTickerForApi(uid); // Use the formatted ticker
   const [stockData, setStockData] = useState(null);
   const [loadingStockData, setLoadingStockData] = useState(true);  // Loading state for stockData
   const [tradingViewSymbol, setTradingViewSymbol] = useState('');
@@ -43,16 +56,12 @@ const StockDetail = () => {
   const stockPriceCagr = stockData && stockData.stock_prices && stockData.stock_prices.length > 0 ? stockData.stock_prices[0].cagr_5_years : null;
   const dividendYieldCagr = stockData && stockData.dividend_yield_data ? stockData.dividend_yield_data.cagr_5_years : null;
 
-
-
   useEffect(() => {
-    const formattedTicker = uid ? uid.replace('-', '.') : '';
-    
     const fetchStockData = async () => {
       try {
-        const response = await fetch(`https://django-stocks-ecbc6bc5e208.herokuapp.com/api/stocks/${formattedTicker}/`, {
+        const response = await fetch(`${API_URL}/api/stocks/${formattedTicker}/`, {
           headers: {
-            'Authorization': `Token 13502af70a55d1fcddf7c094e4418c65904ef6eb`,
+            'Authorization': `Token ${AUTHORIZATION_TOKEN}`,
           },
         });
         if (!response.ok) throw new Error('Failed to fetch stock data');
@@ -70,9 +79,9 @@ const StockDetail = () => {
 
     const fetchFollowingStatus = async () => {
       try {
-        const response = await fetch(`https://django-stocks-ecbc6bc5e208.herokuapp.com/api/stocks/${formattedTicker}/`, {
+        const response = await fetch(`${API_URL}/api/stocks/${formattedTicker}/`, {
           headers: {
-            'Authorization': `Token 13502af70a55d1fcddf7c094e4418c65904ef6eb`,
+            'Authorization': `Token ${AUTHORIZATION_TOKEN}`,
           },
         });
         if (!response.ok) throw new Error('Failed to fetch following status');
@@ -91,19 +100,18 @@ const StockDetail = () => {
     } else {
       setLoadingIsFollowing(false);  // If not authenticated, there's no need to fetch following status
     }
-  }, [uid, isAuthenticated]);
+  }, [formattedTicker, isAuthenticated]);
 
   const handleFollowClick = async () => {
     if (!isAuthenticated) {
       setShowLoginAlert(true);
       return;
     }
-    const formattedTicker = uid.replace('-', '.');
     try {
-      const response = await fetch(`https://django-stocks-ecbc6bc5e208.herokuapp.com/api/stocks/${formattedTicker}/toggle_follow/`, {
+      const response = await fetch(`${API_URL}/api/stocks/${formattedTicker}/toggle_follow/`, {
         method: 'POST',
         headers: {
-          'Authorization': `Token 13502af70a55d1fcddf7c094e4418c65904ef6eb`,
+          'Authorization': `Token ${AUTHORIZATION_TOKEN}`,
         },
       });
       const data = await response.json();
@@ -167,7 +175,6 @@ const StockDetail = () => {
           </Grid>
         </Grid>
 
-
         {!loadingTradingViewSymbol && tradingViewSymbol && (
           <Grid item md={7} xs={12} className="chart-container">
             <TradingViewWidget symbol={tradingViewSymbol} />
@@ -195,14 +202,14 @@ const StockDetail = () => {
               {stockData.dividend_yield_data && <DividendYieldChart dividendYieldData={stockData.dividend_yield_data} />}
             </Grid>
 
-<Grid item md={3} xs={12}>
-    <CagrPercent
-        cagrData={stockData.general_cagr || {}}
-        stockPriceCagr={stockPriceCagr}
-        dividendYieldCagr={dividendYieldCagr}
-        hasData={!!stockData.general_cagr}
-    />
-</Grid>
+            <Grid item md={3} xs={12}>
+                <CagrPercent
+                    cagrData={stockData.general_cagr || {}}
+                    stockPriceCagr={stockPriceCagr}
+                    dividendYieldCagr={dividendYieldCagr}
+                    hasData={!!stockData.general_cagr}
+                />
+            </Grid>
 
             <Grid item md={4} xs={12}>
               <AnalystOverallRating ratings={stockData.analyst_ratings} />
@@ -222,7 +229,6 @@ const StockDetail = () => {
           <Grid item md={3} xs={12}>
             <SplitsDividendsTable general={stockData} splitsDividendsData={stockData.splits_dividends} />
           </Grid>
-
         </Grid>
       </Grid>
   );

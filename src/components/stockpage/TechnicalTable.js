@@ -2,6 +2,7 @@ import React from 'react';
 import { Typography, Table, TableBody, TableCell, TableContainer, TableRow, Paper, Box, Skeleton } from '@mui/material';
 
 const TechnicalsTable = ({ technicalsData }) => {
+  // Define the items to display in the technicals table
   const technicalsItems = [
     { label: 'Beta', key: 'beta' },
     { label: '52-Week High', key: 'fifty_two_week_high' },
@@ -14,30 +15,26 @@ const TechnicalsTable = ({ technicalsData }) => {
     { label: 'Short Percent', key: 'short_percent' },
   ];
 
+  // Format the value based on the key
   const formatValue = (key, value) => {
-    // Ensure the value is converted to a number if it's a string representing a number
     const numericValue = (typeof value === 'string' && !isNaN(value)) ? parseFloat(value) : value;
 
     if (['fifty_two_week_high', 'fifty_two_week_low', 'fifty_day_ma', 'two_hundred_day_ma'].includes(key)) {
-      // Format these values to 2 decimal places
       return (typeof numericValue === 'number') ? numericValue.toFixed(2) : value;
     } else if (['shares_short', 'shares_short_prior_month'].includes(key)) {
-      // Format these values in millions
       const valueMillions = numericValue / 1000000;
       return `${valueMillions.toFixed(1)}M`;
     } else if (key === 'short_percent') {
-      // Format short percent as a percentage
       return `${(numericValue * 100).toFixed(2)}%`;
     } else {
-      // For other values, check if it's a number and format; otherwise, return as is
       return (typeof numericValue === 'number') ? numericValue.toFixed(2) : value;
     }
   };
 
+  // Render a table row for each item
   const renderRow = (item, key) => {
     const rawValue = technicalsData[item.key];
     const value = rawValue ? formatValue(item.key, rawValue) : 'N/A';
-
 
     return (
       <TableRow key={key}>
@@ -58,9 +55,7 @@ const TechnicalsTable = ({ technicalsData }) => {
         <Table aria-label="Technicals Table">
           <TableBody>
             {technicalsData ? (
-              technicalsItems
-                .filter(item => item.key !== 'general') // Filter out "General"
-                .map((item, index) => renderRow(item, index))
+              technicalsItems.map((item, index) => renderRow(item, index))
             ) : (
               <TableRow>
                 <TableCell>
