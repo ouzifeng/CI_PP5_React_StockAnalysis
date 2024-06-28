@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext, lazy } from 'react';
+import React, { useEffect, useState, useContext, lazy, Suspense } from 'react';
 import { useParams } from 'react-router-dom';
 import {
   Grid,
@@ -37,8 +37,6 @@ const formatTickerForApi = (ticker) => {
   }
   return ticker.replace('-', '-');
 };
-
-
 
 const StockDetail = () => {
   const { uid } = useParams();
@@ -175,59 +173,85 @@ const StockDetail = () => {
           </Grid>
         </Grid>
 
-        {!loadingTradingViewSymbol && tradingViewSymbol && (
-          <Grid item md={7} xs={12} className="chart-container">
-            <TradingViewWidget symbol={tradingViewSymbol} />
-          </Grid>
-        )}
-        {!loadingStockData && stockData && (
-          <Grid item md={5} xs={12}>
-            <StockHighlights general={stockData} highlights={stockData.highlights} />
-          </Grid>
-        )}
+        <Suspense fallback={<CircularProgress />}>
+          {!loadingTradingViewSymbol && tradingViewSymbol && (
+            <Grid item md={7} xs={12} className="chart-container">
+              <div className="chart-container">
+                <TradingViewWidget symbol={tradingViewSymbol} />
+              </div>
+            </Grid>
+          )}
+          {!loadingStockData && stockData && (
+            <Grid item md={5} xs={12}>
+              <StockHighlights general={stockData} highlights={stockData.highlights} />
+            </Grid>
+          )}
+        </Suspense>
         <Grid container item xs={12} spacing={3}>
           <Grid item xs={12}>
-            <BasicStats data={stockData} />
+            <Suspense fallback={<CircularProgress />}>
+              <BasicStats data={stockData} />
+            </Suspense>
           </Grid>
         </Grid>
         <Grid container item xs={12} spacing={3}>
           <Grid item xs={12}>
-            <Description text={stockData.general_description.text} />
+            <Suspense fallback={<CircularProgress />}>
+              <Description text={stockData.general_description.text} />
+            </Suspense>
           </Grid>
         </Grid>
         <Grid container item md={12} xs={12} spacing={3} sx={{ mt: 3 }}>
-            <Grid item md={5} xs={12}>
-              {stockData.income_statements && <CagrChart incomeStatements={stockData.income_statements} />}
+          <Grid item md={5} xs={12}>
+            <Suspense fallback={<CircularProgress />}>
+              <div className="chart-container">
+                {stockData.income_statements && <CagrChart incomeStatements={stockData.income_statements} />}
+              </div>
               {stockData.dividend_yield_data && <div style={{ marginTop: '20px' }}></div>}
-              {stockData.dividend_yield_data && <DividendYieldChart dividendYieldData={stockData.dividend_yield_data} />}
-            </Grid>
+              <div className="chart-container">
+                {stockData.dividend_yield_data && <DividendYieldChart dividendYieldData={stockData.dividend_yield_data} />}
+              </div>
+            </Suspense>
+          </Grid>
 
-            <Grid item md={3} xs={12}>
-                <CagrPercent
-                    cagrData={stockData.general_cagr || {}}
-                    stockPriceCagr={stockPriceCagr}
-                    dividendYieldCagr={dividendYieldCagr}
-                    hasData={!!stockData.general_cagr}
-                />
-            </Grid>
+          <Grid item md={3} xs={12}>
+            <Suspense fallback={<CircularProgress />}>
+              <CagrPercent
+                cagrData={stockData.general_cagr || {}}
+                stockPriceCagr={stockPriceCagr}
+                dividendYieldCagr={dividendYieldCagr}
+                hasData={!!stockData.general_cagr}
+              />
+            </Suspense>
+          </Grid>
 
-            <Grid item md={4} xs={12}>
+          <Grid item md={4} xs={12}>
+            <Suspense fallback={<CircularProgress />}>
               <AnalystOverallRating ratings={stockData.analyst_ratings} />
               <AnalystRatingsBarChart ratings={stockData.analyst_ratings} />
-            </Grid>
+            </Suspense>
+          </Grid>
         </Grid>
         <Grid container item md={12} xs={12} spacing={3} sx={{ mt: 3 }}>
           <Grid item md={3} xs={12}>
-            <MarginTable general={stockData} highlights={stockData.highlights} />
+            <Suspense fallback={<CircularProgress />}>
+              <MarginTable general={stockData} highlights={stockData.highlights} />
+            </Suspense>
           </Grid>
           <Grid item md={3} xs={12}>
-            <ValuationTable general={stockData} valuationData={stockData.valuation} />
+            <Suspense fallback={<CircularProgress />}>
+              <ValuationTable general={stockData} valuationData={stockData.valuation} />
+            </Suspense>
           </Grid>
           <Grid item md={3} xs={12}>
-            <TechnicalsTable technicalsData={stockData.technicals} />
+            <Suspense fallback={<CircularProgress />}>
+              <TechnicalsTable technicalsData={stockData.technicals} />
+            </Suspense>
           </Grid>
           <Grid item md={3} xs={12}>
-            <SplitsDividendsTable general={stockData} splitsDividendsData={stockData.splits_dividends} />
+            <Suspense fallback={<CircularProgress />}>
+              <SplitsDividendsTable general={stockData} splitsDividendsData={stockData.splits_dividends} />
+            </Suspense>
           </Grid>
         </Grid>
       </Grid>

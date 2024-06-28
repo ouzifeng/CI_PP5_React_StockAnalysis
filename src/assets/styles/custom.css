@@ -163,3 +163,25 @@ body {
 @media (min-width: 769px) and (max-width: 992px) {
   /* Your CSS rules for medium screens go here */
 }
+
+
+.chart-container {
+  position: relative;
+  width: 100%;
+  height: auto;
+  overflow: hidden;
+}
+
+/* For mobile devices */
+@media (max-width: 767px) {
+  .chart-container {
+    height: 200px;
+  }
+}
+
+/* For larger screens */
+@media (min-width: 768px) {
+  .chart-container {
+    height: 400px; /* Adjust this value as needed for larger screens */
+  }
+}

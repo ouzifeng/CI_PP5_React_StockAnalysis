@@ -16,7 +16,7 @@ const ForgotPassword = () => {
         setSubmitting(true);
 
         // URL of the password reset endpoint
-        const apiUrl = `${API_URL}/auth/custom-password-reset/`;
+        const apiUrl = `${API_URL}/api/user/password_reset/`;
 
         // Configuration for the Axios request, including authorization token
         const config = {
@@ -50,7 +50,7 @@ const ForgotPassword = () => {
     };
 
     return (
-        <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+        <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '50vh' }}>
             <Paper elevation={3} sx={{ padding: 4 }}>
                 <Typography variant="h5" mb={2}>Forgot Password</Typography>
                 <form onSubmit={handleSubmit}>

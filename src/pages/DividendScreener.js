@@ -17,6 +17,8 @@ function DividendScreener() {
   const navigate = useNavigate();
   const theme = useTheme();
   const matches = useMediaQuery(theme.breakpoints.down('md')); 
+  const isIPad = useMediaQuery('(max-width: 834px) and (min-width: 768px)');
+
   const [openPopper, setOpenPopper] = useState(null);
   const [anchorEls, setAnchorEls] = useState({});
   const [popperWidth, setPopperWidth] = useState(null);
@@ -143,7 +145,7 @@ function DividendScreener() {
 
   return (
     <Container maxWidth="lg">
-      <Grid container spacing={1} mt={4} mb={4}>
+      <Grid container spacing={1} mt={4} mb={4} style={isIPad ? { marginTop: '64px' } : {}}>
         <Grid item md={2}>
           <Button aria-describedby="dividend-popper" type="button" variant='contained' onClick={(event) => handlePopperClick('dividend', event)} fullWidth>
             Dividend Yield

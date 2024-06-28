@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import Grid from '@mui/material/Grid';
 import Skeleton from '@mui/material/Skeleton';
+import useMediaQuery from '@mui/material/useMediaQuery';
 import '../../assets/styles/custom.css';
 
 const Ticker = () => {
   const [stocks, setStocks] = useState([]);
   const [loading, setLoading] = useState(true);
+  const isDesktop = useMediaQuery('(min-width:960px)');
 
   // Simulate API fetch delay for demonstration purposes
   useEffect(() => {
@@ -29,6 +31,10 @@ const Ticker = () => {
       })
       .catch((error) => console.error('Error fetching stock data:', error));
   }, []);
+
+  if (!isDesktop) {
+    return null; // Return nothing if the screen width is less than 960px
+  }
 
   return (
     <div className="ticker-container">
