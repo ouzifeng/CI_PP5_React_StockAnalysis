@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import BaseLayout from './layouts/BaseLayout';
 import SignIn from './pages/Login';
 import SignUp from './pages/SignUp';
@@ -51,6 +51,9 @@ function App() {
 
               {/* Accessible only when logged in */}
               <Route path="/following" element={<ProtectedRoute component={Follow} />} />
+              
+              {/* Redirect any unknown routes to the homepage */}
+              <Route path="*" element={<Navigate to="/" />} />
             </Routes>
           </BaseLayout>
         </Router>
