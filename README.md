@@ -16,6 +16,8 @@ The platform needs to focus on three areas:
 
 The project includes a DRF-based backend, available [here](https://github.com/ouzifeng/CI_PP5_API). This repository is dedicated to the frontend, built using React JS.
 
+As this is going to be used as an internal tool, and not launched for the general public, it has also been agreed that it is acceptable to leave some console.logs in the source code to  help with future debugging. 
+
 ## User Experience
 
 ### Target Audience
@@ -357,6 +359,8 @@ Although the investment platform is primarily designed to work on desktop as mob
 
 
 ## Features
+
+
 
 ### Account Registration
 

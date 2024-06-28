@@ -23,7 +23,7 @@ const ResetPassword = () => {
         setSubmitting(true);
 
         try {
-            const apiUrl = `${API_URL}/auth/custom/auth/password/reset/confirm/`; // Use the API_URL from config
+            const apiUrl = `${API_URL}/api/user/password_reset`; // Use the API_URL from config
 
             const config = {
                 headers: {
