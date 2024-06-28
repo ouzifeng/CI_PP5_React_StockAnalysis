@@ -456,6 +456,12 @@ User stories: 22, 23, 24
 
 [Delete Investment Notes Video](https://www.loom.com/share/dcf4cbe2ba79445d9dc10f0fa1449221)
 
+## Account Password Reset
+
+Intially the customer wanted users ot be able to reset passwords via a form on the platform, this functionality was built. Later they came back and decided that since it is an internal tool for a small team, they would prefer to be able to reset users passwords via an admin dashboard for security reasons - they have been the recipients of phishing emails before to steal passwords. The Django admin dashboard 
+
+[Change user PW via Django dashboard](https://www.loom.com/share/40d60bb85f0e4e2886756c1a817a807e)
+
 
 ## Bug Fixes
 
