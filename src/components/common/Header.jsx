@@ -21,7 +21,7 @@ import TextField from '@mui/material/TextField';
 import ReactCountryFlag from "react-country-flag";
 import MenuDrawer from './MenuDrawer';
 import useDebounce from './useDebounce';
-import { API_URL, AUTHORIZATION_TOKEN } from '../../config'; // Importing the config variables
+import { API_URL, AUTHORIZATION_TOKEN } from '../../config';
 
 // Styled components
 const Search = styled('div')(({ theme }) => ({
@@ -51,6 +51,20 @@ const SearchIconWrapper = styled('div')(({ theme, focused }) => ({
   color: focused ? '#ffffff' : '#1976d2',
 }));
 
+const Avatar = styled('div')(({ theme, bgColor }) => ({
+  width: '32px',
+  height: '32px',
+  borderRadius: '50%',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  backgroundColor: bgColor,
+  color: '#fff',
+  fontWeight: 'bold',
+  textTransform: 'uppercase',
+  fontSize: '12px',
+}));
+
 function Header() {
   const [focused, setFocused] = useState(false);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -76,11 +90,9 @@ function Header() {
   useEffect(() => {
     const token = localStorage.getItem('token');
     setIsAuthenticated(!!token);
-    // Reset login success alert when Header mounts
     setShowLoginSuccessAlert(false);
   }, [setIsAuthenticated, setShowLoginSuccessAlert]);
 
-  // useEffect for handling search
   useEffect(() => {
     const fetchData = async () => {
       if (debouncedSearchInput.length >= 3) {
@@ -91,53 +103,43 @@ function Header() {
               'Authorization': `Token ${AUTHORIZATION_TOKEN}`,
             },
           });
-          console.log(response.data);
           setSearchResults(response.data || []);
         } catch (error) {
           console.error('Search Error: ', error);
         }
         setIsLoading(false);
       } else {
-        setSearchResults([]); // Clear results if input is less than 3 characters
+        setSearchResults([]);
       }
     };
 
     if (debouncedSearchInput) fetchData();
   }, [debouncedSearchInput]);
 
-  // Opens the profile menu
   const handleProfileMenuOpen = (event) => {
     setAnchorEl(event.currentTarget);
   };
 
-  // Closes the mobile menu
   const handleMobileMenuClose = () => {
     setMobileMoreAnchorEl(null);
   };
 
-  // Closes the profile menu
   const handleMenuClose = () => {
     setAnchorEl(null);
     handleMobileMenuClose();
   };
 
-  // Opens the mobile menu
   const handleMobileMenuOpen = (event) => {
     setMobileMoreAnchorEl(event.currentTarget);
   };
 
-  // Handles user logout
   const handleLogout = async () => {
     try {
       await axios.post(`${API_URL}/auth/logout/`);
       localStorage.removeItem('token');
       setIsAuthenticated(false);
-
-      // Set the logout alert state to true
       setShowLogoutAlert(true);
-
-      // Navigate to the login page
-      navigate('/login', { replace: true }); // Added { replace: true } to replace the current entry in the history stack
+      navigate('/login', { replace: true });
     } catch (error) {
       console.error('Logout Error: ', error);
     }
@@ -285,15 +287,15 @@ function Header() {
                 {isAuthenticated ? (
                   userAvatarUrl ? (
                     <img
-                      src={userAvatarUrl} // Use the avatar URL from context
+                      src={userAvatarUrl}
                       alt="User Avatar"
                       style={{ width: '32px', height: '32px', borderRadius: '50%' }}
                     />
                   ) : (
-                    <AccountCircle /> // Fallback icon if no avatar URL
+                    <Avatar bgColor="#3f51b5">Hi</Avatar>
                   )
                 ) : (
-                  <AccountCircle /> // Show this if not authenticated
+                  <AccountCircle />
                 )}
               </IconButton>
             </Box>
@@ -312,9 +314,7 @@ function Header() {
           </Toolbar>
 
           <>
-            {/* Row 1 - Mobile Only */}
             <Toolbar sx={{ display: { xs: 'flex', md: 'none' }, justifyContent: 'center' }}>
-              {/* Menu Button */}
               <IconButton
                 size="large"
                 edge="start"
@@ -325,16 +325,13 @@ function Header() {
               >
                 <MenuIcon />
               </IconButton>
-              {/* Logo */}
               <Link to="/" style={{ display: 'flex', alignItems: 'center', color: 'inherit', textDecoration: 'none', marginLeft: 'auto', marginRight: 'auto' }}>
                 <img
                   src="/bull-street-logo.png"
                   alt="Bull Street Logo"
-                  style={{ height: 'auto', maxWidth: '100%', maxHeight: '45px', marginLeft: 'auto', marginRight: 'auto', paddingTop: '5px' }} // Adjust height and width as needed
+                  style={{ height: 'auto', maxWidth: '100%', maxHeight: '45px', marginLeft: 'auto', marginRight: 'auto', paddingTop: '5px' }}
                 />
               </Link>
-
-              {/* Login Menu */}
               <IconButton
                 size="large"
                 edge="end"
@@ -347,22 +344,20 @@ function Header() {
                 {isAuthenticated ? (
                   userAvatarUrl ? (
                     <img
-                      src={userAvatarUrl} // Use the avatar URL from context
+                      src={userAvatarUrl}
                       alt="User Avatar"
                       style={{ width: '35px', height: '35px', borderRadius: '50%' }}
                     />
                   ) : (
-                    <AccountCircle /> // Fallback icon if no avatar URL
+                    <Avatar bgColor="#3f51b5">Hi</Avatar>
                   )
                 ) : (
-                  <AccountCircle /> // Show this if not authenticated
+                  <AccountCircle />
                 )}
               </IconButton>
             </Toolbar>
 
-            {/* Row 2 */}
             <Toolbar sx={{ display: { xs: 'flex', md: 'none' } }} className='mobileSearch'>
-              {/* Search Bar */}
               <Search>
                 <SearchIconWrapper focused={focused}>
                   <SearchIcon />

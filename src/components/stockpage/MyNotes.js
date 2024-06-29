@@ -36,7 +36,6 @@ const MyNotesDrawer = ({ open, onClose, stockId, stockData }) => {
     }
   }, [open, stockId]);
 
-  // Fetch notes from the API
   const fetchNotes = async (formattedStockId) => {
     setIsLoading(true);
     try {
@@ -55,7 +54,6 @@ const MyNotesDrawer = ({ open, onClose, stockId, stockData }) => {
     }
   };
 
-  // Add a new note
   const addNote = async () => {
     if (noteText.trim() !== '' && stockData?.id) {
       const newNote = {
@@ -91,7 +89,6 @@ const MyNotesDrawer = ({ open, onClose, stockId, stockData }) => {
     }
   };
 
-  // Delete a note
   const deleteNote = async (noteId) => {
     setIsLoading(true);
     try {
@@ -117,13 +114,11 @@ const MyNotesDrawer = ({ open, onClose, stockId, stockData }) => {
     }
   };
 
-  // Start editing a note
   const startEditingNote = (note) => {
     setEditNoteId(note.id);
     setEditNoteText(note.content);
   };
 
-  // Save edited note
   const saveEditedNote = async () => {
     if (editNoteText.trim() === '') {
       console.error('Note content cannot be empty');
@@ -149,7 +144,6 @@ const MyNotesDrawer = ({ open, onClose, stockId, stockData }) => {
     }
   };
 
-  // Cancel editing
   const cancelEditing = () => {
     setEditNoteId(null);
     setEditNoteText('');
@@ -189,34 +183,38 @@ const MyNotesDrawer = ({ open, onClose, stockId, stockData }) => {
           {notes.map((note) => (
             <ListItem
               key={note.id}
-              secondaryAction={
-                <Box>
-                  {editNoteId === note.id ? (
-                    <>
-                      <IconButton onClick={saveEditedNote}><SaveIcon /></IconButton>
-                      <IconButton onClick={cancelEditing}><CancelIcon /></IconButton>
-                    </>
-                  ) : (
-                    <>
-                      <IconButton onClick={() => startEditingNote(note)}><EditIcon /></IconButton>
-                      <IconButton onClick={() => deleteNote(note.id)}><DeleteIcon /></IconButton>
-                    </>
-                  )}
-                </Box>
-              }
+              style={{ backgroundColor: editNoteId === note.id ? '#f0f0f0' : 'transparent', width: '100%', flexDirection: 'column', alignItems: 'flex-start' }}
             >
               {editNoteId === note.id ? (
-                <TextField
-                  fullWidth
-                  value={editNoteText}
-                  onChange={(e) => setEditNoteText(e.target.value)}
-                />
+                <Box width="100%">
+                  <TextField
+                    fullWidth
+                    multiline
+                    minRows={3}
+                    value={editNoteText}
+                    onChange={(e) => setEditNoteText(e.target.value)}
+                    style={{ marginBottom: 8 }}
+                  />
+                  <Box display="flex" justifyContent="flex-end" gap={1}>
+                    <Button variant="contained" color="primary" onClick={saveEditedNote} startIcon={<SaveIcon />}>
+                      Save
+                    </Button>
+                    <Button variant="outlined" color="secondary" onClick={cancelEditing} startIcon={<CancelIcon />}>
+                      Cancel
+                    </Button>
+                  </Box>
+                </Box>
               ) : (
-                <ListItemText
-                  primary={note.content}
-                  secondary={new Date(note.created_at).toLocaleDateString()}
-                  primaryTypographyProps={{ style: { marginRight: '50px' } }}
-                />
+                <Box width="100%">
+                  <ListItemText
+                    primary={note.content}
+                    secondary={new Date(note.created_at).toLocaleDateString()}
+                  />
+                  <Box display="flex" justifyContent="flex-end" gap={1}>
+                    <IconButton onClick={() => startEditingNote(note)}><EditIcon /></IconButton>
+                    <IconButton onClick={() => deleteNote(note.id)}><DeleteIcon /></IconButton>
+                  </Box>
+                </Box>
               )}
             </ListItem>
           ))}
